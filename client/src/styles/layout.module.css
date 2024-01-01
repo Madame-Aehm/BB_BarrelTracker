@@ -1,0 +1,35 @@
+.main {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.labelNavContainer {
+  width: 100%;
+  max-width: 600px;
+}
+
+.navContainer {
+  width: 100%;
+  height: 50px;
+  border-bottom: solid black 3px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.navIconWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+
+.activeNavIcon {
+  cursor: default;
+}

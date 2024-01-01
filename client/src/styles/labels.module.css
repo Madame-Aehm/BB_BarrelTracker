@@ -1,0 +1,156 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.h1 {
+  color: var(--bb-blue);
+}
+
+.p {
+  max-width: 600px;
+  margin-bottom: 0;
+  padding: 0 1rem;
+}
+
+.divider {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.singleWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 2rem;
+  border-right: solid 3px black;
+  gap: 0.5rem;
+}
+
+.allWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.genBarrelLabelPair {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.barrelNumberInput {
+  padding: 0.6rem;
+  padding-right: 0.7rem;
+  border: solid black 3px;
+  border-radius: 0.5rem;
+  font-size: x-large;
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+}
+
+.barrelNumberInput:focus {
+  border-color: var(--bb-blue);
+  outline-color: var(--bb-blue);
+}
+
+.inputInvalid {
+  border-color: tomato;
+}
+
+.genSubmitButton {
+  width: 12rem;
+  height: 3.5rem;
+  border: 0px;
+  background-color: var(--bb-blue);
+  color: white;
+  font-weight: bold;
+  border-radius: 0.7rem;
+  cursor: pointer;
+} 
+
+.genSubmitButtonLoading {
+  background-color: var(--bb-greyish);
+  cursor: default;
+}
+
+.genSubmitButton:active {
+  background-color: var(--bb-blue2);
+}
+
+.labelContainer { 
+  width: 300px; 
+  border: solid 3px black; 
+  border-radius: 1rem; 
+  margin-top: 1rem;
+}
+
+.qrcode { 
+  width: 300px;
+  height: 300px; 
+  background-color: #fff; 
+}
+
+.qrIcon { 
+  width: 40px;
+  margin-top: -2px; 
+  margin-left: 2px; 
+}
+
+.barrelNumber { 
+  width: 300px;
+  text-align: center; 
+  margin-bottom: 1rem;
+  margin-top: -2rem;
+}
+
+.or {
+  position: relative;
+  right: -9rem;
+  top: -4.5rem;
+  background-color: #fff;
+  padding: 0.5rem;
+  margin: 0
+}
+
+.menuWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.labelsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+  justify-content: center;
+}
+
+.error {
+  display: block;
+  color: tomato;
+  height: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .divider {
+    grid-template-columns: 1fr;
+  }
+  .singleWrapper {
+    padding-right: 1rem;
+    padding-bottom: 0;
+    border-right: none;
+    border-bottom: solid 3px black;
+  }
+  .allWrapper {
+    margin-top: 2rem;
+  }
+  .or {
+    right: 0;
+    top: 1.3rem;
+  }
+}
