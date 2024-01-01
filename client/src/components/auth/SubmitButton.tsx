@@ -9,7 +9,7 @@ const SubmitButton = ({ loading }: Props) => {
     <button 
       type={ loading ? undefined : "submit" } 
       className={`${authStyles.authSubmitButton} ${loading ? authStyles.authSubmitButtonLoading : ""}`}>
-        OK
+        { loading ? "loading..." : "OK" }
     </button>
   )
 }

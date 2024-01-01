@@ -1,0 +1,18 @@
+.mainButtons {
+  height: 8rem;
+  width: 15rem;
+  border: 0px;
+  background-color: var(--bb-blue);
+  color: white;
+  font-weight: bold;
+  font-size: x-large;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  justify-content: space-around;
+}

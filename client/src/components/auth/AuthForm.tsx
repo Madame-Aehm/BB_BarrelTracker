@@ -2,7 +2,7 @@ import { ChangeEvent, Dispatch, FormEvent, useRef, useState } from 'react'
 import authStyles from '../../styles/auth.module.css'
 import PinInput from './PinInput';
 import { Pin, PinError, PinInputType } from '../../@types/auth';
-import shiftFocus from '../../utils/shiftFocus';
+import { shiftFocus, unfocusAll } from '../../utils/shiftFocus';
 import SubmitButton from './SubmitButton';
 
 type Props = {
@@ -37,6 +37,7 @@ const AuthForm = ({ submit, error }: Props) => {
     if (e) e.preventDefault();
     error.setError(error.defaultError);
     setLoading(true);
+    unfocusAll();
     const fullPin = Object.values(pin.current).join("");
 
     if (fullPin.length !== 4) {

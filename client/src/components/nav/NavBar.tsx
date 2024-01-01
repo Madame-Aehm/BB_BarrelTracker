@@ -17,10 +17,15 @@ const NavBar = () => {
   return (
     <nav className={layoutStyles.navContainer}>
       <NavIcon 
+        icon='qr_code_scanner'
+        label='scanner'
+        handleClick={() => navigate("/")}
+        active={location.pathname === "/" ? true : false} />
+      {/* <NavIcon 
         icon='home' 
         label='home' 
         handleClick={() => navigate("/")} 
-        active={location.pathname === "/" ? true : false} />
+        active={location.pathname === "/" ? true : false} /> */}
       <NavIcon 
         icon='new_label' 
         label='labels' 

@@ -9,6 +9,12 @@
   text-align: center;
 }
 
+.bbImg {
+  height: 100px;
+  width: auto;
+  padding: 2rem 0;
+}
+
 .form {
   max-width: 80vw;
   padding: 1rem;

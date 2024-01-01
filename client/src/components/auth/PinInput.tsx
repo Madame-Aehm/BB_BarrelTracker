@@ -1,7 +1,7 @@
 import { ChangeEvent, KeyboardEvent, MutableRefObject } from 'react'
 import authStyles from '../../styles/auth.module.css'
 import { Pin, PinInputType } from '../../@types/auth'
-import shiftFocus from '../../utils/shiftFocus'
+import { shiftFocus } from '../../utils/shiftFocus'
 
 type Props = {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void
