@@ -1,4 +1,3 @@
-import React from 'react'
 import authStyles from '../../styles/auth.module.css'
 
 type Props = {
