@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import NavBar from '../components/nav/NavBar'
 import layoutStyles from '../styles/layout.module.css'
 import { QrReader } from 'react-qr-reader';
@@ -6,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 
 function Scanner() {
   const navigate = useNavigate();
-  const [found, setFound] = useState(false);
   
   console.log(QrReader)
 

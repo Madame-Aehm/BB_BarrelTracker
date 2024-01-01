@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import Label from '../components/label/Label'
+// import Label from '../components/label/Label'
 import LabelMenu from '../components/label/LabelMenu'
 import labelStyles from '../styles/labels.module.css'
 import layoutStyles from '../styles/layout.module.css'
 import { LabelType } from '../@types/labels'
 import NavBar from '../components/nav/NavBar'
-import QRCode from 'react-qr-code'
 import LabelPlain from '../components/label/LabelPlain'
 
 
