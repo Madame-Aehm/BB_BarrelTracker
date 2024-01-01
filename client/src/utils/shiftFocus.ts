@@ -3,4 +3,11 @@ const shiftFocus = (id: number) => {
   nextInput?.focus();
 }
 
-export default shiftFocus
+const unfocusAll = () => {
+  const inputs = document.getElementsByTagName("input");
+  for (let i = 0; i < inputs.length; i++) {
+    inputs[i].blur();
+  }
+}
+
+export { shiftFocus, unfocusAll }

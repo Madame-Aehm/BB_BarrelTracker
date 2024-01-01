@@ -37,7 +37,7 @@ const AuthPage = () => {
 
   return (
     <main className={authStyles.main}>
-      <img src='https://blauebohne.com/wp-content/uploads/2022/10/bb_logo.svg' />
+      <img src='bb_bean.png' alt='Blaue Bohne' className={authStyles.bbImg} />
       <h3 className={authStyles.h1}>- BARREL TRACKER -</h3>
       <AuthForm submit={submit} error={{ error, setError, defaultError }}/>
     </main>

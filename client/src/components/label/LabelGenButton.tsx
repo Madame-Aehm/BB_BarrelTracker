@@ -13,7 +13,7 @@ const LabelGenButton = ({ children, loading, handleClick }: Props) => {
       type='submit'
       className={`${labelStyles.genSubmitButton} ${loading ? labelStyles.genSubmitButtonLoading : ""}`}
       onClick={handleClick}>
-      { children }
+      { loading ? "loading..." :  children }
     </button>
   )
 }

@@ -4,6 +4,7 @@ import labelStyles from '../../styles/labels.module.css'
 import { LabelType } from '../../@types/labels';
 import { NotOK } from '../../@types/auth';
 import LabelGenButton from './LabelGenButton';
+import { unfocusAll } from '../../utils/shiftFocus';
 
 type Props = {
   setState: Dispatch<React.SetStateAction<LabelType[]>>
@@ -26,6 +27,7 @@ const LabelMenu = ({ setState, setError }: Props) => {
 
   const handleSubmit = async(e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
+    unfocusAll();
     await handleSingle()
   }
 

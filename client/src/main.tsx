@@ -5,14 +5,14 @@ import { AuthContextProvider } from './context/AuthContext.tsx'
 import AuthWrapper from './components/auth/AuthWrapper.tsx'
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import LabelPage from './pages/LabelPage.tsx'
-import Homepage from './pages/Homepage.tsx'
+import Scanner from './pages/Scanner.tsx'
 
 const router = createBrowserRouter([{
   element: <AuthContextProvider><AuthWrapper><Outlet /></AuthWrapper></AuthContextProvider>,
   children: [
     {
       path: "/",
-      element: <Homepage />
+      element: <Scanner />
     },
     {
       path: "label-gen",
