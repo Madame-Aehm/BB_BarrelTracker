@@ -6,6 +6,7 @@ import AuthWrapper from './components/auth/AuthWrapper.tsx'
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import LabelPage from './pages/LabelPage.tsx'
 import Scanner from './pages/Scanner.tsx'
+import BarrelUpdate from './pages/BarrelUpdate.tsx'
 
 const router = createBrowserRouter([{
   element: <AuthContextProvider><AuthWrapper><Outlet /></AuthWrapper></AuthContextProvider>,
@@ -15,14 +16,18 @@ const router = createBrowserRouter([{
       element: <Scanner />
     },
     {
-      path: "label-gen",
+      path: "/label-gen",
       element: <LabelPage />
+    },
+    {
+      path: "/barrel-update/:brl",
+      element: <BarrelUpdate />
     }
   ]
 }])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )

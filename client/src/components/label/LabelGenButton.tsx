@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { PropsWithChildren } from 'react'
 import labelStyles from '../../styles/labels.module.css'
 
-interface Props extends PropsWithChildren {
+interface Props {
+  title: string
   loading: boolean
   handleClick: () => Promise<void>
 }
 
-const LabelGenButton = ({ children, loading, handleClick }: Props) => {
+const LabelGenButton = ({ title, loading, handleClick }: Props) => {
   return (
     <button 
-      type='submit'
+      type={loading ? "submit" : undefined}
       className={`${labelStyles.genSubmitButton} ${loading ? labelStyles.genSubmitButtonLoading : ""}`}
       onClick={handleClick}>
-      { loading ? "loading..." :  children }
+      { loading ? "loading..." :  title }
     </button>
   )
 }

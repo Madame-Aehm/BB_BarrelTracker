@@ -5,6 +5,8 @@ import labelStyles from '../styles/labels.module.css'
 import layoutStyles from '../styles/layout.module.css'
 import { LabelType } from '../@types/labels'
 import NavBar from '../components/nav/NavBar'
+import QRCode from 'react-qr-code'
+import LabelPlain from '../components/label/LabelPlain'
 
 
 const LabelPage = () => {
@@ -25,7 +27,8 @@ const LabelPage = () => {
       <small className={labelStyles.error}>{ error }</small>
       <LabelMenu setState={setLabels} setError={setError} />
       <div className={labelStyles.labelsContainer}>
-        { labels.map((l) => <Label key={l._id} contents={l._id} number={l.number.toString()} />)}
+        {/* { labels.map((l) => <Label key={l._id} contents={l._id} number={l.number.toString()} />)} */}
+        { labels.map((l) => <LabelPlain key={l._id} id={l._id} number={l.number.toString()} />) }
       </div>
     </main>
   )
