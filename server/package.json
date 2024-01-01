@@ -1,7 +1,7 @@
 {
   "name": "bb_barreltracker",
   "version": "1.0.0",
-  "description": "",
+  "description": "Rest API to go with Blaue Bohne Barrel Tracker",
   "main": "index.js",
   "type": "module",
   "scripts": {
