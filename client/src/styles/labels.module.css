@@ -5,14 +5,23 @@
   text-align: center;
 }
 
-.h1 {
-  color: var(--bb-blue);
+.loaderMain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vw;
+  background-color: #fff;
 }
 
 .p {
   max-width: 600px;
   margin-bottom: 0;
   padding: 0 1rem;
+}
+
+.labelNumber {
+  color: black;
 }
 
 .divider {
@@ -33,53 +42,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 1rem;
 }
 
 .genBarrelLabelPair {
   display: flex;
   gap: 1rem;
   align-items: center;
-}
-
-.barrelNumberInput {
-  padding: 0.6rem;
-  padding-right: 0.7rem;
-  border: solid black 3px;
-  border-radius: 0.5rem;
-  font-size: x-large;
-  width: 3rem;
-  height: 3rem;
-  text-align: center;
-}
-
-.barrelNumberInput:focus {
-  border-color: var(--bb-blue);
-  outline-color: var(--bb-blue);
-}
-
-.inputInvalid {
-  border-color: tomato;
-}
-
-.genSubmitButton {
-  width: 12rem;
-  height: 3.5rem;
-  border: 0px;
-  background-color: var(--bb-blue);
-  color: white;
-  font-weight: bold;
-  border-radius: 0.7rem;
-  cursor: pointer;
 } 
-
-.genSubmitButtonLoading {
-  background-color: var(--bb-greyish);
-  cursor: default;
-}
-
-.genSubmitButton:active {
-  background-color: var(--bb-blue2);
-}
 
 .labelContainer { 
   width: 300px; 
@@ -119,7 +89,7 @@
 
 .or {
   position: relative;
-  right: -9rem;
+  right: -8.3rem;
   top: -4.5rem;
   background-color: #fff;
   padding: 0.5rem;
@@ -176,5 +146,8 @@
   }
   .singleWrapper {
     border-color: #fff;
+  }
+  .loaderMain {
+    background-color: #242424;
   }
 }

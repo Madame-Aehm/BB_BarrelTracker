@@ -5,27 +5,27 @@ import { shiftFocus } from '../../utils/shiftFocus'
 
 type Props = {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void
-  id: PinInputType
-  applyError: boolean
-  pin: MutableRefObject<Pin>
+  id?: PinInputType
+  invalid: boolean
+  pin?: MutableRefObject<Pin>
 }
 
-const PinInput = ({ handleChange, id, applyError, pin }: Props) => {
+const PinInput = ({ handleChange, id, invalid, pin }: Props) => {
   
   const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (pin.current[id] === e.key) {
+    if (pin!.current[id!] === e.key) {
       shiftFocus(Number(id));
     }
   }
 
   return (
     <input 
-      className={`${authStyles.pinInput} ${applyError ? authStyles.pinInputError : ""}`} 
+      className={`${authStyles.pinInput} ${invalid ? authStyles.pinInvalid : ""}`} 
       id={id} 
       type="number" 
       onChange={handleChange} 
       onFocus={(e) => e.target.select()}
-      onKeyUp={handleKeyUp}
+      onKeyUp={(pin && id) ? handleKeyUp : undefined}
       maxLength={1} />
   )
 }

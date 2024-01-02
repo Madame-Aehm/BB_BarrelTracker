@@ -2,9 +2,10 @@
 import { ChangeEvent, Dispatch, FormEvent, useRef, useState } from 'react'
 import labelStyles from '../../styles/labels.module.css'
 import { LabelType } from '../../@types/labels';
-import { NotOK } from '../../@types/auth';
-import LabelGenButton from './LabelGenButton';
 import { unfocusAll } from '../../utils/shiftFocus';
+import Button from '../Button';
+import PinInput from '../auth/PinInput';
+import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail';
 
 type Props = {
   setState: Dispatch<React.SetStateAction<LabelType[]>>
@@ -47,14 +48,12 @@ const LabelMenu = ({ setState, setError }: Props) => {
         const result = await response.json() as LabelType;
         setState([result]);
       } else {
-        const result = await response.json() as NotOK;
-        setError(result.error);
+        await handleNotOK(response, setError);
         setInputValid(false);
       }
       setLoading("");
     } catch(e) {
-      const { message } = e as Error;
-      setError(message);
+      handleCatchError(e, setError);
       setLoading("");
     }
   }
@@ -71,13 +70,11 @@ const LabelMenu = ({ setState, setError }: Props) => {
         const result = await response.json() as LabelType[];
         setState(result);
       } else {
-        const result = await response.json() as NotOK;
-        setError(result.error);
+        await handleNotOK(response, setError);
       }
       setLoading("");
     } catch(e) {
-      const { message } = e as Error;
-      setError(message);
+      handleCatchError(e, setError);
       setLoading("");
     }
   }
@@ -86,24 +83,24 @@ const LabelMenu = ({ setState, setError }: Props) => {
       <div className={labelStyles.divider}>
         <form onSubmit={handleSubmit} className={labelStyles.singleWrapper}>
           <div className={labelStyles.genBarrelLabelPair}>
-            <label htmlFor='barrelNumber'><h3>Barrel Number:</h3></label>
-            <input 
-              type='number' 
-              id='barrelNumber' 
-              onChange={handleChange}
-              className={`${labelStyles.barrelNumberInput} ${inputValid ? "" : labelStyles.inputInvalid}`} />
+            <label><h3>Barrel Number:</h3></label>
+            <PinInput handleChange={handleChange} invalid={!inputValid} />
           </div>
-          <LabelGenButton 
+          <Button 
             loading={loading === "single" ? true : false} 
             handleClick={handleSingle}
-            title='Generate Single Label' />
+            title='Generate Single Label'
+            width='12rem'
+            height='3.5rem' />
           <p className={labelStyles.or}>OR</p>
         </form>
         <div className={labelStyles.allWrapper}>
-          <LabelGenButton 
+          <Button
             loading={loading === "all" ? true : false} 
             handleClick={handleAll} 
-            title='Generate All!'/>
+            title='Generate All!'
+            width='12rem'
+            height='3.5rem' />
         </div>
       </div>
   )

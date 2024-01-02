@@ -21,7 +21,7 @@ function Scanner() {
             console.log(result)
             const text = result.getText();
             // setFound(true);
-            navigate(`/barrel-update/${text}`);
+            navigate(`/barrel-update/${text}`, { state: "scanner" });
           }
           if (error) {
             console.log("scanning...");

@@ -17,7 +17,7 @@ const LabelPage = () => {
       <div className={layoutStyles.labelNavContainer}>
         <NavBar />
       </div>
-      <h1 className={labelStyles.h1}>- Label Generator -</h1>
+      <h1>- Label Generator -</h1>
       <p className={labelStyles.p}>
         Here you can generate labels for the Barrels. Generate a single label by entering a Barrel Number, or
         generate labels for every Barrel in the database with a single click. This page works best on a larger 

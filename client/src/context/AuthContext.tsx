@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dispatch, PropsWithChildren, createContext, useEffect, useState } from "react";
 import { CurrentAuth, NotOK } from "../@types/auth";
+import authHeaders from "../utils/authHeaders";
 
 interface AuthContextType {
   auth: boolean
@@ -25,13 +26,10 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const [authError, setAuthError] = useState("");
 
   const currentAuthStatus = async() => {
-    const token = localStorage.getItem("token");
-    if (!token) return
+    const headers = authHeaders();
+    if (!headers) return
     try {
-      const headers = new Headers();
-      headers.append("Authorization", `Bearer ${token}`);
       const response = await fetch(`${serverBaseURL}/api/auth/authorized`, { headers });
-      console.log(response);
       if (response.ok) {
         const result = await response.json() as CurrentAuth;
         setAuth(result.authorized);
@@ -48,8 +46,10 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   }
 
   useEffect(() => {
-    currentAuthStatus().catch((e) => console.log(e));
-    setFirstCheck(true);
+    console.log("useeffect")
+    currentAuthStatus()
+      .then(() => setFirstCheck(true))
+      .catch((e) => console.log(e));
   }, []);
 
   return <AuthContext.Provider value={{ auth, setAuth, authError, firstCheck }}>

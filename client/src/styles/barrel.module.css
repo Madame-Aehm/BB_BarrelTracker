@@ -1,0 +1,53 @@
+.displayCurrent {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-items: start;
+  align-items: center;
+  column-gap: 1rem;
+  width: 80%;
+}
+
+.displayCurrent > *:nth-child(even) {
+  justify-self: center;
+}
+
+.atHome {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 80%;
+}
+
+.centerButton {
+  align-self: center;
+}
+
+.atHomeImg {
+  margin-left: 1rem;
+}
+
+.input {
+  padding: 1rem;
+  border: solid black 3px;
+  border-radius: 0.5rem;
+  font-size: large;
+}
+
+.input:focus {
+  border-color: var(--bb-blue);
+  outline-color: var(--bb-blue);
+}
+
+.invalid {
+  border-color: tomato;
+}
+
+.error {
+  color: tomato;
+  font-weight: bold;
+  height: 1rem;
+}
+
+.moveDown {
+  margin-top: 2rem;
+}

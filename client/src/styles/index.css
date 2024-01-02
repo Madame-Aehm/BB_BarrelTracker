@@ -43,12 +43,46 @@ input[type=number] {
     -moz-appearance:textfield;
 }
 
+h1 {
+  color: var(--bb-blue);
+}
+
+button {
+  border: 0px;
+  background-color: var(--bb-blue);
+  color: white;
+  font-weight: bold;
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+
+button:active {
+  background-color: var(--bb-blue2);
+}
+
+.buttonLoading {
+  background-color: var(--bb-greyish);
+  cursor: default;
+}
+
 .iconColor {
   color: var(--bb-greyish);
 }
 
 .activeIconColor {
   color: var(--bb-blue);
+}
+
+.invalid {
+  border-color: tomato;
+}
+
+.valid {
+  border-color: black;
+}
+
+.error {
+  color: tomato;
 }
 
 

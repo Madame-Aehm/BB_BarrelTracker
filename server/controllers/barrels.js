@@ -1,5 +1,5 @@
 import Barrel from '../models/barrels.js'
-import { generateQRCode } from '../utils/generateQRCode.js';
+import { formatBarrelSimple } from '../utils/formatBarrel.js';
 
 const getBarrelById = async(req, res) => {
   const id = req.params.id;
@@ -7,7 +7,7 @@ const getBarrelById = async(req, res) => {
   try {
     const barrel = await Barrel.findById(id);
     if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
-    res.status(200).json(barrel);
+    res.status(200).json(formatBarrelSimple(barrel));
   } catch (e) {
     res.status(500).json({ error: "Server Error" });
   }
@@ -19,15 +19,14 @@ const getBarrelByNumber = async(req, res) => {
   try {
     const barrel = await Barrel.findOne({ number: number });
     if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
-    res.status(200).json(barrel);
+    res.status(200).json(formatBarrelSimple(barrel));
   } catch (e) {
     res.status(500).json({ error: "Server Error" });
   }
 }
 
-const getAllBarrelIDS = async(req, res) => {
+const getAllBarrelIDS = async(_, res) => {
   try {
-    // const barrels = await Barrel.find();
     const ids = (await Barrel.find()).map(b => { return { _id: b._id, number: b.number } });
     res.status(200).json(ids);
   } catch (e) {
@@ -37,7 +36,6 @@ const getAllBarrelIDS = async(req, res) => {
 
 const getSingleID = async(req, res) => {
   const number = Number(req.params.number);
-
   if (!number) return res.status(400).json({ error: "Need Barrel Number" });
   try {
     const barrel = await Barrel.findOne({ number: number });
@@ -66,7 +64,7 @@ const addBarrels = async(req, res) => {
         number: i,
         current: {
           date: new Date(),
-          by: "Emily",
+          by: "Pablo",
           where: "BB"
         },
         history: []
@@ -80,4 +78,51 @@ const addBarrels = async(req, res) => {
   }
 }
 
-export { addBarrels, getBarrelById, getBarrelByNumber, getAllBarrelIDS, getSingleID }
+const sendBarrel = async(req, res) => {
+  console.log(req.body);
+  const { id, newCurrent } = req.body;
+  if (!id || !newCurrent) return res.status(401).json({ error: "Missing fields" })
+  newCurrent.date = new Date(newCurrent.date);
+  try {
+    const barrel = await Barrel.findByIdAndUpdate(id, {
+      current: newCurrent,
+    }, { new: true });
+    res.status(200).json(formatBarrelSimple(barrel));
+  } catch(e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
+const returnBarrel = async(req, res) => {
+  const { id, newCurrent, prev } = req.body;
+  if (!id || !newCurrent || !prev) return res.status(401).json({ error: "Missing fields" })
+  newCurrent.date = new Date(newCurrent.date);
+  const history = {
+    where: prev.where,
+    out: {
+      date: new Date(prev.date),
+      by: prev.by
+    },
+    returned: {
+      date: new Date(newCurrent.date),
+      by: newCurrent.by
+    }
+  }
+  try {
+    const barrel = await Barrel.findByIdAndUpdate(id, {
+      current: newCurrent,
+      $push: { history }
+    }, { new: true });
+    if (barrel.history.length > 5) {
+      barrel.history = barrel.history.slice(0,5);
+      await barrel.save();
+    }
+    res.status(200).json(formatBarrelSimple(barrel));
+  } catch(e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
+export { addBarrels, getBarrelById, getBarrelByNumber, getAllBarrelIDS, getSingleID, sendBarrel, returnBarrel }

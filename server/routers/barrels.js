@@ -1,10 +1,14 @@
 import express from 'express'
-import { addBarrels, getAllBarrelIDS, getBarrelById, getBarrelByNumber, getSingleID } from '../controllers/barrels.js';
+import { addBarrels, getAllBarrelIDS, getBarrelById, getBarrelByNumber, getSingleID, returnBarrel, sendBarrel } from '../controllers/barrels.js';
 
 const router = express.Router();
 
+// review before update
 router.get("/id/:id", getBarrelById);
 router.get("/number/:number", getBarrelByNumber);
+
+router.post("/send", sendBarrel);
+router.post("/return", returnBarrel);
 
 router.post("/add", addBarrels);
 
