@@ -3,9 +3,10 @@ import { Dispatch } from 'react'
 import { Barrel } from '../../@types/barrel'
 import barrelStyles from '../../styles/barrel.module.css'
 import Button from '../Button'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
+import CancelButton from './CancelButton'
 
 type Props = {
   barrel: Barrel
@@ -18,7 +19,6 @@ function Return({ barrel, loading, setLoading, setError }: Props) {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleReturn = async() => {
     setError("");
@@ -42,7 +42,7 @@ function Return({ barrel, loading, setLoading, setError }: Props) {
         console.log(result);
         setTimeout(() => {
           setLoading(false);
-          navigate("/", { state: location.state ? location.state as string : null });
+          navigate("/");
         }, 1000);
       } else {
         await handleNotOK(response, setError, setLoading);
@@ -53,12 +53,11 @@ function Return({ barrel, loading, setLoading, setError }: Props) {
   } 
   return (
     <div className={barrelStyles.moveDown}>
+      <CancelButton />
       <Button 
         loading={loading} 
         title={"Mark as Returned"}
-        fontSize='x-large'
-        height='5rem'
-        width='15rem' 
+        styleOverride={{ fontSize: "x-large", height: "5rem", width: "15rem" }}
         handleClick={handleReturn} />
     </div>
   )

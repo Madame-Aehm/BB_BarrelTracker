@@ -45,9 +45,8 @@ const BarrelUpdate = () => {
                 setError={setError} />
           }
         </>
-      ) }
+      )}
       <div><p className={barrelStyles.error}>{ error }</p></div>
-      
     </main>
   )
 }

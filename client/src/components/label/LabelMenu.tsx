@@ -4,8 +4,8 @@ import labelStyles from '../../styles/labels.module.css'
 import { LabelType } from '../../@types/labels';
 import { unfocusAll } from '../../utils/shiftFocus';
 import Button from '../Button';
-import PinInput from '../auth/PinInput';
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail';
+import BrlNumForm from '../BrlNumForm';
 
 type Props = {
   setState: Dispatch<React.SetStateAction<LabelType[]>>
@@ -81,26 +81,16 @@ const LabelMenu = ({ setState, setError }: Props) => {
 
   return (
       <div className={labelStyles.divider}>
-        <form onSubmit={handleSubmit} className={labelStyles.singleWrapper}>
-          <div className={labelStyles.genBarrelLabelPair}>
-            <label><h3>Barrel Number:</h3></label>
-            <PinInput handleChange={handleChange} invalid={!inputValid} />
-          </div>
-          <Button 
-            loading={loading === "single" ? true : false} 
-            handleClick={handleSingle}
-            title='Generate Single Label'
-            width='12rem'
-            height='3.5rem' />
+        <div className={labelStyles.singleWrapper}>
+          <BrlNumForm invalid={!inputValid} handleChange={handleChange} handleSubmit={handleSubmit} />
           <p className={labelStyles.or}>OR</p>
-        </form>
+        </div>
         <div className={labelStyles.allWrapper}>
           <Button
             loading={loading === "all" ? true : false} 
             handleClick={handleAll} 
             title='Generate All!'
-            width='12rem'
-            height='3.5rem' />
+            styleOverride={{ width: "12rem", height: "3.5rem" }} />
         </div>
       </div>
   )

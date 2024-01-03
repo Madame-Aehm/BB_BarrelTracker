@@ -3,9 +3,10 @@ import { ChangeEvent, Dispatch, useState } from 'react'
 import Button from '../Button'
 import barrelStyles from '../../styles/barrel.module.css'
 import { Barrel } from '../../@types/barrel'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
+import CancelButton from './CancelButton'
 
 type Props = {
   barrel: Barrel
@@ -18,7 +19,6 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
 
   const navigate = useNavigate();
-  const location = useLocation();
   const [invalid, setInvalid] = useState(false);
   const [customer, setCustomer] = useState("");
 
@@ -54,7 +54,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
         console.log(result);
         setTimeout(() => {
           setLoading(false);
-          navigate("/", { state: location.state ? location.state as string : null });
+          navigate("/");
         }, 1000);
       } else {
         await handleNotOK(response, setError, setLoading);
@@ -82,13 +82,12 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
             <option value="Customer Three" />
           </datalist>
           <span className={barrelStyles.centerButton}>
+            <CancelButton />
             <Button 
               title='Confirm'
               loading={loading}
               handleClick={handleConfirm} 
-              width='10rem'
-              height='4rem'
-              fontSize='x-large'
+              styleOverride={{ width: "10rem", height: "4rem", fontSize: "x-large" }}
               />
           </span>
       </div>

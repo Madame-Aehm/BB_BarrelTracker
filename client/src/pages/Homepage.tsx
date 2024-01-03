@@ -10,8 +10,7 @@ function Homepage() {
     <main className={layoutStyles.main}>
       <NavBar />
       <div className={homeStyles.buttonsContainer}>
-        <button className={homeStyles.mainButtons}>Scanner</button>
-        <button className={homeStyles.mainButtons}>Manual Input</button>
+        
         
       </div>
     </main>

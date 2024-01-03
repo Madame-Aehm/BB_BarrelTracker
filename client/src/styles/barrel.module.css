@@ -20,6 +20,8 @@
 
 .centerButton {
   align-self: center;
+  display: flex;
+  gap: 1rem;
 }
 
 .atHomeImg {
@@ -48,6 +50,29 @@
   height: 1rem;
 }
 
+.cancel {
+  background-color: tomato;
+  width: 10rem;
+  height: 4rem;
+  font-size: x-large;
+  color: #242424;
+}
+
 .moveDown {
   margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 350px) {
+  .centerButton {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (max-width: 450px) {
+  .moveDown {
+    flex-direction: column-reverse;
+  }
 }

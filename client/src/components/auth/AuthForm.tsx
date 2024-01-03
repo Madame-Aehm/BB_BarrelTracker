@@ -70,8 +70,7 @@ const AuthForm = ({ submit, error, loading }: Props) => {
         <Button 
           loading={loading} 
           title={"OK"}
-          height='3.5rem'
-          width='5.5rem' />
+          styleOverride={{ height: "3.5rem", width: "5.5rem" }} />
       </form>
   )
 }
