@@ -21,7 +21,7 @@ const PrefSwitch = ({ pref, setPref }: Props) => {
 
   return (
     <div className={scannerStyles.switchContainer}>
-      <h5 className={scannerStyles.h} onClick={() => handleClick("scanner")}>scanner</h5>
+      <h5 className={scannerStyles.sideLabel} onClick={() => handleClick("scanner")}>scanner</h5>
       <label className={scannerStyles.switch} htmlFor='preference'>
         <input 
           onChange={handleChange} 
@@ -30,7 +30,7 @@ const PrefSwitch = ({ pref, setPref }: Props) => {
           checked={pref === "manual" ? true : false} />
         <span className={scannerStyles.slider}></span>
       </label>
-      <h5 className={scannerStyles.h} onClick={() => handleClick("manual")}>manual</h5>
+      <h5 className={scannerStyles.sideLabel} onClick={() => handleClick("manual")}>manual</h5>
 
     </div>
   )
