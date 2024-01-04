@@ -24,7 +24,7 @@
 
 .pinInput:focus {
   border-color: var(--bb-blue);
-  outline-color: var(--bb-blue);
+  outline: solid 1px var(--bb-blue);
 }
 
 .pinInvalid {
@@ -48,4 +48,10 @@
   color: tomato;
   margin-top: -1rem;
   height: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pinInput {
+    border-color: rgba(255, 255, 255, 0.87);
+  }
 }

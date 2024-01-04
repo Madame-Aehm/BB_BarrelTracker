@@ -130,7 +130,7 @@
     color: rgba(255, 255, 255, 0.87);
   }
   .singleWrapper {
-    border-color: #fff;
+    border-color: rgba(255, 255, 255, 0.87);
   }
   .loaderMain {
     background-color: #242424;
