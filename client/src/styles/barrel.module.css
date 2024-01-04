@@ -58,6 +58,10 @@
   color: #242424;
 }
 
+.cancel:active {
+  background-color: rgb(177, 69, 50);
+}
+
 .moveDown {
   margin-top: 2rem;
   display: flex;

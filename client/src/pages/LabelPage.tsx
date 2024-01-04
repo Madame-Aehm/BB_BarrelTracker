@@ -13,7 +13,7 @@ const LabelPage = () => {
   const [error, setError] = useState("");
 
   return (
-    <main className={labelStyles.main}>
+    <main className={layoutStyles.main}>
       <div className={layoutStyles.labelNavContainer}>
         <NavBar />
       </div>
