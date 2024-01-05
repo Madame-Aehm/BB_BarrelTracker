@@ -1,15 +1,14 @@
 import Barrel from '../models/barrels.js'
-import { formatBarrelSimple } from '../utils/formatBarrel.js';
 import sendEmail from '../utils/sendEmail.js';
 
 const getBarrelById = async(req, res) => {
   const id = req.params.id;
   if (!id) return res.status(400).json({ error: "Barrel ID required" });
   try {
-    const barrel = await Barrel.findById(id);
+    const barrel = await Barrel.findById(id, "-history");
     if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
-    if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
-    res.status(200).json(formatBarrelSimple(barrel));
+    // if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
+    res.status(200).json(barrel);
   } catch (e) {
     res.status(500).json({ error: "Server Error" });
   }
@@ -19,11 +18,12 @@ const getBarrelByNumber = async(req, res) => {
   const number = Number(req.params.number);
   if (!number) return res.status(400).json({ error: "Barrel Number required" });
   try {
-    const barrel = await Barrel.findOne({ number: number });
+    const barrel = await Barrel.findOne({ number: number }, "-history");
     if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
-    if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
-    res.status(200).json(formatBarrelSimple(barrel));
+    // if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
+    res.status(200).json(barrel);
   } catch (e) {
+    console.log(e);
     res.status(500).json({ error: "Server Error" });
   }
 }
@@ -34,6 +34,8 @@ const getAllBarrelIDS = async(_, res) => {
     res.status(200).json(ids);
   } catch (e) {
     console.log(e);
+    res.status(500).json({ error: "Server Error" });
+
   }
 }
 
@@ -66,7 +68,8 @@ const addBarrels = async(req, res) => {
       barrelsToAdd.push(new Barrel({
         number: i,
         home: true,
-        damaged: false
+        damaged: false,
+        open: null
       }).save())
     }
     await Promise.all(barrelsToAdd);
@@ -79,15 +82,12 @@ const addBarrels = async(req, res) => {
 
 const sendBarrel = async(req, res) => {
   const { id, sendTo } = req.body;
-  console.log(id, sendTo);
   if (!id || !sendTo) return res.status(401).json({ error: "Missing fields" })
   try {
-    const barrel = await Barrel.findById(id);
-    if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't send out" });
-    if (!barrel.home) return res.status(401).json({ error: "Barrel already out." });
-    barrel.home = false;
-    barrel.history = [sendTo, ...barrel.history];
-    await barrel.save();
+    await Barrel.findByIdAndUpdate(id, {
+      home: false,
+      open: sendTo
+    });
     res.status(200).json({ message: `Barrel successfully sent to ${sendTo.customer}` });
   } catch(e) {
     console.log(e);
@@ -96,14 +96,14 @@ const sendBarrel = async(req, res) => {
 }
 
 const returnBarrel = async(req, res) => {
-  const { id } = req.body;
-  if (!id) return res.status(401).json({ error: "Need ID" });
+  const { id, open } = req.body;
+  if (!id || !open) return res.status(401).json({ error: "Missing fields" });
   try {
-    const barrel = await Barrel.findById(id);
-    if (barrel.home) return res.status(401).json({ error: "Barrel already home.." })
-    barrel.home = true;
-    barrel.history[0].returned = new Date();
-    await barrel.save();
+    await Barrel.findByIdAndUpdate(id, {
+      $push: { history: { ...open, returned: new Date() } },
+      home: true,
+      open: null
+    }, { new: true });
     res.status(200).json({ message: "Barrel marked as returned." });
   } catch(e) {
     console.log(e);
@@ -111,13 +111,24 @@ const returnBarrel = async(req, res) => {
   }
 }
 
-const markAsDamaged = async(req, res) => {
-  const { id } = req.body;
-  if (!id) return res.status(401).json({ error: "Need ID" });
+const reviewDamageRequest = async(req, res) => {
+  const { id, open, reviewResponse, damaged } = req.body;
+  if (!id || !open || typeof damaged !== "boolean") return res.status(401).json({ error: "Missing fields" });
   try {
-    const barrel = await Barrel.findByIdAndUpdate(id, { damaged: true, home: true });
-    if (!barrel) return res.status(404).json({ error: "No barrel could be found" });
-    res.status(200).json({ message: `Barrel ${barrel.number} successfully marked as damaged` });
+    const trackDamage = {
+      ...open.damage_review,
+      closed: new Date(),
+      opened: new Date(open.opened),
+      reviewResponse
+    }
+    const barrel = await Barrel.findByIdAndUpdate(id, {
+      $push: { history: { ...open, damage_review: trackDamage } },
+      damaged,
+      open: null
+    });
+    res.status(200).json({ 
+      message: `Barrel ${barrel.number} successfully marked as ${damaged ? "" : "not"} damaged` 
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
@@ -128,15 +139,15 @@ const requestDamageReview = async(req, res) => {
   const { id, comments } = req.body;
   if (!id) return res.status(401).json({ error: "Need ID" });
   const damage_review = {
-    date: new Date(),
-    checked: false
+    opened: new Date(),
   }
   if (comments) damage_review.comments = comments;
   try {
-    const barrel = await Barrel.findById(id);
-    barrel.history[0].damage_review = damage_review;
-    await barrel.save();
-    const emailSent = sendEmail(barrel, comments);
+    const barrel = await Barrel.findByIdAndUpdate(id, {
+      'open.damage_review': damage_review,
+      'open.returned': new Date()
+    });
+    const emailSent = await sendEmail(barrel, comments);
     res.status(200).json({ message: `Barrel submitted for damage review. ${emailSent ? "An email has been sent to Pablo." : "Email couldn't send - please inform Pablo."}` })
   } catch (e) {
     console.log(e);
@@ -152,5 +163,5 @@ export {
   getSingleID, 
   sendBarrel, 
   returnBarrel,
-  markAsDamaged,
-  requestDamageReview }
+  requestDamageReview,
+  reviewDamageRequest }

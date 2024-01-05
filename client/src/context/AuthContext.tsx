@@ -2,6 +2,7 @@
 import { Dispatch, PropsWithChildren, createContext, useEffect, useState } from "react";
 import { CurrentAuth, NotOK } from "../@types/auth";
 import authHeaders from "../utils/authHeaders";
+import { handleCatchError } from "../utils/handleFetchFail";
 
 interface AuthContextType {
   auth: boolean
@@ -39,14 +40,11 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
         localStorage.removeItem("token");
       }
     } catch(e) {
-      console.log(e);
-      const { message } = e as Error
-      setAuthError(message);
+      handleCatchError(e, setAuthError);
     }
   }
 
   useEffect(() => {
-    console.log("useeffect")
     currentAuthStatus()
       .then(() => setFirstCheck(true))
       .catch((e) => console.log(e));

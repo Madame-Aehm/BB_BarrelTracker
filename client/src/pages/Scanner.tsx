@@ -20,9 +20,8 @@ function Scanner() {
             constraints={{ facingMode: 'environment' }}
             onResult={(result, error) => {
               if (result) {
-                console.log(result)
+                console.log(result);
                 const text = result.getText();
-                // setFound(true);
                 navigate(`/barrel-update/${text}`, { state: "scanner" });
               }
               if (error) {

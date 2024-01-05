@@ -53,6 +53,7 @@ button {
   background-color: var(--bb-blue);
   color: white;
   font-weight: bold;
+  font-size: x-large;
   border-radius: 0.7rem;
   cursor: pointer;
 }
@@ -66,12 +67,15 @@ button:active {
   cursor: default;
 }
 
-.iconColor {
-  color: var(--bb-greyish);
+.cancelButton {
+  background-color: tomato;
+  width: 10rem;
+  height: 4rem;
+  color: #242424;
 }
 
-.activeIconColor {
-  color: var(--bb-blue);
+.cancelButton:active {
+  background-color: rgb(177, 69, 50);
 }
 
 .invalid {
@@ -84,6 +88,7 @@ button:active {
 
 .error {
   color: tomato;
+  min-height: 1rem;
 }
 
 
@@ -92,4 +97,14 @@ button:active {
     color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
   }
+}
+
+
+
+.iconColor {
+  color: var(--bb-greyish);
+}
+
+.activeIconColor {
+  color: var(--bb-blue);
 }

@@ -16,6 +16,7 @@ const handleNotOK = async(
   setError: Dispatch<React.SetStateAction<string>>,
   setLoading?: Dispatch<React.SetStateAction<boolean>>) => {
   const result = await response.json() as NotOK;
+  console.log(result);
   setError(result.error);
   if (setLoading) setLoading(false);
 }

@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config'
 
-const sendEmail = (barrel, comments) => {
+const sendEmail = async(barrel, comments) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -10,25 +10,24 @@ const sendEmail = (barrel, comments) => {
     }
   });
   const mailOptions = {
-    from: "bbbt.damage-review",
+    from: '"bbbt.damagereview"',
     to: 'emilyrachelstickler@gmail.com',
     subject: 'Damage Review Requested',
     html: `
       <p><b>Barrel #${barrel.number}</b></p>
-      <p><b>Customer: </b>${barrel.history[0].customer}</p>
-      <p><b>Invoice: </b>${barrel.history[0].invoice}</p>
+      <p><b>Customer: </b>${barrel.open.customer}</p>
+      <p><b>Invoice: </b>${barrel.open.invoice}</p>
       ${ !comments ? "" : `<p><b>Comments: </b>${comments}</p>`} 
     `
   };
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-      return false
-    } else {
-      console.log('Email sent: ' + info.response);
-      return true
-    }
-  });
+  try {
+    const result = await transporter.sendMail(mailOptions);
+    console.log("email sent - ", result.response);
+    return true
+  } catch(e) {
+    console.log(e);
+    return false
+  }
 }
 
 export default sendEmail

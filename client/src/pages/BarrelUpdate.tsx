@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import layoutStyles from '../styles/layout.module.css'
 import barrelStyles from '../styles/barrel.module.css'
 import useFetch from '../hooks/useFetch';
@@ -7,47 +7,62 @@ import formatDate from '../utils/formatDate';
 import SendOut from '../components/barrel/SendOut';
 import Loading from '../components/Loading';
 import Return from '../components/barrel/Return';
+import Button from '../components/Button';
 
 const BarrelUpdate = () => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
+  const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
 
   const url = `${serverBaseURL}/api/barrel/${location.state === "scanner" ? "id" : "number"}/${params.brl ? params.brl : ""}`;
 
   const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url);
-  console.log(barrel)
 
   if (loading) return <Loading />
+  if (!barrel && error) return <p>{error}</p>
   return (
     <main className={`${layoutStyles.main} ${layoutStyles.trueCenter}`}>
-      { barrel && (
+      {(barrel && !barrel.damaged) && (
         <>
           <h1>Barrel #{ barrel.number }</h1>
-          { !barrel.current 
-          ? <img src="/bb_cropped.png" alt='Home at Blaue Bohne' /> 
+          { !barrel.open 
+          ? <h2 className={barrelStyles.rbm}>Send to:</h2> 
           : <div className={barrelStyles.displayCurrent}>
-              <h2>Currently: </h2>
-              <h2>{ barrel.current.customer }</h2> 
-              <h2>Since: </h2> 
-              <h2>{ formatDate(barrel.current.createdAt) }</h2>
+              <h3>Customer: </h3>
+              <p>{ barrel.open.customer }</p> 
+              <h3>Invoice: </h3>
+              <p>{ barrel.open.invoice }</p>
+              <h3>Since: </h3> 
+              <p>{ formatDate(barrel.open.createdAt) }</p>
             </div>
           }
-          { barrel.home 
-            ? <SendOut 
+          <p className="error">{ error }</p>
+          { barrel.open ? <Return 
                 barrel={barrel}
-                loading={loading} 
+                open={barrel.open}
+                loading={loading}
                 setLoading={setLoading}
                 setError={setError} />
-            : <Return 
+            : <SendOut 
                 barrel={barrel}
-                loading={loading}
+                loading={loading} 
                 setLoading={setLoading}
                 setError={setError} />
           }
         </>
       )}
-      <div><p className={barrelStyles.error}>{ error }</p></div>
+      { (barrel && barrel.damaged) && (
+        <div>
+          <h1>Barrel #{ barrel.number }</h1>
+          <h4 >Barrel is marked as <span className='error'>damaged</span>. Don't use!</h4>
+          <Button 
+            loading={false}
+            title='OK'
+            styleOverride={{ width: "10rem", height: "4rem" }}
+            handleClick={() => navigate("/") } />
+        </div>
+      ) }
     </main>
   )
 }

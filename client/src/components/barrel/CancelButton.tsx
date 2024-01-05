@@ -1,12 +1,17 @@
 import { useNavigate } from "react-router-dom"
-import barrelStyles from '../../styles/barrel.module.css'
 
+type Props = {
+  customReturn?: string
+}
 
-
-const CancelButton = () => {
+const CancelButton = ({ customReturn }: Props) => {
   const navigate = useNavigate();
   return (
-    <button className={barrelStyles.cancel} onClick={() => navigate("/")}>Cancel</button>
+    <button 
+      className='cancelButton'
+      onClick={() => navigate(`${customReturn ? customReturn : "/"}`)}>
+        Cancel
+    </button>
   )
 }
 

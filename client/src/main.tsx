@@ -7,6 +7,7 @@ import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import LabelPage from './pages/LabelPage.tsx'
 import Scanner from './pages/Scanner.tsx'
 import BarrelUpdate from './pages/BarrelUpdate.tsx'
+import Damage from './pages/Damage.tsx'
 
 const router = createBrowserRouter([{
   element: <AuthContextProvider><AuthWrapper><Outlet /></AuthWrapper></AuthContextProvider>,
@@ -22,6 +23,10 @@ const router = createBrowserRouter([{
     {
       path: "/barrel-update/:brl",
       element: <BarrelUpdate />
+    },
+    {
+      path: "/damage",
+      element: <Damage />
     }
   ]
 }])

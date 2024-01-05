@@ -5,7 +5,6 @@ import Loading from '../Loading';
 
 const AuthWrapper = ({ children }: PropsWithChildren) => {
   const { auth, firstCheck } = useContext(AuthContext);
-  console.log(auth, firstCheck);
   if (!firstCheck) return <Loading />
   return auth ? children : <AuthPage />;
 }

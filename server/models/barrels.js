@@ -6,16 +6,16 @@ const historySchema = new mongoose.Schema({
   returned: { type: Date },
   damage_review: {
     type: Object, 
-    date: { type: Date, required: true },
-    checked: { type: Boolean, required: true },
+    opened: { type: Date, required: true },
     comments: { type: String },
+    closed: { type: Date },
     response: { type: String }
   }
 }, { timestamps: true });
 
 const barrelSchema = new mongoose.Schema({
   number: { type: Number, required: true, unique: true}, 
-  home: { type: Boolean, required: true },
+  open: historySchema,
   history: [historySchema],
   damaged: { type: Boolean, required: true },
 

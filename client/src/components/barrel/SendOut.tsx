@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ChangeEvent, Dispatch, useState } from 'react'
+import { ChangeEvent, Dispatch, FormEvent, useRef, useState } from 'react'
 import customers from '../../customers.json';
 import Button from '../Button'
 import barrelStyles from '../../styles/barrel.module.css'
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
+import { unfocusAll } from '../../utils/shiftFocus';
 
 type Props = {
   barrel: Barrel
@@ -20,26 +21,33 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
 
   const navigate = useNavigate();
-  const [invalid, setInvalid] = useState(false);
-  const [inputValues, setInputValues] = useState({ invoice: "", customer: "" });
+  const [invalid, setInvalid] = useState({ invoice: false, customer: false });
+  const inputValues = useRef({ invoice: "", customer: "" });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    console.log(e.target.id, e.target.value)
-    setInputValues({  ...inputValues, [e.target.id]: e.target.value })
-    setInvalid(false);
+    if (e.target.id === "invoice") inputValues.current.invoice = e.target.value;
+    if (e.target.id === "customer") inputValues.current.customer = e.target.value;
+    setInvalid({ 
+      invoice: e.target.id === "invoice" ? false : invalid.invoice, 
+      customer: e.target.id === "customer" ? false : invalid.customer 
+    });
   }
 
-  const handleConfirm = async() => {
+  const handleConfirm = async(e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    unfocusAll();
     setError("");
-    if (!inputValues.customer || !inputValues.invoice) {
-      setError("You need to enter a customer!");
-      setInvalid(true);
+    if (!inputValues.current.customer || !inputValues.current.invoice) {
+      setError("You need to enter a customer and invoice!");
+      setInvalid({ 
+        invoice: inputValues.current.invoice ? false : true, 
+        customer: inputValues.current.customer ? false : true });
       return
     }
     setLoading(true);
     const body = JSON.stringify({
       id: barrel._id,
-      sendTo: inputValues
+      sendTo: inputValues.current
     })
     const headers = authHeaders();
     if (!headers) return setError("Unauthorized");
@@ -63,35 +71,28 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
 
   return (
     <>
-      <div className={barrelStyles.atHome}>
-        {/* <input 
-          className={`${barrelStyles.input} ${invalid ? barrelStyles.invalid : ""}`} 
-          list='customers' 
-          placeholder="Enter customer" 
+      <form onSubmit={handleConfirm} className={barrelStyles.atHome}>
+        <select 
+          id='customer' 
+          onChange={handleChange} 
+          className={`${barrelStyles.input} ${invalid.customer ? barrelStyles.invalid : ""}`}>
+          <option value="">Choose Customer</option>
+          { customers.map((c) => <option key={c.customer} value={c.customer}>{c.customer}</option>) }
+        </select>
+        <input 
+          id='invoice'
+          className={`${barrelStyles.input} ${invalid.invoice ? barrelStyles.invalid : ""}`} 
+          placeholder="Enter Invoice" 
           onChange={handleChange} />
-          <datalist id='customers'>
-            <option value="Customer One" />
-            <option value="Customer Two" />
-            <option value="Customer Three" />
-          </datalist> */}
-          <select id='customer' onChange={handleChange}>
-            { customers.map((c) => <option key={c.customer} value={c.customer}>{c.customer}</option>) }
-          </select>
-          <input 
-            id='invoice'
-            className={`${barrelStyles.input} ${invalid ? barrelStyles.invalid : ""}`} 
-            placeholder="Enter Invoice" 
-            onChange={handleChange} />
-          <span className={barrelStyles.centerButton}>
-            <CancelButton />
-            <Button 
-              title='Confirm'
-              loading={loading}
-              handleClick={handleConfirm} 
-              styleOverride={{ width: "10rem", height: "4rem", fontSize: "x-large" }}
-              />
-          </span>
-      </div>
+        <div className={barrelStyles.centerButton}>
+          <CancelButton />
+          <Button 
+            title='Confirm'
+            loading={loading}
+            styleOverride={{ width: "10rem", height: "4rem" }}
+            />
+        </div>
+      </form>
     </>
   )
 }

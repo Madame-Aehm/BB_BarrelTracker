@@ -11,11 +11,24 @@
   justify-self: center;
 }
 
+.displayCurrent h3, p {
+  margin: 0;
+}
+
 .atHome {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 80%;
+}
+
+.rbm {
+  margin: 0;
+}
+
+.when {
+  text-align: right;
+  margin-bottom: 1rem;
 }
 
 .centerButton {
@@ -40,10 +53,15 @@
   border-color: tomato;
 }
 
+.textarea {
+  min-height: 150px;
+}
+
 .error {
   color: tomato;
   font-weight: bold;
   height: 1rem;
+  margin-top: 0;
 }
 
 .cancel {
@@ -58,10 +76,28 @@
   background-color: rgb(177, 69, 50);
 }
 
-.moveDown {
-  margin-top: 2rem;
+.damageButton {
+  background-color: gold;
+  color: #242424;
+  font-size: x-large;
+  height: 5rem;
+  width: 15rem;
+}
+
+.damageButton:active {
+  background-color: darkgoldenrod;
+}
+
+.buttonLoading {
+  background-color: burlywood;
+  cursor: default;
+}
+
+.buttonsWrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -71,8 +107,8 @@
   }
 }
 
-@media (max-width: 450px) {
-  .moveDown {
-    flex-direction: column-reverse;
+@media (max-width: 500px) {
+  .buttonsWrapper {
+    flex-direction: column;
   }
 }

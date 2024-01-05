@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Dispatch } from 'react'
-import { Barrel } from '../../@types/barrel'
+import { Barrel, Open } from '../../@types/barrel'
 import barrelStyles from '../../styles/barrel.module.css'
 import Button from '../Button'
 import { useNavigate } from 'react-router-dom'
@@ -8,15 +7,17 @@ import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { OK } from '../../@types/auth'
+import DamageReview from './DamageReview'
 
 type Props = {
+  open: Open
   barrel: Barrel
   loading: boolean
   setLoading: Dispatch<React.SetStateAction<boolean>>
   setError: Dispatch<React.SetStateAction<string>>
 }
 
-function Return({ barrel, loading, setLoading, setError }: Props) {
+function Return({ open, barrel, loading, setLoading, setError }: Props) {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   
   const navigate = useNavigate();
@@ -24,10 +25,13 @@ function Return({ barrel, loading, setLoading, setError }: Props) {
   const handleReturn = async() => {
     setError("");
     setLoading(true);
-    const body = new URLSearchParams();
-    body.append("id", barrel._id);
+    const body = JSON.stringify({
+      id: barrel._id,
+      open: open
+    })
     const headers = authHeaders();
     if (!headers) return setError("Unauthorized");
+    headers.append("Content-Type", "application/json");
     try {
       const response = await fetch(`${serverBaseURL}/api/barrel/return`, { headers, body, method: "POST" });
       if (response.ok) {
@@ -44,14 +48,32 @@ function Return({ barrel, loading, setLoading, setError }: Props) {
       handleCatchError(e, setError, setLoading);
     }
   } 
-  return (
-    <div className={barrelStyles.moveDown}>
-      <CancelButton />
+
+  const handleDamageReviewRequest = () => {
+    navigate("/damage", { state: { barrel } })
+  }
+
+  if (open.damage_review) return (
+    <DamageReview 
+      id={barrel._id} 
+      open={open}
+      loading={loading}
+      setLoading={setLoading}
+      setError={setError} />
+  )
+  else return (
+    <div className={barrelStyles.buttonsWrapper}>
       <Button 
         loading={loading} 
-        title={"Mark as Returned"}
-        styleOverride={{ fontSize: "x-large", height: "5rem", width: "15rem" }}
+        title='Mark as Returned'
+        styleOverride={{ height: "5rem", width: "15rem" }}
         handleClick={handleReturn} />
+      <button 
+        onClick={!loading ? handleDamageReviewRequest : undefined}
+        className={`${barrelStyles.damageButton} ${loading ? barrelStyles.damageButtonLoading : ""}`}>
+          { loading ? "loading..." : "Request Damage Review" }
+      </button>
+      <CancelButton />
     </div>
   )
 }
