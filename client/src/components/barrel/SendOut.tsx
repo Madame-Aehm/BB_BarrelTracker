@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { ChangeEvent, Dispatch, useState } from 'react'
+import customers from '../../customers.json';
 import Button from '../Button'
 import barrelStyles from '../../styles/barrel.module.css'
 import { Barrel } from '../../@types/barrel'
@@ -20,16 +21,17 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
 
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState(false);
-  const [customer, setCustomer] = useState("");
+  const [inputValues, setInputValues] = useState({ invoice: "", customer: "" });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCustomer(e.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    console.log(e.target.id, e.target.value)
+    setInputValues({  ...inputValues, [e.target.id]: e.target.value })
     setInvalid(false);
   }
 
   const handleConfirm = async() => {
     setError("");
-    if (!customer) {
+    if (!inputValues.customer || !inputValues.invoice) {
       setError("You need to enter a customer!");
       setInvalid(true);
       return
@@ -37,12 +39,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
     setLoading(true);
     const body = JSON.stringify({
       id: barrel._id,
-      newCurrent: {
-        where: customer,
-        date: new Date(),
-        by: "me"
-      },
-      prev: barrel.current
+      sendTo: inputValues
     })
     const headers = authHeaders();
     if (!headers) return setError("Unauthorized");
@@ -66,12 +63,8 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
 
   return (
     <>
-      <div className={barrelStyles.displayCurrent}>
-        <h2>Send to:</h2>
-        <h2>{ customer }</h2>
-      </div>
       <div className={barrelStyles.atHome}>
-        <input 
+        {/* <input 
           className={`${barrelStyles.input} ${invalid ? barrelStyles.invalid : ""}`} 
           list='customers' 
           placeholder="Enter customer" 
@@ -80,7 +73,15 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
             <option value="Customer One" />
             <option value="Customer Two" />
             <option value="Customer Three" />
-          </datalist>
+          </datalist> */}
+          <select id='customer' onChange={handleChange}>
+            { customers.map((c) => <option key={c.customer} value={c.customer}>{c.customer}</option>) }
+          </select>
+          <input 
+            id='invoice'
+            className={`${barrelStyles.input} ${invalid ? barrelStyles.invalid : ""}`} 
+            placeholder="Enter Invoice" 
+            onChange={handleChange} />
           <span className={barrelStyles.centerButton}>
             <CancelButton />
             <Button 

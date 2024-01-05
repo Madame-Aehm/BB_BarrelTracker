@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
+import { OK } from '../../@types/auth'
 
 type Props = {
   barrel: Barrel
@@ -23,22 +24,14 @@ function Return({ barrel, loading, setLoading, setError }: Props) {
   const handleReturn = async() => {
     setError("");
     setLoading(true);
-    const body = JSON.stringify({
-      id: barrel._id,
-      newCurrent: {
-        where: "BB",
-        date: new Date(),
-        by: "me"
-      },
-      prev: barrel.current
-    })
+    const body = new URLSearchParams();
+    body.append("id", barrel._id);
     const headers = authHeaders();
     if (!headers) return setError("Unauthorized");
-    headers.append("Content-Type", "application/json");
     try {
       const response = await fetch(`${serverBaseURL}/api/barrel/return`, { headers, body, method: "POST" });
       if (response.ok) {
-        const result = await response.json() as Barrel;
+        const result = await response.json() as OK;
         console.log(result);
         setTimeout(() => {
           setLoading(false);

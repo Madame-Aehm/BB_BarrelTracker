@@ -3,7 +3,7 @@ import homeStyles from '../styles/home.module.css'
 import NavBar from "../components/nav/NavBar"
 
 
-function Homepage() {
+function Admin() {
   
 
   return (
@@ -17,4 +17,4 @@ function Homepage() {
   )
 }
 
-export default Homepage
+export default Admin

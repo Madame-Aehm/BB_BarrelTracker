@@ -3,7 +3,7 @@ import cors from "cors";
 import authRouter from "./routers/auth.js";
 import 'dotenv/config'
 import mongoose from "mongoose";
-import { encryptPin } from "./utils/bcrypt.js";
+// import { encryptPin } from "./utils/bcrypt.js";
 import barrelRouter from "./routers/barrels.js";
 import authenticate from "./middleware/auth.js";
 

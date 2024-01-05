@@ -16,6 +16,7 @@ const BarrelUpdate = () => {
   const url = `${serverBaseURL}/api/barrel/${location.state === "scanner" ? "id" : "number"}/${params.brl ? params.brl : ""}`;
 
   const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url);
+  console.log(barrel)
 
   if (loading) return <Loading />
   return (
@@ -23,16 +24,16 @@ const BarrelUpdate = () => {
       { barrel && (
         <>
           <h1>Barrel #{ barrel.number }</h1>
-          <div className={barrelStyles.displayCurrent}>
-            <h2>Currently: </h2>
-            { barrel.current.where === "BB" 
-              ? <img src="/bb_cropped.png" alt='Home at Blaue Bohne' className={barrelStyles.atHomeImg} /> 
-              : <h2>{ barrel.current.where }</h2> 
-            }
-            <h2>Since: </h2>
-            <h2>{ formatDate(barrel.current.date) }</h2>
-          </div>
-          { barrel.current.where === "BB" 
+          { !barrel.current 
+          ? <img src="/bb_cropped.png" alt='Home at Blaue Bohne' /> 
+          : <div className={barrelStyles.displayCurrent}>
+              <h2>Currently: </h2>
+              <h2>{ barrel.current.customer }</h2> 
+              <h2>Since: </h2> 
+              <h2>{ formatDate(barrel.current.createdAt) }</h2>
+            </div>
+          }
+          { barrel.home 
             ? <SendOut 
                 barrel={barrel}
                 loading={loading} 

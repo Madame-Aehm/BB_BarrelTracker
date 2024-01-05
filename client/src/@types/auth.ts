@@ -10,6 +10,10 @@ export type NotOK = {
   error: string
 }
 
+export type OK = {
+  message: string
+}
+
 export enum PinInputType {
   One = "1",
   Two = "2",

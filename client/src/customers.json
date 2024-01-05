@@ -1,0 +1,23 @@
+[
+  {
+    "customer": "Customer Number One",
+    "contact": {
+      "email": "customer1@email.com",
+      "phone": "000000000"
+    }
+  },
+  {
+    "customer": "Customer Number Two",
+    "contact": {
+      "email": "customer2@email.com",
+      "phone": "000000000"
+    }
+  },
+  {
+    "customer": "Customer Number Three",
+    "contact": {
+      "email": "customer3@email.com",
+      "phone": "000000000"
+    }
+  }
+]

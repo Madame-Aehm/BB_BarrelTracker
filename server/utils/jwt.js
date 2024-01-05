@@ -6,7 +6,7 @@ export const generateToken = (auth) => {
     sub: auth._id
   }
   const options = {
-    expiresIn: "1d",
+    expiresIn: "5d",
   };
   const token = jwt.sign(payload, process.env.JWT_SECRET, options)
   return token

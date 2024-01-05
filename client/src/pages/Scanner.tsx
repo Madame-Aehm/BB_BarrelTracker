@@ -11,9 +11,6 @@ function Scanner() {
   const existingPref = localStorage.getItem("pref");
   const [pref, setPref] = useState(existingPref ? existingPref : "scanner");
 
-
-
-
   return (
     <main className={layoutStyles.main}>
       <NavBar />
@@ -33,7 +30,7 @@ function Scanner() {
               }
             }}
             scanDelay={1000}
-            containerStyle={{ width: "80%", height: "auto" }}
+            containerStyle={{ width: "80%", minWidth: "300px", height: "auto" }}
           /> 
         : <Manual />
       }
