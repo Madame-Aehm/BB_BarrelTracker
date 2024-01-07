@@ -3,10 +3,8 @@ import cors from "cors";
 import authRouter from "./routers/auth.js";
 import 'dotenv/config'
 import mongoose from "mongoose";
-// import { encryptPin } from "./utils/bcrypt.js";
 import barrelRouter from "./routers/barrels.js";
 import authenticate from "./middleware/auth.js";
-
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,8 +16,6 @@ app.use(
   })
 );
 app.use(cors());
-
-// app.get("/", (req, res) => res.send("hello"))
 
 app.use("/api/auth", authRouter);
 app.use("/api/barrel", authenticate, barrelRouter);

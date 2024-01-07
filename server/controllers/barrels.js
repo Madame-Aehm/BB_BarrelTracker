@@ -1,6 +1,7 @@
 import Barrel from '../models/barrels.js'
-import { generateQRCode } from '../utils/generateQRCode.js';
-import sendEmail from '../utils/sendEmail.js';
+import localDate from '../utils/localDate.js';
+// import { generateQRCode } from '../utils/generateQRCode.js';
+import { barrelDamagedEmail } from '../utils/sendEmail.js';
 
 const getBarrelById = async(req, res) => {
   const id = req.params.id;
@@ -101,7 +102,7 @@ const returnBarrel = async(req, res) => {
   if (!id || !open) return res.status(401).json({ error: "Missing fields" });
   try {
     await Barrel.findByIdAndUpdate(id, {
-      $push: { history: { ...open, returned: new Date() } },
+      $push: { history: { ...open, returned: localDate(new Date()) } },
       home: true,
       open: null
     }, { new: true });
@@ -118,8 +119,8 @@ const reviewDamageRequest = async(req, res) => {
   try {
     const trackDamage = {
       ...open.damage_review,
-      closed: new Date(),
-      opened: new Date(open.opened),
+      closed: localDate(new Date()),
+      opened: localDate(new Date(open.opened)),
       reviewResponse
     }
     const barrel = await Barrel.findByIdAndUpdate(id, {
@@ -140,15 +141,15 @@ const requestDamageReview = async(req, res) => {
   const { id, comments } = req.body;
   if (!id) return res.status(401).json({ error: "Need ID" });
   const damage_review = {
-    opened: new Date(),
+    opened: localDate(new Date()),
   }
   if (comments) damage_review.comments = comments;
   try {
     const barrel = await Barrel.findByIdAndUpdate(id, {
       'open.damage_review': damage_review,
-      'open.returned': new Date()
+      'open.returned': localDate(new Date())
     });
-    const emailSent = await sendEmail(barrel, comments);
+    const emailSent = await barrelDamagedEmail(barrel, comments);
     res.status(200).json({ message: `Barrel submitted for damage review. ${emailSent ? "An email has been sent to Pablo." : "Email couldn't send - please inform Pablo."}` })
   } catch (e) {
     console.log(e);

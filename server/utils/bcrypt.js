@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-export const encryptPin = async(pin) => {
+export const encrypt = async(pin) => {
   try {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
@@ -11,7 +11,7 @@ export const encryptPin = async(pin) => {
   }
 }
 
-export const verifyPin = async (pin, hashedPin) => {
+export const verify = async (pin, hashedPin) => {
   const verified = bcrypt.compare(pin, hashedPin);
   return verified;
 };

@@ -1,17 +1,10 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config'
 
-const sendEmail = async(barrel, comments) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.USER,
-      pass: process.env.PASS
-    }
-  });
+const barrelDamagedEmail = async(barrel, comments) => {
   const mailOptions = {
     from: '"bbbt.damagereview"',
-    to: 'emilyrachelstickler@gmail.com',
+    to: process.env.POC_EMAIL,
     subject: 'Damage Review Requested',
     html: `
       <p><b>Barrel #${barrel.number}</b></p>
@@ -20,6 +13,29 @@ const sendEmail = async(barrel, comments) => {
       ${ !comments ? "" : `<p><b>Comments: </b>${comments}</p>`} 
     `
   };
+  await sendEmail(mailOptions)
+}
+
+const recoverPinEmail = async(code) => {
+  const mailOptions = {
+    from: '"Pin Recovery"',
+    to: process.env.POC_EMAIL,
+    subject: "BB BT Pin Recovery",
+    html: `
+      <p><b>Code: </b> ${code}</p>
+    `
+  };
+  await sendEmail(mailOptions);
+}
+
+const sendEmail = async(mailOptions) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.USER,
+      pass: process.env.PASS
+    }
+  });
   try {
     const result = await transporter.sendMail(mailOptions);
     console.log("email sent - ", result.response);
@@ -30,4 +46,4 @@ const sendEmail = async(barrel, comments) => {
   }
 }
 
-export default sendEmail
+export { barrelDamagedEmail, recoverPinEmail }
