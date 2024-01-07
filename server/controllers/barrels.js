@@ -1,4 +1,5 @@
 import Barrel from '../models/barrels.js'
+import { generateQRCode } from '../utils/generateQRCode.js';
 import sendEmail from '../utils/sendEmail.js';
 
 const getBarrelById = async(req, res) => {

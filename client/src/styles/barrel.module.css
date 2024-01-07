@@ -39,14 +39,7 @@
 
 .input {
   padding: 1rem;
-  border: solid black 3px;
-  border-radius: 0.5rem;
   font-size: large;
-}
-
-.input:focus {
-  border-color: var(--bb-blue);
-  outline-color: var(--bb-blue);
 }
 
 .invalid {

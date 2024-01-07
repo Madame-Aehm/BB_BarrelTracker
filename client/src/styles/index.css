@@ -78,6 +78,16 @@ button:active {
   background-color: rgb(177, 69, 50);
 }
 
+input, select {
+  border: solid black 3px;
+  border-radius: 0.5rem;
+}
+
+input:focus, select:focus {
+  border-color: var(--bb-blue);
+  outline: solid 1px var(--bb-blue);
+}
+
 .invalid {
   border-color: tomato;
 }
@@ -96,6 +106,9 @@ button:active {
   :root {
     color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
+  }
+  input {
+    border-color: rgba(255, 255, 255, 0.87);
   }
 }
 

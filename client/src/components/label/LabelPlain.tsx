@@ -9,7 +9,7 @@ type Props = {
 const LabelPlain = ({ id, number }: Props) => {
   return (
     <div className={labelStyles.plainContainer}>
-      <QRCode value={id} />
+      <QRCode id={id} value={id} />
       <h1 className={labelStyles.labelNumber}>- #{ number } -</h1>
     </div>
   )

@@ -4,12 +4,13 @@ export const generateQRCode = (barrelID) => {
   let result = null;
   QRCode.toString(barrelID, {
     errorCorrectionLevel: 'H',
-    type: 'svg'
+    type: 'png',
   }, function(err, data) {
     if (err) {
       console.log(err);
     }
     result = data
   });
+  console.log(result);
   return result
 }
