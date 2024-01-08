@@ -13,7 +13,7 @@ const barrelDamagedEmail = async(barrel, comments) => {
       ${ !comments ? "" : `<p><b>Comments: </b>${comments}</p>`} 
     `
   };
-  await sendEmail(mailOptions)
+  return await sendEmail(mailOptions)
 }
 
 const recoverPinEmail = async(code) => {
@@ -25,7 +25,7 @@ const recoverPinEmail = async(code) => {
       <p><b>Code: </b> ${code}</p>
     `
   };
-  await sendEmail(mailOptions);
+  return await sendEmail(mailOptions);
 }
 
 const sendEmail = async(mailOptions) => {

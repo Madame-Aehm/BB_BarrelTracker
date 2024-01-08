@@ -1,4 +1,4 @@
-import layoutStyles from '../../styles/layout.module.css'
+import layoutStyles from '../../../styles/layout.module.css'
 
 type Props = {
   icon: string

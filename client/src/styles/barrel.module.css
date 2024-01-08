@@ -5,6 +5,7 @@
   align-items: center;
   column-gap: 1rem;
   width: 80%;
+  margin-bottom: 1rem;
 }
 
 .displayCurrent > *:nth-child(even) {
@@ -20,10 +21,15 @@
   flex-direction: column;
   gap: 1rem;
   width: 80%;
+  margin-bottom: 1rem;
 }
 
 .rbm {
   margin: 0;
+}
+
+.sideMargins {
+  margin: 0 1rem;
 }
 
 .when {

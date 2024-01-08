@@ -1,6 +1,6 @@
 import layoutStyles from '../styles/layout.module.css'
 import homeStyles from '../styles/home.module.css'
-import NavBar from "../components/nav/NavBar"
+import NavBar from "../components/layout/nav/NavBar"
 
 
 function Admin() {

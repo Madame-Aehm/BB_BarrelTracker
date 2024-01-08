@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import NavBar from '../components/nav/NavBar'
-import layoutStyles from '../styles/layout.module.css'
 import { QrReader } from 'react-qr-reader';
 import { useNavigate } from 'react-router-dom';
 import PrefSwitch from '../components/scanner/PrefSwitch';
@@ -12,8 +10,7 @@ function Scanner() {
   const [pref, setPref] = useState(existingPref ? existingPref : "scanner");
 
   return (
-    <main className={layoutStyles.main}>
-      <NavBar />
+    <>
       <PrefSwitch pref={pref} setPref={setPref} />
       { pref === "scanner" 
         ? <QrReader
@@ -33,9 +30,7 @@ function Scanner() {
           /> 
         : <Manual />
       }
-      
-      
-    </main>
+    </>
   )
 }
 

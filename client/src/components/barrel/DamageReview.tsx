@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import barrelStyles from '../../styles/barrel.module.css'
-import { Open } from '../../@types/barrel'
+import { Barrel } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import Button from '../Button'
 import { ChangeEvent, Dispatch, useRef } from 'react'
@@ -10,15 +10,15 @@ import { OK } from '../../@types/auth'
 import { useNavigate } from 'react-router-dom'
 
 type Props = {
-  id: string
-  open: Open
+  barrel: Barrel
   loading: boolean
   setLoading: Dispatch<React.SetStateAction<boolean>>
   setError: Dispatch<React.SetStateAction<string>>
 }
 
-const DamageReview = ({ id, open, loading, setLoading, setError }: Props) => {
+const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
+  const damage_review = barrel.open?.damage_review;
   const navigate = useNavigate();
   const reviewResponse = useRef("");
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -28,8 +28,8 @@ const DamageReview = ({ id, open, loading, setLoading, setError }: Props) => {
     setError("");
     setLoading(true);
     const body = JSON.stringify({
-      id: id,
-      open: open,
+      id: barrel._id,
+      open: barrel.open,
       reviewResponse: reviewResponse.current,
       damaged
     })
@@ -53,12 +53,12 @@ const DamageReview = ({ id, open, loading, setLoading, setError }: Props) => {
     }
   }
   
-  if (open.damage_review) return (
+  if (damage_review) return (
     <div className={barrelStyles.atHome}>
       <span>
         <h2 className={barrelStyles.rbm}>Damage Review Request</h2>
-        <p className={barrelStyles.when}>on { formatDate(open.damage_review.opened) } </p>
-        { open.damage_review.comments && <p><b>Comments: </b>{ open.damage_review.comments }</p> }
+        <p className={barrelStyles.when}>on { formatDate(damage_review.opened) } </p>
+        { damage_review.comments && <p><b>Comments: </b>{ damage_review.comments }</p> }
       </span>
       <textarea 
         className={`${barrelStyles.input} ${barrelStyles.textarea}`}

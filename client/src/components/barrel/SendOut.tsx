@@ -71,6 +71,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
 
   return (
     <>
+      <h2 className={barrelStyles.rbm}>Send to:</h2> 
       <form onSubmit={handleConfirm} className={barrelStyles.atHome}>
         <select 
           id='customer' 

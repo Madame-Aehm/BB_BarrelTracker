@@ -1,8 +1,8 @@
 import { useContext } from 'react'
-import layoutStyles from '../../styles/layout.module.css'
+import layoutStyles from '../../../styles/layout.module.css'
 import NavIcon from './NavIcon'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { AuthContext } from '../../context/AuthContext'
+import { AuthContext } from '../../../context/AuthContext'
 
 const NavBar = () => {
   const navigate = useNavigate();

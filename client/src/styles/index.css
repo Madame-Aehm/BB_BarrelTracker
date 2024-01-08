@@ -78,12 +78,12 @@ button:active {
   background-color: rgb(177, 69, 50);
 }
 
-input, select {
+input, select, textarea {
   border: solid black 3px;
   border-radius: 0.5rem;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
   border-color: var(--bb-blue);
   outline: solid 1px var(--bb-blue);
 }
@@ -107,7 +107,7 @@ input:focus, select:focus {
     color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
   }
-  input {
+  input, select, textarea {
     border-color: rgba(255, 255, 255, 0.87);
   }
 }

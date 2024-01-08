@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom"
-import layoutStyles from '../styles/layout.module.css'
 import barrelStyles from '../styles/barrel.module.css'
 import { Barrel } from "../@types/barrel";
 import CancelButton from "../components/barrel/CancelButton";
@@ -52,10 +51,10 @@ function Damage() {
 
   if (loading) return <Loading />
   if (!state || error || successMessage) return (
-    <div className={`${layoutStyles.main} ${layoutStyles.trueCenter}`}>
+    <>
       { successMessage && (
         <div>
-          <p>{ successMessage }</p>
+          <p className={barrelStyles.sideMargins}>{ successMessage }</p>
           <Button 
             loading={false}
             title="OK"
@@ -63,12 +62,12 @@ function Damage() {
             handleClick={() => navigate("/")} />
         </div> 
       )}
-      { error &&  <p>{ error }</p> } 
+      { error && <p>{ error }</p> } 
       { !state && <p>How did you get here...? 🧐</p> } 
-    </div>
+    </>
   ) 
-  if (state.barrel.open) return (
-    <main className={`${layoutStyles.main} ${layoutStyles.trueCenter}`}>
+  if (state.barrel) return (
+    <>
       <h1>Request Damage Review</h1>
       <div className={barrelStyles.atHome}>
         <textarea 
@@ -84,7 +83,7 @@ function Damage() {
             handleClick={submitRequest}/>
         </div>
       </div>
-    </main>
+    </>
   )
 }
 

@@ -8,6 +8,7 @@ import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { OK } from '../../@types/auth'
 import DamageReview from './DamageReview'
+import formatDate from '../../utils/formatDate'
 
 type Props = {
   open: Open
@@ -50,31 +51,41 @@ function Return({ open, barrel, loading, setLoading, setError }: Props) {
   } 
 
   const handleDamageReviewRequest = () => {
-    navigate("/damage", { state: { barrel } })
+    navigate("/report-damage", { state: { barrel } })
   }
 
-  if (open.damage_review) return (
-    <DamageReview 
-      id={barrel._id} 
-      open={open}
-      loading={loading}
-      setLoading={setLoading}
-      setError={setError} />
-  )
-  else return (
-    <div className={barrelStyles.buttonsWrapper}>
-      <Button 
-        loading={loading} 
-        title='Mark as Returned'
-        styleOverride={{ height: "5rem", width: "15rem" }}
-        handleClick={handleReturn} />
-      <button 
-        onClick={!loading ? handleDamageReviewRequest : undefined}
-        className={`${barrelStyles.damageButton} ${loading ? barrelStyles.damageButtonLoading : ""}`}>
-          { loading ? "loading..." : "Request Damage Review" }
-      </button>
-      <CancelButton />
-    </div>
+  return (
+    <>
+      <div className={barrelStyles.displayCurrent}>
+        <h3>Customer: </h3>
+        <p>{ open.customer }</p> 
+        <h3>Invoice: </h3>
+        <p>{ open.invoice }</p>
+        <h3>Since: </h3> 
+        <p>{ formatDate(open.createdAt) }</p>
+      </div>
+      { open.damage_review ? (
+        <DamageReview 
+          barrel={barrel} 
+          loading={loading}
+          setLoading={setLoading}
+          setError={setError} />
+      ) : (
+        <div className={barrelStyles.buttonsWrapper}>
+          <Button 
+            loading={loading} 
+            title='Mark as Returned'
+            styleOverride={{ height: "5rem", width: "15rem" }}
+            handleClick={handleReturn} />
+          <button 
+            onClick={!loading ? handleDamageReviewRequest : undefined}
+            className={`${barrelStyles.damageButton} ${loading ? barrelStyles.damageButtonLoading : ""}`}>
+              { loading ? "loading..." : "Request Damage Review" }
+          </button>
+          <CancelButton />
+        </div>
+      ) }
+    </>
   )
 }
 
