@@ -37,6 +37,10 @@ const router = createBrowserRouter([{
         {
           path: "/report-damage",
           element: <Damage />
+        },
+        {
+          path: "/history/:id",
+          element: <div>History</div>
         }
       ]
     }

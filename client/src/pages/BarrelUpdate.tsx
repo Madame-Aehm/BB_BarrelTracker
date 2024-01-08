@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import useFetch from '../hooks/useFetch';
 import { Barrel } from '../@types/barrel';
 import SendOut from '../components/barrel/SendOut';
@@ -49,6 +49,7 @@ const BarrelUpdate = () => {
             handleClick={() => navigate("/") } />
         </div>
       )}
+      <Link to={`/history/${barrel._id}`}>see history</Link>
     </>
   )
 }
