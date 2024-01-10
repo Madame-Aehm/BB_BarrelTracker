@@ -18,6 +18,10 @@ app.use(
 );
 app.use(cors());
 
+app.use((req, _, next) => {
+  console.log(req.path, req.method);
+  next();
+})
 app.use("/api/auth", authRouter);
 app.use("/api/barrel", authenticate, barrelRouter);
 app.use("/api/customer", authenticate, customerRouter);

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ChangeEvent, Dispatch, FormEvent, useRef, useState } from 'react'
-import customers from '../../customers.json';
+import { ChangeEvent, Dispatch, FormEvent, useContext, useRef, useState } from 'react'
 import Button from '../Button'
 import barrelStyles from '../../styles/barrel.module.css'
 import { Barrel } from '../../@types/barrel'
@@ -9,6 +8,7 @@ import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { unfocusAll } from '../../utils/shiftFocus';
+import { CustomerContext } from '../../context/CustomerContext';
 
 type Props = {
   barrel: Barrel
@@ -20,6 +20,9 @@ type Props = {
 const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
 
+  const { customers } = useContext(CustomerContext);
+  console.log(customers)
+
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState({ invoice: false, customer: false });
   const inputValues = useRef({ invoice: "", customer: "" });
@@ -27,10 +30,12 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (e.target.id === "invoice") inputValues.current.invoice = e.target.value;
     if (e.target.id === "customer") inputValues.current.customer = e.target.value;
-    setInvalid({ 
-      invoice: e.target.id === "invoice" ? false : invalid.invoice, 
-      customer: e.target.id === "customer" ? false : invalid.customer 
-    });
+    if (invalid.customer || invalid.invoice) {
+      setInvalid({ 
+        invoice: e.target.id === "invoice" ? false : invalid.invoice, 
+        customer: e.target.id === "customer" ? false : invalid.customer 
+      })
+    }
   }
 
   const handleConfirm = async(e: FormEvent<HTMLFormElement>) => {
@@ -78,7 +83,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
           onChange={handleChange} 
           className={`${barrelStyles.input} ${invalid.customer ? barrelStyles.invalid : ""}`}>
           <option value="">Choose Customer</option>
-          { customers.map((c) => <option key={c.customer} value={c.customer}>{c.customer}</option>) }
+          { customers.map((c) => <option key={c._id} value={c.name}>{c.name}</option>) }
         </select>
         <input 
           id='invoice'
@@ -86,12 +91,12 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
           placeholder="Enter Invoice" 
           onChange={handleChange} />
         <div className={barrelStyles.centerButton}>
-          <CancelButton />
           <Button 
             title='Confirm'
             loading={loading}
             styleOverride={{ width: "10rem", height: "4rem" }}
             />
+          <CancelButton />
         </div>
       </form>
     </>

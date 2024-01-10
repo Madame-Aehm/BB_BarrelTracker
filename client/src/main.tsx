@@ -10,9 +10,18 @@ import BarrelUpdate from './pages/BarrelUpdate.tsx'
 import Damage from './pages/Damage.tsx'
 import NavLayout from './components/layout/NavLayout.tsx'
 import PlainLayout from './components/layout/PlainLayout.tsx'
+import History from './pages/History.tsx'
+import { CustomerContextProvider } from './context/CustomerContext.tsx'
 
 const router = createBrowserRouter([{
-  element: <AuthContextProvider><AuthWrapper><Outlet /></AuthWrapper></AuthContextProvider>,
+  element: (
+    <AuthContextProvider>
+      <CustomerContextProvider>
+        <AuthWrapper>
+          <Outlet />
+        </AuthWrapper>
+      </CustomerContextProvider>
+    </AuthContextProvider>),
   children: [
     {
       element: <NavLayout><Outlet /></NavLayout>,
@@ -40,7 +49,7 @@ const router = createBrowserRouter([{
         },
         {
           path: "/history/:id",
-          element: <div>History</div>
+          element: <History />
         }
       ]
     }

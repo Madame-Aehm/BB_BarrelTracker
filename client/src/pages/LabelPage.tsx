@@ -6,18 +6,20 @@ import { LabelType } from '../@types/labels'
 import LabelPlain from '../components/label/LabelPlain'
 import Button from '../components/Button'
 import downloadAll from '../utils/QRDownload'
+import useFetch from '../hooks/useFetch'
 
 
 const LabelPage = () => {
-  const [labels, setLabels] = useState<LabelType[]>([]);
-  const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
+  const [url, setUrl] = useState("");
+  const { data, loading, error, setError } = useFetch<LabelType[]>(url);
+  const labels = data ? data : [];
 
   return (
     <>
       <h1>- Label Generator -</h1>
       <small className={labelStyles.error}>{ error }</small>
-      <LabelMenu setState={setLabels} setError={setError} />
+      <LabelMenu loadingControl={loading} setUrl={setUrl} setError={setError} />
       { labels.length > 0 && (
         <Button 
           handleClick={() => downloadAll(labels, setDownloading)} 

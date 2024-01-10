@@ -25,7 +25,7 @@ const authenticateDevice = async(req, res) => {
 }
 
 const currentlyAuthorized = (_, res) => {
-  res.status(200).json({ authorized: true });
+  res.status(200).json(true);
 }
 
 const recoverPin = async(_, res) => {

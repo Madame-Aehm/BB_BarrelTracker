@@ -62,18 +62,6 @@
   margin-top: 0;
 }
 
-.cancel {
-  background-color: tomato;
-  width: 10rem;
-  height: 4rem;
-  font-size: x-large;
-  color: #242424;
-}
-
-.cancel:active {
-  background-color: rgb(177, 69, 50);
-}
-
 .damageButton {
   background-color: gold;
   color: #242424;
@@ -101,7 +89,7 @@
 
 @media (max-width: 350px) {
   .centerButton {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 }
 

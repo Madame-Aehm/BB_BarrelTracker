@@ -1,5 +1,5 @@
 import express from 'express'
-import { addBarrels, getAllBarrelIDS, getBarrelById, getBarrelByNumber, getSingleID, requestDamageReview, returnBarrel, reviewDamageRequest, sendBarrel } from '../controllers/barrels.js';
+import { addBarrels, getAllBarrelIDS, getBarrelById, getBarrelByNumber, getHistory, getSingleID, requestDamageReview, returnBarrel, reviewDamageRequest, sendBarrel } from '../controllers/barrels.js';
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ router.post("/return", returnBarrel);
 
 router.post("/review-damage", reviewDamageRequest);
 router.post("/request-damage-review", requestDamageReview);
+
+router.get("/history/:id", getHistory);
 
 router.post("/add", addBarrels);
 

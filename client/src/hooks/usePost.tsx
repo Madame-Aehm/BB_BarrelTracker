@@ -10,7 +10,14 @@ interface ReturnData<T> {
   setError: Dispatch<React.SetStateAction<string>>
 }
 
-const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
+interface Parameters {
+  url: string, 
+  body: string, 
+  delay?: boolean
+}
+
+const usePost = <T,> (params: Parameters): ReturnData<T> => {
+  const { url, body, delay } = params;
 
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +31,7 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
       const headers = authHeaders();
       if (!headers) return setLoading(false);
       try {
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, { headers, body, method: "POST" });
         if (response.ok) {
           const result = await response.json() as T;
           console.log(result);
@@ -41,10 +48,10 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
         handleCatchError(e, setError, setLoading);
       }
     }
-    if (url) fetchData().catch(e => {console.log(e); setLoading(false)});
-  }, [url, delay])
+    if (url && body) fetchData().catch(e => {console.log(e); setLoading(false)});
+  }, [url, delay, body])
 
   return { data, loading, setLoading, error, setError }
 }
 
-export default useFetch
+export default usePost

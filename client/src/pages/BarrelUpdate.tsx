@@ -14,7 +14,7 @@ const BarrelUpdate = () => {
 
   const url = `${serverBaseURL}/api/barrel/${location.state === "scanner" ? "id" : "number"}/${params.brl ? params.brl : ""}`;
 
-  const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url);
+  const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
 
   if (loading) return <Loading />
   if (!barrel && error) return <p>{error}</p>

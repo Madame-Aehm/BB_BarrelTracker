@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import barrelStyles from '../../styles/barrel.module.css'
+import { ChangeEvent, Dispatch, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Barrel } from '../../@types/barrel'
+import barrelStyles from '../../styles/barrel.module.css'
 import formatDate from '../../utils/formatDate'
 import Button from '../Button'
-import { ChangeEvent, Dispatch, useRef } from 'react'
 import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import { OK } from '../../@types/auth'
-import { useNavigate } from 'react-router-dom'
+import CancelButton from './CancelButton'
 
 type Props = {
   barrel: Barrel
@@ -18,12 +19,14 @@ type Props = {
 
 const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-  const damage_review = barrel.open?.damage_review;
   const navigate = useNavigate();
   const reviewResponse = useRef("");
+  const damage_review = barrel.open?.damage_review;
+
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     reviewResponse.current = e.target.value;
   }
+
   const handleReview = async(damaged: boolean) => {
     setError("");
     setLoading(true);
@@ -68,12 +71,13 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
         <Button 
           loading={loading}
           title='Mark as OK'
-          styleOverride={{ height: "4rem", width: "10rem" }} 
+          styleOverride={{ height: "5rem", width: "15rem" }} 
           handleClick={() => handleReview(false)}
            />
-        <button className='cancelButton' onClick={() => handleReview(true)}>
+        <button className='cancelButton' style={{ height: "5rem", width: "15rem" }} onClick={() => handleReview(true)}>
           Mark as Damaged
         </button>
+        <CancelButton />
       </div>
     </div>
   )

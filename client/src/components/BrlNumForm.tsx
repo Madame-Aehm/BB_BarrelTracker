@@ -8,9 +8,10 @@ type Props = {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void
   handleSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void> | void
   invalid: boolean
+  loading: string
 }
 
-const BrlNumForm = ({ handleChange, handleSubmit, invalid }:Props) => {
+const BrlNumForm = ({ loading, handleChange, handleSubmit, invalid }:Props) => {
 
   return (
     <form onSubmit={handleSubmit} >
@@ -19,7 +20,7 @@ const BrlNumForm = ({ handleChange, handleSubmit, invalid }:Props) => {
         <PinInput handleChange={handleChange} invalid={invalid} styleOverride={{ width: "3rem" }}/>
       </div>
       <Button 
-        loading={false} 
+        loading={loading === "single" ? true : false} 
         title='Go!'
         styleOverride={{ width: "12rem", height: "3.5rem" }} />
     </form>

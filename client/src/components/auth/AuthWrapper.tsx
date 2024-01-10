@@ -4,8 +4,8 @@ import AuthPage from '../../pages/AuthPage';
 import Loading from '../Loading';
 
 const AuthWrapper = ({ children }: PropsWithChildren) => {
-  const { auth, firstCheck } = useContext(AuthContext);
-  if (!firstCheck) return <Loading />
+  const { auth, loading } = useContext(AuthContext);
+  if (loading) return <Loading />
   return auth ? children : <AuthPage />;
 }
 

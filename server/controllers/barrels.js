@@ -1,6 +1,5 @@
 import Barrel from '../models/barrels.js'
 import localDate from '../utils/localDate.js';
-// import { generateQRCode } from '../utils/generateQRCode.js';
 import { barrelDamagedEmail } from '../utils/sendEmail.js';
 
 const getBarrelById = async(req, res) => {
@@ -24,58 +23,6 @@ const getBarrelByNumber = async(req, res) => {
     if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
     // if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
     res.status(200).json(barrel);
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ error: "Server Error" });
-  }
-}
-
-const getAllBarrelIDS = async(_, res) => {
-  try {
-    const ids = (await Barrel.find().sort({ number: "asc" })).map(b => { return { _id: b._id, number: b.number } });
-    res.status(200).json(ids);
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ error: "Server Error" });
-
-  }
-}
-
-const getSingleID = async(req, res) => {
-  const number = Number(req.params.number);
-  if (!number) return res.status(400).json({ error: "Need Barrel Number" });
-  try {
-    const barrel = await Barrel.findOne({ number: number });
-    if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
-    res.status(200).json({ _id: barrel._id, number: barrel.number });
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ error: "Server Error" });
-  }
-}
-
-const addBarrels = async(req, res) => {
-  const number = Number(req.body.number);
-  if (!number) {
-    return res.status(400).json({ error: "Need to know how many..." });
-  }
-  let offset = 1;
-  try {
-    const existingBarrels = await Barrel.find().sort({ number: "desc" });
-    if (existingBarrels.length) {
-      offset = existingBarrels.map((b) => b.number).sort((a, b) => b - a)[0] + 1;
-    }
-    const barrelsToAdd = [];
-    for (let i = offset; i < offset + number; i++) {
-      barrelsToAdd.push(new Barrel({
-        number: i,
-        home: true,
-        damaged: false,
-        open: null
-      }).save())
-    }
-    await Promise.all(barrelsToAdd);
-    res.status(201).json({ message: `${number} new barrels successfully added` });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
@@ -157,13 +104,75 @@ const requestDamageReview = async(req, res) => {
   }
 }
 
+
+const getHistory = async(req, res) => {
+  const { id } = req.params;
+  if (!id) return res.status(401).json({ error: "Need ID" });
+  
+}
+
+const addBarrels = async(req, res) => {
+  const number = Number(req.body.number);
+  if (!number) {
+    return res.status(400).json({ error: "Need to know how many..." });
+  }
+  let offset = 1;
+  try {
+    const existingBarrels = await Barrel.find().sort({ number: "desc" });
+    if (existingBarrels.length) {
+      offset = existingBarrels.map((b) => b.number).sort((a, b) => b - a)[0] + 1;
+    }
+    const barrelsToAdd = [];
+    for (let i = offset; i < offset + number; i++) {
+      barrelsToAdd.push(new Barrel({
+        number: i,
+        home: true,
+        damaged: false,
+        open: null
+      }).save())
+    }
+    await Promise.all(barrelsToAdd);
+    res.status(201).json({ message: `${number} new barrels successfully added` });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
+const getAllBarrelIDS = async(_, res) => {
+  try {
+    const ids = await Barrel.find().select(["_id", "number"]).sort({ number: "asc" });
+    res.status(200).json(ids);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+
+  }
+}
+
+const getSingleID = async(req, res) => {
+  const number = Number(req.params.number);
+  if (!number) return res.status(400).json({ error: "Need Barrel Number" });
+  try {
+    const barrel = await Barrel.findOne({ number: number }).select(["_id", "number"]);
+    console.log(barrel);
+    if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
+    res.status(200).json([barrel]);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
 export { 
-  addBarrels, 
   getBarrelById, 
   getBarrelByNumber, 
-  getAllBarrelIDS, 
-  getSingleID, 
   sendBarrel, 
   returnBarrel,
+  reviewDamageRequest,
   requestDamageReview,
-  reviewDamageRequest }
+  getHistory,
+  addBarrels, 
+  getAllBarrelIDS, 
+  getSingleID
+ }
