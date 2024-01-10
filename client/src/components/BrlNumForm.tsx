@@ -8,7 +8,7 @@ type Props = {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void
   handleSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void> | void
   invalid: boolean
-  loading: string
+  loading?: string
 }
 
 const BrlNumForm = ({ loading, handleChange, handleSubmit, invalid }:Props) => {
