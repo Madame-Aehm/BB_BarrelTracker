@@ -21,7 +21,6 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
 
   const { customers } = useContext(CustomerContext);
-  console.log(customers)
 
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState({ invoice: false, customer: false });
@@ -77,7 +76,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   return (
     <>
       <h2 className={barrelStyles.rbm}>Send to:</h2> 
-      <form onSubmit={handleConfirm} className={barrelStyles.atHome}>
+      <form onSubmit={handleConfirm} className={`${barrelStyles.atHome} ${barrelStyles.gap1}`}>
         <select 
           id='customer' 
           onChange={handleChange} 

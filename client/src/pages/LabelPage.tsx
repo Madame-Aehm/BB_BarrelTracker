@@ -7,6 +7,7 @@ import LabelPlain from '../components/label/LabelPlain'
 import Button from '../components/Button'
 import downloadAll from '../utils/QRDownload'
 import useFetch from '../hooks/useFetch'
+import ToTop from '../components/ToTop'
 
 
 const LabelPage = () => {
@@ -31,7 +32,7 @@ const LabelPage = () => {
         {/* { labels.map((l) => <Label key={l._id} contents={l._id} number={l.number.toString()} />)} */}
         { labels.map((l) => <LabelPlain key={l._id} id={l._id} number={l.number.toString()} />) }
       </div>
-      
+      <ToTop />
     </>
   )
 }

@@ -12,6 +12,7 @@ import NavLayout from './components/layout/NavLayout.tsx'
 import PlainLayout from './components/layout/PlainLayout.tsx'
 import History from './pages/History.tsx'
 import { CustomerContextProvider } from './context/CustomerContext.tsx'
+import PlainLayoutTop from './components/layout/PlainLayoutTop.tsx'
 
 const router = createBrowserRouter([{
   element: (
@@ -46,7 +47,12 @@ const router = createBrowserRouter([{
         {
           path: "/report-damage",
           element: <Damage />
-        },
+        }
+      ]
+    },
+    {
+      element:  <PlainLayoutTop><Outlet /></PlainLayoutTop>,
+      children: [
         {
           path: "/history/:id",
           element: <History />

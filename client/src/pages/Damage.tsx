@@ -59,7 +59,7 @@ function Damage() {
             loading={false}
             title="OK"
             styleOverride={{ width: "10rem", height: "4rem", marginTop: "1rem" }} 
-            handleClick={() => navigate("/")} />
+            handleClick={() => navigate("/", { replace: true })} />
         </div> 
       )}
       { error && <p>{ error }</p> } 
@@ -69,7 +69,7 @@ function Damage() {
   if (state.barrel) return (
     <>
       <h1>Request Damage Review</h1>
-      <div className={barrelStyles.atHome}>
+      <div className={`${barrelStyles.atHome} ${barrelStyles.gap1} ${barrelStyles.width80}`}>
         <textarea 
           onChange={handleChange}
           className={`${barrelStyles.input} ${barrelStyles.textarea}`}

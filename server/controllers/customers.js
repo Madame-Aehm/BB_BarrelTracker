@@ -36,8 +36,24 @@ const getCustomerHistory = async(req, res) => {
   const { name } = req.params;
   if (!name) return res.status(401).json({ error: "Need customer name" });
   try {
-    const customer = await Customer.findOne({ name });
-    const histories = await Barrel.find({ "history.customer": name });
+    const barrels = await Barrel.find({
+      $or:[
+        { history: { $elemMatch: { customer: name }}},
+        { "open.customer": name }
+      ]});
+    const histories = [];
+    barrels.forEach((brl) => {
+      const brlObj = brl.toObject();
+      if (brlObj.open && brlObj.open.customer === name) {
+        histories.push({ ...brlObj.open, createdAt: new Date(brlObj.open.createdAt), barrel: brlObj.number });
+      }
+      brlObj.history.forEach((h) => {
+        if (h.customer === name) {
+          histories.push({ ...h, createdAt: new Date(h.createdAt), barrel: brlObj.number })
+        }
+      })
+    })
+    histories.sort((a, b) => b.createdAt - a.createdAt);
     res.send(histories);
   } catch (e) {
     console.log(e);

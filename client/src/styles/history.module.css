@@ -1,0 +1,105 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.openable {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-out;
+}
+
+.inner {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.displayCurrent {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  justify-items: start;
+  align-items: center;
+  column-gap: 1rem;
+  width: 95%;
+  margin: 0.5rem 0;
+}
+
+.hr {
+  margin: 0;
+  align-self: stretch;
+}
+
+.open {
+  grid-template-rows: 2fr;
+}
+
+.openArrow {
+  transition: 0.2s;
+  -moz-transform: scale(1, -1);
+  -webkit-transform: scale(1, -1);
+  -o-transform: scale(1, -1);
+  -ms-transform: scale(1, -1);
+  transform: scale(1, -1);
+}
+
+.closedArrow {
+  transition: 0.2s;
+  -moz-transform: scale(1, 1);
+  -webkit-transform: scale(1, 1);
+  -o-transform: scale(1, 1);
+  -ms-transform: scale(1, 1);
+  transform: scale(1, 1);
+}
+
+.card {
+  width: 80%;
+  border: solid var(--font-dark) 3px;
+  border-radius: 0.5rem;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.icon {
+  margin: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow {
+  cursor: pointer;
+}
+
+.h {
+  margin: 0.5rem 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.pre {
+  white-space: pre-line;
+  text-align: left;
+}
+
+.js {
+  align-self: start;
+}
+
+@media (prefers-color-scheme: dark) {
+  .container {
+    border-color: var(--font-light);
+  }
+}

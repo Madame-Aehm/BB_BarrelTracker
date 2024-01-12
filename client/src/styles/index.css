@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #213547;
+  color: #272727;
   background-color: #ffffff;
 
   font-synthesis: none;
@@ -13,14 +13,16 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --bb-light: #DAF3FF;
+  --font-light: rgba(255, 255, 255, 0.87);
+  --font-dark: #272727;
+
   --bb-blue: #0083D0;
   --bb-blue2: #0069B3;
-  --bb-blue3: #005096;
-  --bb-blue4: #00387A;
-  --bb-blue5: #002360;
   --bb-greyish: #7393BC;
+
+  scroll-behavior: smooth;
 }
+
 
 body {
   margin: 0;
@@ -71,7 +73,7 @@ button:active {
   background-color: tomato;
   width: 10rem;
   height: 4rem;
-  color: #242424;
+  color: var(--font-dark);
 }
 
 .cancelButton:active {
@@ -93,22 +95,27 @@ input:focus, select:focus, textarea:focus {
 }
 
 .valid {
-  border-color: black;
+  border-color: var(--font-dark);
 }
 
 .error {
   color: tomato;
-  min-height: 1rem;
+  min-height: 1.5rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px double var(--bb-greyish);
 }
 
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    color: var(--font-light);
+    background-color: var(--font-dark);
   }
   input, select, textarea {
-    border-color: rgba(255, 255, 255, 0.87);
+    border-color: var(--font-light);
   }
 }
 

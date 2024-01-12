@@ -49,7 +49,7 @@ const BarrelUpdate = () => {
             handleClick={() => navigate("/") } />
         </div>
       )}
-      <Link to={`/history/${barrel._id}`}>see history</Link>
+      <p><Link to={`/history/${barrel._id}`}>see history</Link></p>
     </>
   )
 }

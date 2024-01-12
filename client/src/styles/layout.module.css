@@ -38,9 +38,141 @@
   cursor: default;
 }
 
+.sidebarContainer {
+  height: 25vh;
+  width: 100vw;
+  max-width: 600px;
+  position: fixed;
+  border: solid var(--font-dark) 3px;
+  border-top: none;
+  background-color: #ffffff;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebarOpen {
+  top: 0vh;
+  transition: top 1s;
+}
+
+.sidebarClosed {
+  top: -45vh;
+  transition: top 1s;
+}
+
+.innerMenuWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%; 
+  gap: 1rem;
+}
+
+.closeMenu {
+  align-self: flex-end; 
+  padding: 1rem; 
+  cursor: pointer;
+}
+
+.innerMenuContainer {
+  display: grid; 
+  grid-template-columns: auto auto;
+  width: 80%; 
+  align-items: center; 
+  row-gap: 1rem;
+  font-size: x-large;
+  font-weight: bold;
+  justify-items: end;
+}
+
+.innerMenuContainer > *:nth-child(even) {
+  justify-self: start;
+  padding-left: 2rem
+}
+
+.innerMenuContainer > *:nth-child(odd) {
+  color: var(--bb-blue);
+}
+
+.innerMenuContainer a {
+  text-decoration: none;
+  color: var(--font-dark);
+}
+
+.innerMenuContainer a:active:nth-child(even) {
+  color: var(--bb-blue);
+}
+
+.topButtonContainer {
+  position: fixed; 
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.opaque {
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.transparent {
+  opacity: 0;
+  transition: 0.2s;
+  cursor: default;
+}
+
+.hideCursor {
+  cursor: default;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.topButtonContainer button {
+  width: 5rem;
+  height: 5rem;
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.topButtonContainer button:active {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+.scrollLength {
+  padding-bottom: 5rem;
+}
+
 @media (min-width: 600px) {
   .main {
     border-right: solid 3px var(--bb-blue);
     border-left: solid 3px var(--bb-blue);
   }
+  .scrollLength {
+    padding-bottom: 0;
+  }
+}
+
+@media (any-hover: hover) {
+  .topButtonContainer button:hover {
+    opacity: 1;
+    transition: 0.2s;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebarContainer {
+    background-color: var(--font-dark);
+    border-color: var(--font-light);
+  }
+  .innerMenuContainer a {
+    color: var(--font-light);
+  }
+  
 }

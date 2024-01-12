@@ -33,7 +33,7 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
     const body = JSON.stringify({
       id: barrel._id,
       open: barrel.open,
-      reviewResponse: reviewResponse.current,
+      response: reviewResponse.current,
       damaged
     })
     const headers = authHeaders();
@@ -57,16 +57,22 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
   }
   
   if (damage_review) return (
-    <div className={barrelStyles.atHome}>
-      <span>
-        <h2 className={barrelStyles.rbm}>Damage Review Request</h2>
-        <p className={barrelStyles.when}>on { formatDate(damage_review.opened) } </p>
-        { damage_review.comments && <p><b>Comments: </b>{ damage_review.comments }</p> }
-      </span>
-      <textarea 
-        className={`${barrelStyles.input} ${barrelStyles.textarea}`}
-        placeholder='Additional details'
-        onChange={handleChange} />
+    <>
+      <div className={`${barrelStyles.atHome} ${barrelStyles.width80}`}>
+          <h2 className={barrelStyles.rbm}>Damage Review Request</h2>
+          <p className={barrelStyles.when}>on { formatDate(damage_review.opened) } </p>
+          { damage_review.comments && 
+            <div>
+              <h3>Comments: </h3>
+              <p className={barrelStyles.pre}>{ damage_review.comments }</p>
+            </div> 
+          }
+      
+        <textarea 
+          className={`${barrelStyles.input} ${barrelStyles.textarea}`}
+          placeholder='Additional details'
+          onChange={handleChange} />
+      </div>
       <div className={barrelStyles.buttonsWrapper}>
         <Button 
           loading={loading}
@@ -74,12 +80,13 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
           styleOverride={{ height: "5rem", width: "15rem" }} 
           handleClick={() => handleReview(false)}
            />
-        <button className='cancelButton' style={{ height: "5rem", width: "15rem" }} onClick={() => handleReview(true)}>
-          Mark as Damaged
+        <button className={barrelStyles.damageButton} style={{ height: "5rem", width: "15rem" }} onClick={() => handleReview(true)}>
+          Mark as Damaged*
         </button>
         <CancelButton />
       </div>
-    </div>
+      <p className={barrelStyles.sideMargins}>*This means the barrel is too damaged to continue using. It will be removed from rotation.</p>
+    </>
   )
 }
 

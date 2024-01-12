@@ -56,7 +56,7 @@ function Return({ open, barrel, loading, setLoading, setError }: Props) {
 
   return (
     <>
-      <div className={barrelStyles.displayCurrent}>
+      <div className={`${barrelStyles.displayCurrent} ${barrelStyles.width80}`}>
         <h3>Customer: </h3>
         <p>{ open.customer }</p> 
         <h3>Invoice: </h3>

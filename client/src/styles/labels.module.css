@@ -5,7 +5,7 @@
 }
 
 .labelNumber {
-  color: black;
+  color: var(--font-dark);
 }
 
 .divider {
@@ -37,10 +37,10 @@
 
 .labelContainer { 
   width: 300px; 
-  border: solid 3px black; 
+  border: solid 3px var(--font-dark); 
   border-radius: 1rem; 
   background-color: #fff;
-  color: black;
+  color: var(--font-dark);
   margin-top: 1rem;
 }
 
@@ -51,7 +51,7 @@
   border: solid 5px var(--bb-blue);
   border-radius: 1rem;
   background-color: #fff;
-  color: #242424;
+  color: var(--font-dark);
 }
 
 .qrcode { 
@@ -120,18 +120,14 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-  }
   .or {
-    background-color: #242424;
-    color: rgba(255, 255, 255, 0.87);
+    background-color: var(--font-dark);
+    color: var(--font-light);
   }
   .singleWrapper {
-    border-color: rgba(255, 255, 255, 0.87);
+    border-color: var(--font-light);
   }
   .loaderMain {
-    background-color: #242424;
+    background-color: var(--font-dark);
   }
 }
