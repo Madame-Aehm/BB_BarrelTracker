@@ -39,7 +39,7 @@
 }
 
 .sidebarContainer {
-  height: 25vh;
+  height: 40vh;
   width: 100vw;
   max-width: 600px;
   position: fixed;
@@ -70,7 +70,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%; 
-  gap: 1rem;
+  /* gap: 1rem; */
 }
 
 .closeMenu {

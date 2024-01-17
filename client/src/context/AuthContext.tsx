@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dispatch, PropsWithChildren, createContext, useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
+import getVersion from "../versionControl";
 
 interface AuthContextType {
   auth: boolean
@@ -27,9 +28,14 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (error) {
       localStorage.removeItem("token");
+      setAuth(false);
     }
     if (data === true) setAuth(data);
   }, [data, error])
+
+  useEffect(() => {
+    getVersion().catch(e => console.log(e));
+  }, [])
 
   return <AuthContext.Provider value={{ auth, setAuth, loading, error }}>
     { children }

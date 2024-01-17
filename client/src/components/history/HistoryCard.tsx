@@ -33,7 +33,7 @@ const HistoryCard = ({ history }: Props) => {
             <b>Send: </b>
             <p>{ formatDate(history.createdAt) }</p>
             <b>Returned: </b>
-            <p>{ history.returned ? history.returned : "-" }</p>
+            <p>{ history.returned ? formatDate(history.returned) : "-" }</p>
             </div>
             { history.damage_review && 
               <>

@@ -1,6 +1,6 @@
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import useFetch from '../hooks/useFetch';
-import { Barrel } from '../@types/barrel';
+import { Barrel, SendParamsType } from '../@types/barrel';
 import SendOut from '../components/barrel/SendOut';
 import Loading from '../components/Loading';
 import Return from '../components/barrel/Return';
@@ -9,10 +9,10 @@ import Button from '../components/Button';
 const BarrelUpdate = () => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
 
-  const url = `${serverBaseURL}/api/barrel/${location.state === "scanner" ? "id" : "number"}/${params.brl ? params.brl : ""}`;
+  const { params } = useOutletContext<SendParamsType>();
+
+  const url = `${serverBaseURL}/api/barrel/get/${params}`;
 
   const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
 
@@ -49,7 +49,7 @@ const BarrelUpdate = () => {
             handleClick={() => navigate("/") } />
         </div>
       )}
-      <p><Link to={`/history/${barrel._id}`}>see history</Link></p>
+      <p><Link to={`/barrel/history/${barrel.number}`}>see history</Link></p>
     </>
   )
 }

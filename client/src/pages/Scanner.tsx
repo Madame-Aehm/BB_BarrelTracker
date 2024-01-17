@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import PrefSwitch from '../components/scanner/PrefSwitch';
 import Manual from '../components/scanner/Manual';
 
-function Scanner() {
+type Props = {
+  to: string
+}
+
+function Scanner({ to }: Props) {
   const navigate = useNavigate();
   const existingPref = localStorage.getItem("pref");
   const [pref, setPref] = useState(existingPref ? existingPref : "scanner");
@@ -19,7 +23,7 @@ function Scanner() {
               if (result) {
                 console.log(result);
                 const text = result.getText();
-                navigate(`/barrel-update/${text}`, { state: "scanner" });
+                navigate(`/barrel/${to}/${text}`, { state: "scanner" });
               }
               if (error) {
                 console.log("scanning...");

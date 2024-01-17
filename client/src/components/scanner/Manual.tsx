@@ -23,7 +23,7 @@ const Manual = () => {
       setInvalid(true);
       setError(!barrel.current ? "Need a barrel number" : "No negative numbers ploise")
     } else {
-      navigate(`/barrel-update/${barrel.current}`);
+      navigate(`/barrel/update/${barrel.current}`);
     }
   }
 

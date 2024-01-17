@@ -8,6 +8,7 @@ interface ReturnData<T> {
   data: T | null
   error: string
   setError: Dispatch<React.SetStateAction<string>>
+  refetch: () => Promise<void>
 }
 
 const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
@@ -16,35 +17,43 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchData = async() => {
-      setLoading(true);
-      setData(null);
-      setError("");
-      const headers = authHeaders();
-      if (!headers) return setLoading(false);
-      try {
-        const response = await fetch(url, { headers });
-        if (response.ok) {
-          const result = await response.json() as T;
-          console.log(result);
-          setData(result);
-          if (delay === true) {
-            setTimeout(() => {
-              setLoading(false)
-            }, 1000);
-          } else setLoading(false)
-        } else {
-          await handleNotOK(response, setError, setLoading);
-        }
-      } catch (e) {
-        handleCatchError(e, setError, setLoading);
+  const fetchData = async() => {
+    setData(null);
+    setError("");
+    const headers = authHeaders();
+    if (!headers) return setLoading(false);
+    try {
+      const response = await fetch(url, { headers });
+      if (response.ok) {
+        const result = await response.json() as T;
+        console.log(result);
+        setData(result);
+        if (delay === true) {
+          setTimeout(() => {
+            setLoading(false)
+          }, 1000);
+        } else setLoading(false)
+      } else {
+        await handleNotOK(response, setError, setLoading);
       }
+    } catch (e) {
+      handleCatchError(e, setError, setLoading);
     }
-    if (url) fetchData().catch(e => {console.log(e); setLoading(false)});
-  }, [url, delay])
+  }
 
-  return { data, loading, setLoading, error, setError }
+  useEffect(() => {
+    if (url){ 
+      setLoading(true);
+      fetchData().catch(e => {
+      console.log(e); 
+      setLoading(false)
+    });}
+    else {
+      setLoading(false);
+    }
+  }, [url])
+
+  return { data, loading, setLoading, error, setError, refetch: fetchData }
 }
 
 export default useFetch

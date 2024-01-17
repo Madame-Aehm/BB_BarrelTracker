@@ -2,27 +2,23 @@ import Barrel from '../models/barrels.js'
 import localDate from '../utils/localDate.js';
 import { barrelDamagedEmail } from '../utils/sendEmail.js';
 
-const getBarrelById = async(req, res) => {
-  const id = req.params.id;
-  if (!id) return res.status(400).json({ error: "Barrel ID required" });
+const getBarrel = async(req, res) => {
+  const { params } = req.params;
+  let id;
+  let number;
+  if (params.split("=")[0] === "id") id = params.split("=")[1];
+  if (params.split("=")[0] === "number") number = params.split("=")[1];
+  if (!id && !number) return res.status(401).json({ error: "Need identifier" });
   try {
-    const barrel = await Barrel.findById(id, "-history");
-    if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
-    // if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
-    res.status(200).json(barrel);
-  } catch (e) {
-    res.status(500).json({ error: "Server Error" });
-  }
-}
-
-const getBarrelByNumber = async(req, res) => {
-  const number = Number(req.params.number);
-  if (!number) return res.status(400).json({ error: "Barrel Number required" });
-  try {
-    const barrel = await Barrel.findOne({ number: number }, "-history");
-    if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
-    // if (barrel.damaged) return res.status(401).json({ error: "Barrel marked as damaged - don't use." });
-    res.status(200).json(barrel);
+    if (id) {
+      const barrel = await Barrel.findById(id, "-history");
+      if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
+      res.status(200).json(barrel);
+    } else {
+      const barrel = await Barrel.findOne({ number: number }, "-history");
+      if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
+      res.status(200).json(barrel);
+    }
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
@@ -108,17 +104,26 @@ const requestDamageReview = async(req, res) => {
 
 
 const getHistory = async(req, res) => {
-  const { id } = req.params;
-  if (!id) return res.status(401).json({ error: "Need ID" });
+  const { params } = req.params;
+  let id;
+  let number;
+  if (params.split("=")[0] === "id") id = params.split("=")[1];
+  if (params.split("=")[0] === "number") number = params.split("=")[1];
+  if (!id && !number) return res.status(401).json({ error: "Need identifier" });
   try {
-    const barrel = await Barrel.findById(id);
-    if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
-    res.status(200).json(barrel);
+    if (id) {
+      const barrel = await Barrel.findById(id);
+      if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
+      res.status(200).json(barrel);
+    } else {
+      const barrel = await Barrel.findOne({ number: number });
+      if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
+      res.status(200).json(barrel);
+    }
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
   }
-  
 }
 
 const addBarrels = async(req, res) => {
@@ -142,7 +147,7 @@ const addBarrels = async(req, res) => {
       }).save())
     }
     await Promise.all(barrelsToAdd);
-    res.status(201).json({ message: `${number} new barrels successfully added` });
+    res.status(201).json({ message: `${number} new barrel${number === 1 ? "" : "s"} successfully added` });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
@@ -174,8 +179,6 @@ const getSingleID = async(req, res) => {
 }
 
 export { 
-  getBarrelById, 
-  getBarrelByNumber, 
   sendBarrel, 
   returnBarrel,
   reviewDamageRequest,
@@ -183,5 +186,6 @@ export {
   getHistory,
   addBarrels, 
   getAllBarrelIDS, 
-  getSingleID
+  getSingleID, 
+  getBarrel
  }

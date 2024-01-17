@@ -99,7 +99,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .container {
+  .card {
     border-color: var(--font-light);
   }
 }

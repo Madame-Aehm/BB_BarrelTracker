@@ -38,7 +38,7 @@ const NavBar = () => {
           label='admin' 
           handleClick={handleClick} 
           active={false} />
-        <NavIcon active={false} icon='logout' label='close' handleClick={close} />
+        <NavIcon active={false} icon='lock' label='lock' handleClick={close} />
       </nav>
       <div 
         className={`${layoutStyles.sidebarContainer} ${open ? layoutStyles.sidebarOpen : layoutStyles.sidebarClosed}`}
@@ -51,8 +51,8 @@ const NavBar = () => {
             </span>
             <div className={layoutStyles.innerMenuContainer}>
               <NavMenuItem to='/label-gen' title='Labels' icon='qr_code_scanner' />
-              <NavMenuItem to='' title='Barrels' icon='oil_barrel' />
-              <NavMenuItem to='' title='Customers' icon='group' />
+              <NavMenuItem to='/manage-barrels' title='Barrels' icon='oil_barrel' />
+              <NavMenuItem to='/manage-customers' title='Customers' icon='group' />
             </div>
           </div>
           <img src='bb_bean.png' style={{ width: "2rem", height: "auto", padding: "0.5rem" }}/>

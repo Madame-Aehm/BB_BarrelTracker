@@ -1,11 +1,11 @@
 import express from 'express'
-import { addBarrels, getAllBarrelIDS, getBarrelById, getBarrelByNumber, getHistory, getSingleID, requestDamageReview, returnBarrel, reviewDamageRequest, sendBarrel } from '../controllers/barrels.js';
+import { addBarrels, getAllBarrelIDS, getBarrel, getHistory, getSingleID, requestDamageReview, returnBarrel, reviewDamageRequest, sendBarrel } from '../controllers/barrels.js';
 
 const router = express.Router();
 
-// review before update
-router.get("/id/:id", getBarrelById);
-router.get("/number/:number", getBarrelByNumber);
+
+router.get("/get/:params", getBarrel);
+router.get("/history/:params", getHistory);
 
 router.post("/send", sendBarrel);
 router.post("/return", returnBarrel);
@@ -13,11 +13,8 @@ router.post("/return", returnBarrel);
 router.post("/review-damage", reviewDamageRequest);
 router.post("/request-damage-review", requestDamageReview);
 
-router.get("/history/:id", getHistory);
-
 router.post("/add", addBarrels);
 
-// for label generation
 router.get("/label/all", getAllBarrelIDS);
 router.get("/label/number/:number", getSingleID);
 

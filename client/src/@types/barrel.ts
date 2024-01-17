@@ -25,3 +25,7 @@ export interface Damage_Review {
 export interface BrlHistory extends Open {
   barrel?: number
 }
+
+export type SendParamsType = {
+  params: string
+}
