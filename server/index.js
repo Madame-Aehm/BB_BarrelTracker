@@ -25,7 +25,7 @@ app.use((req, _, next) => {
 app.use("/api/auth", authRouter);
 app.use("/api/barrel", authenticate, barrelRouter);
 app.use("/api/customer", authenticate, customerRouter);
-app.get("/api/version", (_, res) => res.send({ version: "2" })); // change this on on redeploy to trigger hard refresh and clear browser cache (hopefully)
+app.get("/api/version", (_, res) => res.send({ version: "3" })); // change this on on redeploy to trigger hard refresh and clear browser cache (hopefully)
 app.use('*', (_, res) => res.status(404).json({ error: "Endpoint not found." }));
 
 mongoose

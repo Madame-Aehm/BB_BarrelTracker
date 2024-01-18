@@ -5,9 +5,9 @@
   width: 100vw;
   height: 100vh;
   background-color: var(--font-light);
-  display: flex;
+  /* display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
 }
 
 .modal {
@@ -18,7 +18,71 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 90%;
+  position: absolute;
+  width: 350px;
+  max-width: 85%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  top: 20%
+}
+
+
+@keyframes enter {
+  from { 
+    opacity: 0;
+    top: 25%;
+   }
+   50% {
+    opacity: 1;
+   }
+  to { 
+    top: 20%;
+   }
+}
+
+.enter {
+  animation: enter 0.3s;
+}
+
+@keyframes exit {
+  from { 
+    opacity: 1;
+    top: 20%;
+   }
+   5% {
+    top: 28%;
+   }
+  to { 
+    top: -100%;
+    opacity: 0;
+   }
+}
+
+.exit {
+  animation: exit 0.8s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.fadeout {
+  animation: fade 0.3s;
+}
+
+.fadein {
+  animation: fade reverse 0.1s;
+}
+
+.hide {
+  display: none;
 }
 
 .close {
@@ -31,4 +95,15 @@
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .outerContainer {
+    background-color: rgba(39,39,39,0.87);
+  }
+  .modal {
+    border-color: var(--font-light);
+    background-color: var(--font-dark);
+  }
 }

@@ -39,7 +39,7 @@
 }
 
 .sidebarContainer {
-  height: 40vh;
+  height: 18rem;
   width: 100vw;
   max-width: 600px;
   position: fixed;
@@ -56,13 +56,13 @@
 }
 
 .sidebarOpen {
-  top: 0vh;
-  transition: top 1s;
+  top: 0;
+  transition: top 0.5s;
 }
 
 .sidebarClosed {
-  top: -45vh;
-  transition: top 1s;
+  top: -20rem;
+  transition: top 0.5s;
 }
 
 .innerMenuWrapper {

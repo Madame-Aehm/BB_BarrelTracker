@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import modalStyles from '../styles/modal.module.css'
 
 interface Props extends PropsWithChildren {
@@ -7,9 +7,18 @@ interface Props extends PropsWithChildren {
 }
 
 const Modal = ({ open, setOpen, children }: Props) => {
-  if (open) return (
-    <div className={modalStyles.outerContainer} onClick={() => setOpen(false)}>
-      <div className={modalStyles.modal} onClick={(e) => e.stopPropagation()}>
+  const [closed, setClosed] = useState(true);
+
+  useEffect(() => {
+    if (open) setClosed(false);
+    else setTimeout(() => {
+        setClosed(true);
+      }, 250)
+  }, [open])
+
+   return (
+    <div className={`${modalStyles.outerContainer} ${open ? "" : modalStyles.fadeout} ${closed ? modalStyles.hide : ""}`} onClick={() => setOpen(false)}>
+      <div className={`${modalStyles.modal} ${open ? modalStyles.enter : modalStyles.exit}`} onClick={(e) => e.stopPropagation()}>
         <div 
           className={`material-symbols-outlined ${modalStyles.close}`}
           onClick={() => setOpen(false)}>
