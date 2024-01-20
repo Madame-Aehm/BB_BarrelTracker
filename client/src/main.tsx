@@ -11,7 +11,6 @@ import Damage from './pages/Damage.tsx'
 import History from './pages/History.tsx'
 import NavLayout from './components/layout/NavLayout.tsx'
 import PlainLayout from './components/layout/PlainLayout.tsx'
-import PlainLayoutTop from './components/layout/PlainLayoutTop.tsx'
 import { CustomerContextProvider } from './context/CustomerContext.tsx'
 import BarrelPage from './pages/Barrel.tsx'
 import ManageBarrels from './pages/ManageBarrels.tsx'
@@ -63,17 +62,17 @@ const router = createBrowserRouter([{
             },
             {
               path: "history/:brl",
-              element: <PlainLayoutTop><History /></PlainLayoutTop>
+              element: <PlainLayout top={true}><History /></PlainLayout>
             }
           ]
         },
         {
           path: "/report-damage",
-          element: <Damage />
+          element: <PlainLayout><Damage /></PlainLayout>
         },
         {
           path: "*",
-          element: <Error404 />
+          element: <PlainLayout><Error404 /></PlainLayout>
         }
       ]
     },

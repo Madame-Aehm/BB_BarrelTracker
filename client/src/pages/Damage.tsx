@@ -75,7 +75,7 @@ function Damage() {
           className={`${barrelStyles.input} ${barrelStyles.textarea}`}
           placeholder="If you have any notes to provide, please add them here (optional)"/>
         <div className={barrelStyles.centerButton}>
-          <CancelButton customReturn={`/barrel-update/${state.barrel.number}`} />
+          <CancelButton  />
           <Button
             loading={loading}
             title="Submit"

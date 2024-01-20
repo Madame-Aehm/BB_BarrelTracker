@@ -1,15 +1,11 @@
 import { useNavigate } from "react-router-dom"
 
-type Props = {
-  customReturn?: string
-}
-
-const CancelButton = ({ customReturn }: Props) => {
+const CancelButton = () => {
   const navigate = useNavigate();
   return (
     <button 
       className='cancelButton'
-      onClick={() => navigate(`${customReturn ? customReturn : "/"}`)}>
+      onClick={() => navigate(-1)}>
         Cancel
     </button>
   )
