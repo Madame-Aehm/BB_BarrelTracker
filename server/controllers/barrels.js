@@ -46,7 +46,7 @@ const returnBarrel = async(req, res) => {
   if (!id || !open) return res.status(401).json({ error: "Missing fields" });
   try {
     const barrel = await Barrel.findByIdAndUpdate(id, {
-      $push: { history: { ...open, returned: localDate(new Date()) } },
+      $push: { history: { $each: [{ ...open, returned: localDate(new Date()) }], $position: 0 } },
       home: true,
       open: null
     }, { new: true, select: "_id" });
@@ -68,7 +68,7 @@ const reviewDamageRequest = async(req, res) => {
     }
     if (response) trackDamage.response = response;
     const barrel = await Barrel.findByIdAndUpdate(id, {
-      $push: { history: { ...open, damage_review: trackDamage } },
+      $push: { history: { $each: [{ ...open, damage_review: trackDamage }], $position: 0 }},
       damaged,
       open: null
     }, { new: true, select: "_id number" });
@@ -110,11 +110,11 @@ const getHistory = async(req, res) => {
   if (!id && !number) return res.status(401).json({ error: "Need identifier" });
   try {
     if (id) {
-      const barrel = await Barrel.findById(id);
+      const barrel = await Barrel.findById(id).sort({ createdAt: 'asc' });
       if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
       res.status(200).json(barrel);
     } else {
-      const barrel = await Barrel.findOne({ number: number });
+      const barrel = await Barrel.findOne({ number: number }).sort({ createdAt: 'asc' });
       if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
       res.status(200).json(barrel);
     }
