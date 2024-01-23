@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
 
+const damageReviewSchema = new mongoose.Schema({
+  comments: { type: String },
+  closed: { type: Date },
+  response: { type: String }
+}, { timestamps: true })
+
 const historySchema = new mongoose.Schema({  
   customer: { type: String, required: true },
   invoice: { type: String, required: true },
   returned: { type: Date },
-  damage_review: {
-    type: Object, 
-    opened: { type: Date, required: true },
-    comments: { type: String },
-    closed: { type: Date },
-    response: { type: String }
-  }
+  damage_review: damageReviewSchema
 }, { timestamps: true });
 
 const barrelSchema = new mongoose.Schema({

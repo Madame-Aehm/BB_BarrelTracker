@@ -39,9 +39,13 @@ const HistoryCard = ({ history }: Props) => {
               <>
                 <hr className={historyStyles.hr}></hr>
                 <b>Damage Report</b>
-                <div className={`${historyStyles.displayCurrent} ${barrelStyles.gap1}`}>
-                  <b>Date: </b>
-                  <p>{ formatDate(history.damage_review.opened) }</p>
+                <div className={`${historyStyles.displayCurrent}`}>
+                  <b>Opened: </b>
+                  <p>{ formatDate(history.damage_review.createdAt) }</p>
+                  { history.damage_review.closed && <>
+                    <b>Resolved: </b>
+                    <p>{ formatDate(history.damage_review.closed) }</p>
+                  </> }
                   { history.damage_review.comments && <>
                     <b className={historyStyles.js}>Comments: </b>
                     <div>

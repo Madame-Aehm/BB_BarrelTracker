@@ -60,7 +60,7 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
     <>
       <div className={`${barrelStyles.atHome} ${barrelStyles.width80}`}>
           <h2 className={barrelStyles.rbm}>Damage Review Request</h2>
-          <p className={barrelStyles.when}>on { formatDate(damage_review.opened) } </p>
+          <p className={barrelStyles.when}>on { formatDate(damage_review.createdAt) } </p>
           { damage_review.comments && 
             <div>
               <h3>Comments: </h3>

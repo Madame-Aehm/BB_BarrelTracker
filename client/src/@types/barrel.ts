@@ -16,7 +16,7 @@ export interface Open {
 }
 
 export interface Damage_Review {
-  opened: string
+  createdAt: string
   closed?: string
   comments?: string
   response?: string

@@ -64,8 +64,7 @@ const reviewDamageRequest = async(req, res) => {
   try {
     const trackDamage = {
       ...open.damage_review,
-      closed: localDate(new Date()),
-      opened: localDate(new Date(open.opened)),
+      closed: localDate(new Date())
     }
     if (response) trackDamage.response = response;
     const barrel = await Barrel.findByIdAndUpdate(id, {
@@ -85,10 +84,9 @@ const reviewDamageRequest = async(req, res) => {
 const requestDamageReview = async(req, res) => {
   const { id, comments } = req.body;
   if (!id) return res.status(401).json({ error: "Need ID" });
-  const damage_review = {
-    opened: localDate(new Date()),
-  }
+  const damage_review = {}
   if (comments) damage_review.comments = comments;
+  console.log(damage_review)
   try {
     const barrel = await Barrel.findByIdAndUpdate(id, {
       'open.damage_review': damage_review,
