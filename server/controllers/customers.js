@@ -1,6 +1,6 @@
 import Customer from '../models/customers.js';
 import Barrel from '../models/barrels.js';
-import customerCache from '../utils/cache.js';
+import customerCache from '../config/cache.js';
 
 const getCustomers = async(_, res) => {
   try {

@@ -83,6 +83,8 @@ const reviewDamageRequest = async(req, res) => {
 
 const requestDamageReview = async(req, res) => {
   const { id, comments } = req.body;
+  const { image } = req.file;
+  const test = req.files;
   if (!id) return res.status(401).json({ error: "Need ID" });
   const damage_review = {}
   if (comments) damage_review.comments = comments;
