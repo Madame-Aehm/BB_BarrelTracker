@@ -1,6 +1,7 @@
 import Barrel from '../models/barrels.js'
 import localDate from '../utils/localDate.js';
 import { barrelDamagedEmail } from '../utils/sendEmail.js';
+import { v2 as cloudinary } from "cloudinary";
 
 const getBarrel = async(req, res) => {
   const { params } = req.params;
@@ -83,13 +84,16 @@ const reviewDamageRequest = async(req, res) => {
 
 const requestDamageReview = async(req, res) => {
   const { id, comments } = req.body;
-  const { image } = req.file;
-  const test = req.files;
   if (!id) return res.status(401).json({ error: "Need ID" });
   const damage_review = {}
   if (comments) damage_review.comments = comments;
-  console.log(damage_review)
   try {
+    if (req.files) {
+      const promises = req.files.map((file) => cloudinary.uploader.upload(file.path, { folder: "bb_tracker" }))
+      const images = await Promise.all(promises);
+      const relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }})
+      damage_review.images = relevantFields;
+    }
     const barrel = await Barrel.findByIdAndUpdate(id, {
       'open.damage_review': damage_review,
       'open.returned': localDate(new Date())

@@ -1,4 +1,4 @@
-import { encrypt, verify } from '../config/bcrypt.js';
+import { encrypt, verify } from '../utils/bcrypt.js';
 import Auth from '../models/auth.js';
 import { generateToken } from '../utils/jwt.js';
 import localDate from "../utils/localDate.js";

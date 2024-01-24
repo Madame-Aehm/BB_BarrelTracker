@@ -20,6 +20,11 @@ export interface Damage_Review {
   closed?: string
   comments?: string
   response?: string
+  images: [{
+    public_id: string
+    url: string
+    _id: string
+  }]
 }
 
 export interface BrlHistory extends Open {

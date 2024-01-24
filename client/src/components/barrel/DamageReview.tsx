@@ -9,6 +9,7 @@ import authHeaders from '../../utils/authHeaders'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import { OK } from '../../@types/auth'
 import CancelButton from './CancelButton'
+import DamageImages from './DamageImages'
 
 type Props = {
   barrel: Barrel
@@ -67,6 +68,9 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
               <p className={barrelStyles.pre}>{ damage_review.comments }</p>
             </div> 
           }
+          { damage_review.images.length > 0 ? 
+            <DamageImages images={damage_review.images} /> 
+          : null }
       
         <textarea 
           className={`${barrelStyles.input} ${barrelStyles.textarea}`}
