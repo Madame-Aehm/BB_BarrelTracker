@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config'
 
-const barrelDamagedEmail = async(barrel, comments) => {
+const barrelDamagedEmail = async(barrel, comments, images) => {
   const mailOptions = {
     from: '"bbbt.damagereview"',
     to: process.env.POC_EMAIL,
@@ -11,6 +11,7 @@ const barrelDamagedEmail = async(barrel, comments) => {
       <p><b>Customer: </b>${barrel.open.customer}</p>
       <p><b>Invoice: </b>${barrel.open.invoice}</p>
       ${ !comments ? "" : `<p><b>Comments: </b>${comments}</p>`} 
+      ${ images ? images.map((img => `<img src="${img.url}" style="width:300px;height:auto" />`)) : "" }
     `
   };
   return await sendEmail(mailOptions)
