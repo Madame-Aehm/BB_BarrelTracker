@@ -20,13 +20,19 @@ function Damage() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const comments = useRef("");
+  const files = useRef<FileList | null>(null);
 
   const submitRequest = async() => {
     if (!state) return
     setLoading(true);
-    const body = new URLSearchParams();
+    const body = new FormData();
     body.append("id", state.barrel._id);
     if (comments.current) body.append("comments", comments.current);
+    if (files.current) {
+      Array.from(files.current).forEach((file) => {
+        body.append("images", file);
+      })
+    }
     const headers = authHeaders();
     if (!headers) return
     try {
@@ -45,7 +51,13 @@ function Damage() {
     }
   }
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const fileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      files.current = e.target.files;
+    }
+  } 
+
+  const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     comments.current = e.target.value;
   }
 
@@ -71,16 +83,22 @@ function Damage() {
       <h1>Request Damage Review</h1>
       <div className={`${barrelStyles.atHome} ${barrelStyles.gap1} ${barrelStyles.width80}`}>
         <textarea 
-          onChange={handleChange}
+          onChange={handleTextChange}
           className={`${barrelStyles.input} ${barrelStyles.textarea}`}
           placeholder="If you have any notes to provide, please add them here (optional)"/>
+        <input 
+          type="file" 
+          accept="image/png, image/jpeg, image/jpg" 
+          onChange={fileChange}
+          multiple />
         <div className={barrelStyles.centerButton}>
           <CancelButton  />
           <Button
             loading={loading}
             title="Submit"
             styleOverride={{ width: "10rem", height: "4rem" }} 
-            handleClick={submitRequest}/>
+            handleClick={submitRequest}
+          />
         </div>
       </div>
     </>

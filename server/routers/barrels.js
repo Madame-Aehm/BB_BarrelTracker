@@ -1,5 +1,6 @@
 import express from 'express'
 import { addBarrels, getAllBarrelIDS, getBarrel, getHistory, getSingleID, requestDamageReview, returnBarrel, reviewDamageRequest, sendBarrel } from '../controllers/barrels.js';
+import { upload } from '../config/multer.js';
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post("/send", sendBarrel);
 router.post("/return", returnBarrel);
 
 router.post("/review-damage", reviewDamageRequest);
-router.post("/request-damage-review", requestDamageReview);
+router.post("/request-damage-review", upload.any('images'), requestDamageReview);
 
 router.post("/add", addBarrels);
 
