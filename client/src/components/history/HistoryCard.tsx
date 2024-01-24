@@ -2,6 +2,7 @@ import { useState } from 'react'
 import historyStyles from '../../styles/history.module.css'
 import { BrlHistory } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
+import DamageImages from '../barrel/DamageImages'
 
 type Props = {
   history: BrlHistory
@@ -57,6 +58,9 @@ const HistoryCard = ({ history }: Props) => {
                       <p className={historyStyles.pre}>{ history.damage_review.response }</p> 
                     </div>
                   </>}
+                  { history.damage_review.images.length > 0 ? 
+                    <DamageImages images={history.damage_review.images} /> 
+                  : null }
                 </div> 
               </>
             }

@@ -3,7 +3,11 @@ import mongoose from 'mongoose';
 const damageReviewSchema = new mongoose.Schema({
   comments: { type: String },
   closed: { type: Date },
-  response: { type: String }
+  response: { type: String },
+  images: [{ 
+    public_id: { type: String, required: true },
+    url: { type: String, required: true }
+   }]
 }, { timestamps: true })
 
 const historySchema = new mongoose.Schema({  
