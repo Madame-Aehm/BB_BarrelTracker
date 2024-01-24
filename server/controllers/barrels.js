@@ -88,17 +88,18 @@ const requestDamageReview = async(req, res) => {
   const damage_review = {}
   if (comments) damage_review.comments = comments;
   try {
+    let relevantFields;
     if (req.files) {
       const promises = req.files.map((file) => cloudinary.uploader.upload(file.path, { folder: "bb_tracker" }))
       const images = await Promise.all(promises);
-      const relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }})
+      relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }})
       damage_review.images = relevantFields;
     }
     const barrel = await Barrel.findByIdAndUpdate(id, {
       'open.damage_review': damage_review,
       'open.returned': localDate(new Date())
     }, { new: true, select: "-history" });
-    const emailSent = await barrelDamagedEmail(barrel, comments);
+    const emailSent = await barrelDamagedEmail(barrel, comments, relevantFields);
     res.status(200).json({ message: `Barrel submitted for damage review. ${emailSent ? "An email has been sent to Pablo." : "Email couldn't send - please inform Pablo."}` })
   } catch (e) {
     console.log(e);
