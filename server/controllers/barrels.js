@@ -92,6 +92,7 @@ const requestDamageReview = async(req, res) => {
     if (req.files) {
       const promises = req.files.map((file) => cloudinary.uploader.upload(file.path, { folder: "bb_tracker" }))
       const images = await Promise.all(promises);
+      console.log("images", images);
       relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }})
       damage_review.images = relevantFields;
     }
