@@ -10,10 +10,14 @@ const Modal = ({ open, setOpen, children }: Props) => {
   const [closed, setClosed] = useState(true);
 
   useEffect(() => {
-    if (open) setClosed(false);
+    if (open) {
+      setClosed(false);
+      document.body.style.overflow = "hidden";
+    }
     else setTimeout(() => {
-        setClosed(true);
-      }, 250)
+      setClosed(true);
+      document.body.style.overflow = "scroll";
+    }, 250)
   }, [open])
 
    return (

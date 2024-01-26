@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import authHeaders from "../utils/authHeaders";
 import { handleCatchError, handleNotOK } from "../utils/handleFetchFail";
 import { OK } from "../@types/auth";
+import { compressImage } from "../utils/images";
 
 interface locationState {
   state: { barrel: Barrel } | null
@@ -28,14 +29,15 @@ function Damage() {
     const body = new FormData();
     body.append("id", state.barrel._id);
     if (comments.current) body.append("comments", comments.current);
-    if (files.current) {
-      Array.from(files.current).forEach((file) => {
-        body.append("images", file);
-      })
-    }
     const headers = authHeaders();
     if (!headers) return
     try {
+      if (files.current) {
+        const toCompress = Array.from(files.current).map((file) => compressImage(file));
+        (await Promise.all(toCompress)).forEach((file) => {
+          body.append("images", file);
+        })
+      }
       const response = await fetch(`${serverBaseURL}/api/barrel/request-damage-review`, { headers, body, method: "POST" });
       if (response.ok) {
         const result = await response.json() as OK;
@@ -90,7 +92,8 @@ function Damage() {
           type="file" 
           accept="image/png, image/jpeg, image/jpg" 
           onChange={fileChange}
-          multiple />
+          multiple 
+          style={{ padding: "1rem" }} />
         <div className={barrelStyles.centerButton}>
           <CancelButton  />
           <Button
