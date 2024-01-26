@@ -5,9 +5,7 @@
   width: 100vw;
   height: 100vh;
   background-color: var(--font-light);
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
+  z-index: 5;
 }
 
 .modal {
@@ -25,20 +23,20 @@
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  top: 20%
+  top: 10%
 }
 
 
 @keyframes enter {
   from { 
     opacity: 0;
-    top: 25%;
+    top: 15%;
    }
    50% {
     opacity: 1;
    }
   to { 
-    top: 20%;
+    top: 10%;
    }
 }
 
@@ -49,7 +47,7 @@
 @keyframes exit {
   from { 
     opacity: 1;
-    top: 20%;
+    top: 10%;
    }
    5% {
     top: 28%;
