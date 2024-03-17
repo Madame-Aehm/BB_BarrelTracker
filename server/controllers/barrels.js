@@ -116,16 +116,12 @@ const getHistory = async(req, res) => {
   if (params.split("=")[0] === "id") id = params.split("=")[1];
   if (params.split("=")[0] === "number") number = params.split("=")[1];
   if (!id && !number) return res.status(401).json({ error: "Need identifier" });
+  console.log(id, number);
   try {
-    if (id) {
-      const barrel = await Barrel.findById(id).sort({ createdAt: 'asc' });
-      if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
-      res.status(200).json(barrel);
-    } else {
-      const barrel = await Barrel.findOne({ number: number }).sort({ createdAt: 'asc' });
-      if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
-      res.status(200).json(barrel);
-    }
+    const barrel = await Barrel.findOne({ $or: [{ _id: id }, { number }] });
+    console.log("found this barrel", barrel);
+    if (!barrel) return res.status(404).json({ error: "No barrel could be found" });
+    res.status(200).json(barrel);
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
@@ -160,6 +156,16 @@ const addBarrels = async(req, res) => {
   }
 }
 
+const manageAll = async(_, res) => {
+  try {
+    const barrels = await Barrel.find({}, "-history").sort({ number: "desc" });
+    res.status(200).json(barrels);
+  } catch (error) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
 const getAllBarrelIDS = async(_, res) => {
   try {
     const ids = await Barrel.find({}, "_id number").sort({ number: "asc" });
@@ -167,7 +173,6 @@ const getAllBarrelIDS = async(_, res) => {
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
-
   }
 }
 
@@ -191,6 +196,7 @@ export {
   requestDamageReview,
   getHistory,
   addBarrels, 
+  manageAll,
   getAllBarrelIDS, 
   getSingleID, 
   getBarrel

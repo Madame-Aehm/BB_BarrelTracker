@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { LabelType } from "../@types/labels";
 import Modal from "../components/Modal";
 import BarrelListItem from "../components/barrel/BarrelListItem";
 import useFetch from "../hooks/useFetch";
 import AddNew from "../components/barrel/AddNew";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
+import { Barrel } from "../@types/barrel";
+import historyStyles from "../styles/history.module.css"
 
 
 const ManageBarrels = () => {
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-  const { data, loading, error, refetch } = useFetch<LabelType[]>(`${serverBaseURL}/api/barrel/label/all`);
+  const { data, loading, error, refetch } = useFetch<Barrel[]>(`${serverBaseURL}/api/barrel/manage-all`);
   const [openNew, setOpenNew] = useState(false);
   if (loading) return <Loading />
   return (
-    <div>
+    <div className={historyStyles.container}>
       <h1>Manage Barrels</h1>
       <p className="error">{ error }</p>
       <h2>Still under construction... <span className={"material-symbols-outlined"}>handyman</span></h2>
@@ -28,8 +29,9 @@ const ManageBarrels = () => {
       </Modal>
       <h2>Existing Barrels:</h2>
       { data && data.map((b) => {
-        return <BarrelListItem key={b._id} barrel={b} />
-      }) }  
+        return <BarrelListItem key={b._id} barrel={b} barrelNumbers={data.map((b) => b.number)} />
+      }) } 
+       
     </div>
   )
 }

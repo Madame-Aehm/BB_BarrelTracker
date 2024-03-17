@@ -61,7 +61,7 @@ function Return({ open, barrel, loading, setLoading, setError }: Props) {
         <p>{ open.customer }</p> 
         <h3>Invoice: </h3>
         <p>{ open.invoice }</p>
-        <h3>Since: </h3> 
+        <h3>Sent: </h3> 
         <p>{ formatDate(open.createdAt) }</p>
       </div>
       { open.damage_review ? (

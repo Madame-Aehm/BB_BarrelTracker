@@ -17,7 +17,7 @@ const DamageImages = ({ images }: Props) => {
         <Button 
           loading={false}
           title="See Pictures"
-          styleOverride={{ fontSize: "small", width: "8rem", height: "2rem", marginBottom: "1rem" }}
+          styleOverride={{ fontSize: "small", width: "8rem", height: "2rem", margin: "1rem 0" }}
           handleClick={() => setOpen(true)}
         />
         <Modal open={open} setOpen={setOpen}>

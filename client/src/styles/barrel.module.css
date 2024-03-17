@@ -62,10 +62,6 @@
   font-size: large;
 }
 
-.invalid {
-  border-color: tomato;
-}
-
 .textarea {
   min-height: 150px;
 }

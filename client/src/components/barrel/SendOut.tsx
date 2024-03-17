@@ -27,6 +27,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const inputValues = useRef({ invoice: "", customer: "" });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    console.log("event triggered");
     if (e.target.id === "invoice") inputValues.current.invoice = e.target.value;
     if (e.target.id === "customer") inputValues.current.customer = e.target.value;
     if (invalid.customer || invalid.invoice) {
@@ -80,13 +81,13 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
         <select 
           id='customer' 
           onChange={handleChange} 
-          className={`${barrelStyles.input} ${invalid.customer ? barrelStyles.invalid : ""}`}>
+          className={`${barrelStyles.input} ${invalid.customer ? "invalid" : ""}`}>
           <option value="">Choose Customer</option>
           { customers.map((c) => <option key={c._id} value={c.name}>{c.name}</option>) }
         </select>
         <input 
           id='invoice'
-          className={`${barrelStyles.input} ${invalid.invoice ? barrelStyles.invalid : ""}`} 
+          className={`${barrelStyles.input} ${invalid.invoice ? "invalid" : ""}`} 
           placeholder="Enter Invoice" 
           onChange={handleChange} />
         <div className={barrelStyles.centerButton}>

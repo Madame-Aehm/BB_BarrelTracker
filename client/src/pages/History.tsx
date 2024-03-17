@@ -26,10 +26,10 @@ function History() {
         handleClick={() => navigate(-1)} />
       <h1>Barrel #{data.number}</h1>
       { (data.history && !data.history.length && !data.open) && <p>No history</p> }
-      { data.open && <HistoryCard key={data.open._id} history={data.open} /> }
+      { data.open && <HistoryCard key={data.open._id} history={data.open} brl={data.number} /> }
       <div className={historyStyles.container}>
         { data.history && data.history.map((h) => {
-          return <HistoryCard key={h._id} history={h} />
+          return <HistoryCard key={h._id} history={h} brl={data.number} />
         }) }
       </div>
       <ToTop />

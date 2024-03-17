@@ -25,7 +25,7 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
       const headers = authHeaders();
       if (!headers) return
       try {
-        const response = await fetch(`${serverBaseURL}/api/customer/all`, { headers });
+        const response = await fetch(`${serverBaseURL}/api/customer/active`, { headers });
         if (response.ok) {
           const result = await response.json() as Customer[];
           setCustomers(result);

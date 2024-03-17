@@ -43,7 +43,6 @@ const LabelMenu = ({ loadingControl, setUrl, setError }: Props) => {
   }
 
   useEffect(() => {
-    console.log(loadingControl)
     if (!loadingControl) {
       setLoading("");
     }
