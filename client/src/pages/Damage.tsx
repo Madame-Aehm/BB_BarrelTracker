@@ -70,7 +70,6 @@ function Damage() {
         <div>
           <p className={barrelStyles.sideMargins}>{ successMessage }</p>
           <Button 
-            loading={false}
             title="OK"
             styleOverride={{ width: "10rem", height: "4rem", marginTop: "1rem" }} 
             handleClick={() => navigate("/", { replace: true })} />

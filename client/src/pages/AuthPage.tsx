@@ -7,12 +7,12 @@ import { AuthContext } from '../context/AuthContext';
 import Loading from '../components/Loading';
 
 const AuthPage = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth, loading: activeAuthCheck } = useContext(AuthContext);
 
   const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const defaultError = { 1: false, 2: false, 3: false, 4: false, message: "" };
   const [error, setError] = useState<PinError>(defaultError);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
 
 
@@ -41,7 +41,7 @@ const AuthPage = () => {
     }
   }
 
-  if (loading) return <Loading />
+  if (loading || activeAuthCheck) return <Loading />
 
   return (
     <main className={`${layoutStyles.main} ${layoutStyles.trueCenter}`}>

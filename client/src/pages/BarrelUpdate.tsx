@@ -43,7 +43,6 @@ const BarrelUpdate = () => {
         <div>
           <h4 >Barrel is marked as <span className='error'>damaged</span>. Don't use!</h4>
           <Button 
-            loading={false}
             title='OK'
             styleOverride={{ width: "10rem", height: "4rem" }}
             handleClick={() => navigate("/") } />

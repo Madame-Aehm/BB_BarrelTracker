@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import historyStyles from '../../styles/history.module.css'
+import barrelStyles from '../../styles/barrel.module.css'
 import { Barrel } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import Button from '../Button'
@@ -21,7 +22,10 @@ const BarrelListItem = ({ barrel, barrelNumbers }: Props) => {
       <h4 className={historyStyles.h}>Barrel #{ barrel.number }</h4>
       <span className={historyStyles.icon}>
           { barrel.damaged && 
-            <span className={`material-symbols-outlined`} title='Retired'>report</span> 
+            <span className={`material-symbols-outlined`} title='Retired'>do_not_disturb_on</span> 
+          }
+          { barrel.open?.damage_review &&
+            <span className={`material-symbols-outlined`} title='Damage Reported'>report</span>
           }
           <span className={`material-symbols-outlined ${historyStyles.arrow} ${open ? historyStyles.openArrow : historyStyles.closedArrow}`}>
               keyboard_arrow_down
@@ -36,8 +40,8 @@ const BarrelListItem = ({ barrel, barrelNumbers }: Props) => {
             { !barrel.open ? 
               <p className={historyStyles.pre}>{ barrel.damaged ? "Retired" : "Home" }</p>
             : <>
-                <p className={historyStyles.pre} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                  { barrel.open.customer } 
+                <p className={barrelStyles.listItemText}>
+                  { barrel.open.returned ? "Home" : barrel.open.customer } 
                   {" "}({ barrel.open.invoice })
                   { barrel.open.damage_review && <span className={`material-symbols-outlined`} title='Damage reported'>report</span> }
                   { barrel.open && 
@@ -49,7 +53,6 @@ const BarrelListItem = ({ barrel, barrelNumbers }: Props) => {
             }
             <EditBarrel barrel={barrel} barrelNumbers={barrelNumbers} />
             <Button 
-              loading={false}
               title={"View Histories"}
               styleOverride={{ fontSize: "small", width: "8rem", height: "2rem", margin: "1rem 0" }}
               handleClick={() => navigate(`/barrel/history/${barrel.number}`)}

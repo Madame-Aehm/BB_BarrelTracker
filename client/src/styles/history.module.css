@@ -98,6 +98,58 @@
   align-self: start;
 }
 
+.editBarrelFormContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editBarrelInputLabel {
+  font-size: large;
+  font-weight: bold;
+  text-align: left;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.editBarrelInputLabel:not(.checked):not(.unChecked) {
+  padding-bottom: 0;
+}
+
+.editBarrelInput {
+  padding: 1rem; 
+  font-size: x-large; 
+}
+
+.legend {
+  margin: 0 1rem;
+}
+
+input.editBarrelInput[type="radio"] {
+  display: none;
+}
+
+.checked {
+  color: var(--bb-blue);
+  border: solid 3px var(--bb-blue);
+  border-radius: 0.5rem;
+}
+
+.unChecked {
+  color: dimgrey;
+}
+
+.radioContainer {
+  display: flex; 
+  justify-content: space-around;
+}
+
+.deleteOpen {
+  align-self: flex-end;
+  cursor: pointer;
+  color: tomato;
+}
+
 @media (prefers-color-scheme: dark) {
   .card {
     border-color: var(--font-light);

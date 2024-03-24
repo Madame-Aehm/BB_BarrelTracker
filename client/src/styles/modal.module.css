@@ -23,8 +23,22 @@
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  top: 10%
+  top: 10%;
+  max-height: 70vh;
+  overflow-y: auto;
 }
+
+.modal::-webkit-scrollbar {
+  display: none;
+}
+
+.imagesScroller {
+  width: 90%; 
+  overflow: auto;
+  display: flex;
+}
+
+
 
 
 @keyframes enter {
@@ -104,5 +118,11 @@
   .modal {
     border-color: var(--font-light);
     background-color: var(--font-dark);
+  }
+}
+
+@media not (any-hover: hover) {
+  .imagesScroller::-webkit-scrollbar {
+    display: none;
   }
 }

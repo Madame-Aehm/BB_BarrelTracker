@@ -21,7 +21,6 @@ function History() {
     <>
       <Button 
         styleOverride={{ width: "10rem", height: "4rem", alignSelf: "flex-start", margin: "1rem", marginBottom: "0" }}
-        loading={false}
         title="Back"
         handleClick={() => navigate(-1)} />
       <h1>Barrel #{data.number}</h1>

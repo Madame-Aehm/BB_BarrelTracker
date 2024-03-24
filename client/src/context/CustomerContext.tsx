@@ -37,8 +37,9 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
         console.log(e);
       }
     } 
-
-    getCustomers().catch((e) => console.log(e))
+    if (auth) {
+      getCustomers().catch((e) => console.log(e))
+    }
   }, [auth])
 
   return <CustomerContext.Provider value={{ customers }}>{ children }</CustomerContext.Provider>

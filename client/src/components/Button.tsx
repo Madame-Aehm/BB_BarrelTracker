@@ -2,7 +2,7 @@ import { CSSProperties } from "react"
 
 
 type Props = {
-  loading: boolean
+  loading?: boolean
   handleClick?: () => Promise<void> | void
   styleOverride?: CSSProperties
   title: string

@@ -20,7 +20,6 @@ const ManageBarrels = () => {
       <p className="error">{ error }</p>
       <h2>Still under construction... <span className={"material-symbols-outlined"}>handyman</span></h2>
       <Button 
-        loading={false}
         title={"Add Barrels"}
         styleOverride={{ width: "12rem", height: "4rem" }}
         handleClick={() => {console.log("log");setOpenNew(true)}} />

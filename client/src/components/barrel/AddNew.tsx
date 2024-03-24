@@ -58,7 +58,6 @@ const AddNew = ({ setOpen, refetch }: Props) => {
           <h2>{ success }</h2>
           <Button 
             title='OK'
-            loading={false}
             styleOverride={{ width: "6rem", height: "4rem" }}
             handleClick={() => setOpen(false)} />
         </div> : 
