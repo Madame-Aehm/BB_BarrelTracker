@@ -102,6 +102,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+}
+
+.activeInvoice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .editBarrelInputLabel {
@@ -116,17 +124,8 @@
   padding-bottom: 0;
 }
 
-.editBarrelInput {
-  padding: 1rem; 
-  font-size: x-large; 
-}
-
 .legend {
   margin: 0 1rem;
-}
-
-input.editBarrelInput[type="radio"] {
-  display: none;
 }
 
 .checked {
@@ -150,8 +149,31 @@ input.editBarrelInput[type="radio"] {
   color: tomato;
 }
 
+.imgThumbnailContainer {
+  display: flex; 
+  padding: 1rem;
+}
+
+.imgThumbnailIcon {
+  background-color: #fff;
+  border-radius: 50%; 
+  align-self: flex-start;
+  margin-top: -0.6rem;
+  margin-left: -0.8rem;
+  padding: 0.2rem;
+}
+
+.imgThumbnailWrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
 @media (prefers-color-scheme: dark) {
   .card {
     border-color: var(--font-light);
+  }
+  .imgThumbnailIcon {
+    background-color: var(--font-dark);
   }
 }

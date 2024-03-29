@@ -13,7 +13,7 @@ function History() {
   const { params } = useOutletContext<SendParamsType>();
   const navigate = useNavigate();
 
-  const { data, error, loading } = useFetch<Barrel>(`${serverBaseURL}/api/barrel/history/${params}`);
+  const { data, error, loading } = useFetch<Barrel>(`${serverBaseURL}/api/barrel/get/?${params}&history=true`);
 
   if (error) return <div>Something went wrong....</div>
   if (loading) return <Loading />

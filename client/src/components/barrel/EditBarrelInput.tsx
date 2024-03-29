@@ -1,5 +1,6 @@
 import authStyles from '../../styles/auth.module.css'
 import historyStyles from '../../styles/history.module.css'
+import barrelStyles from '../../styles/barrel.module.css'
 
 type Props = {
   label: string
@@ -24,7 +25,7 @@ const EditBarrelInput = ({ label, type, identifier, value, checked, validation, 
             { label }
           </label>
         <input
-          className={`${validation ? "invalid" : "valid"} ${historyStyles.editBarrelInput}` }
+          className={`${validation ? "invalid" : "valid"} ${barrelStyles.input}`}
           id={identifier}
           name={type === "radio" ? identifier : identifier.split("_")[0]}
           type={type} 

@@ -33,7 +33,7 @@ const router = createBrowserRouter([{
       children: [
         {
           path: "/",
-          element: <Scanner to='update' />
+          element: <Scanner />
         },
         {
           path: "/label-gen",

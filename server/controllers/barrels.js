@@ -4,19 +4,15 @@ import { barrelDamagedEmail } from '../utils/sendEmail.js';
 import { v2 as cloudinary } from "cloudinary";
 
 const getBarrel = async(req, res) => {
-  const { params } = req.params;
-  let id;
-  let number;
-  if (params.split("=")[0] === "id") id = params.split("=")[1];
-  if (params.split("=")[0] === "number") number = params.split("=")[1];
+  const { id, number, history } = req.query;
   if (!id && !number) return res.status(401).json({ error: "Need identifier" });
   try {
     if (id) {
-      const barrel = await Barrel.findById(id, "-history");
+      const barrel = await Barrel.findById(id, history ? "" : "-history");
       if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
       res.status(200).json(barrel);
     } else {
-      const barrel = await Barrel.findOne({ number: number }, "-history");
+      const barrel = await Barrel.findOne({ number: number }, history ? "" : "-history");
       if (!barrel) return res.status(404).json({ error: `No barrel with Number: ${number}` });
       res.status(200).json(barrel);
     }
@@ -108,26 +104,6 @@ const requestDamageReview = async(req, res) => {
   }
 }
 
-
-const getHistory = async(req, res) => {
-  const { params } = req.params;
-  let id;
-  let number;
-  if (params.split("=")[0] === "id") id = params.split("=")[1];
-  if (params.split("=")[0] === "number") number = params.split("=")[1];
-  if (!id && !number) return res.status(401).json({ error: "Need identifier" });
-  console.log(id, number);
-  try {
-    const barrel = await Barrel.findOne({ $or: [{ _id: id }, { number }] });
-    console.log("found this barrel", barrel);
-    if (!barrel) return res.status(404).json({ error: "No barrel could be found" });
-    res.status(200).json(barrel);
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ error: "Server Error" });
-  }
-}
-
 const addBarrels = async(req, res) => {
   const number = Number(req.body.number);
   if (!number) {
@@ -194,7 +170,6 @@ export {
   returnBarrel,
   reviewDamageRequest,
   requestDamageReview,
-  getHistory,
   addBarrels, 
   manageAll,
   getAllBarrelIDS, 

@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom"
 
-const CancelButton = () => {
+type Props = {
+  handleClick?: () => void
+}
+
+const CancelButton = ({ handleClick }: Props) => {
   const navigate = useNavigate();
   return (
     <button 
       className='cancelButton'
-      onClick={() => navigate(-1)}>
+      onClick={handleClick ? handleClick : () => navigate(-1)}>
         Cancel
     </button>
   )

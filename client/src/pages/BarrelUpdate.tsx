@@ -12,7 +12,8 @@ const BarrelUpdate = () => {
 
   const { params } = useOutletContext<SendParamsType>();
 
-  const url = `${serverBaseURL}/api/barrel/get/${params}`;
+
+  const url = `${serverBaseURL}/api/barrel/get/?${params}`;
 
   const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
 
