@@ -9,6 +9,7 @@ import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { unfocusAll } from '../../utils/shiftFocus';
 import { CustomerContext } from '../../context/CustomerContext';
+import serverBaseURL from '../../utils/baseURL'
 
 type Props = {
   barrel: Barrel
@@ -18,8 +19,6 @@ type Props = {
 }
 
 const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-
   const { customers } = useContext(CustomerContext);
 
   const navigate = useNavigate();

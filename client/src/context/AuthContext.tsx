@@ -2,6 +2,7 @@
 import { Dispatch, PropsWithChildren, createContext, useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
 import getVersion from "../versionControl";
+import serverBaseURL from "../utils/baseURL";
 
 interface AuthContextType {
   auth: boolean
@@ -22,7 +23,6 @@ const defaultValue: AuthContextType = {
 export const AuthContext = createContext(defaultValue);
 
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const [auth, setAuth] = useState(false);
 
   const { data, loading, setLoading, error } = useFetch<true>(`${serverBaseURL}/api/auth/authorized`);

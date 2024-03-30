@@ -5,9 +5,9 @@ import SendOut from '../components/barrel/SendOut';
 import Loading from '../components/Loading';
 import Return from '../components/barrel/Return';
 import Button from '../components/Button';
+import serverBaseURL from '../utils/baseURL';
 
 const BarrelUpdate = () => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
 
   const { params } = useOutletContext<SendParamsType>();

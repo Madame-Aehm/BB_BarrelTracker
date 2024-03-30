@@ -20,7 +20,7 @@ export interface Damage_Review {
   closed?: string
   comments?: string
   response?: string
-  images: []
+  images: ImgObject[]
 }
 
 export interface ImgObject {

@@ -9,6 +9,7 @@ import CancelButton from './CancelButton'
 import { OK } from '../../@types/auth'
 import DamageReview from './DamageReview'
 import formatDate from '../../utils/formatDate'
+import serverBaseURL from '../../utils/baseURL'
 
 type Props = {
   open: Open
@@ -19,8 +20,6 @@ type Props = {
 }
 
 function Return({ open, barrel, loading, setLoading, setError }: Props) {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-  
   const navigate = useNavigate();
 
   const handleReturn = async() => {

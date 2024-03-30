@@ -3,13 +3,15 @@ import IconButton from '../IconButton'
 import Modal from '../Modal'
 import { Barrel, ImgObject } from '../../@types/barrel'
 import Button from '../Button'
-import { convertValueTypes, validateEditBarrel } from '../../utils/editBarrelTools'
+import { convertValueTypes, handleSetUpdate, validateEditBarrel } from '../../utils/editBarrelTools'
 import EditBarrelInput from './EditBarrelInput'
 import historyStyles from '../../styles/history.module.css'
 import barrelStyles from '../../styles/barrel.module.css'
 import { CustomerContext } from '../../context/CustomerContext'
 import CancelButton from './CancelButton'
 import ImgThumbnail from '../history/ImgThumbnail'
+import baseURL from '../../utils/baseURL'
+import usePost from '../../hooks/usePost'
 
 type Props = {
   barrel: Barrel
@@ -48,42 +50,26 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
   })
   const [validation, setValidation] = useState(defaultValidation.current);
 
-  const handleSubmit = () => {
-    setValidation(defaultValidation.current);
-    const validationCheck = validateEditBarrel(toUpdate, barrelNumbers, barrel.number);
-    if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    console.log("would now submit", toUpdate, "and also", imagesToDelete.current);
-  }
+  const { loading, error, setError, makePostRequest } = usePost<any>({
+    url: `${baseURL}/api/barrel/edit-barrel`, 
+    body: JSON.stringify(toUpdate),
+    successCallback: (test) => {
+      console.log("callback", test);
+      setOpen(false);
+    },
+    delay: true
+  })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, open: boolean, damage_review?: boolean) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, 
+    open: boolean, 
+    damage_review?: boolean) => {
     const name = e.target.type === "radio" ? e.target.name.split("_")[0] : e.target.name;
     const value = convertValueTypes(e.target.value, name);
-    console.log(name, value);
-    setToUpdate(prev => {
-      if (name === "returned" && !value && prev.open?.damage_review) {
-        delete prev.open.damage_review;
-      }
-      return open && prev.open ?
-        damage_review && prev.open.damage_review ? {
-          ...prev,
-          open: {
-            ...prev.open,
-            damage_review: {
-              ...prev.open.damage_review,
-              [name]: value
-            }
-          }
-        } : {
-          ...prev,
-          open: {
-            ...prev.open,
-            [name]: value
-          }
-        } : {
-          ...prev,
-          [name]: value
-        }
-    })
+    if (name === "returned" && !value && barrel.open?.damage_review) {
+      imagesToDelete.current = barrel.open.damage_review.images.map((img) => img.public_id);
+    }
+    setToUpdate((prev) => handleSetUpdate(prev, name, value, open, damage_review));
   }
 
   const handleImageRemove = (img: ImgObject) => {
@@ -102,19 +88,22 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
     })
   }
 
+  const handleSubmit = async() => {
+    setValidation(defaultValidation.current);
+    setError("");
+    const validationCheck = validateEditBarrel(toUpdate, barrelNumbers, barrel.number);
+    if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
+    console.log("would now submit", toUpdate, "and also", imagesToDelete.current);
+    await makePostRequest();
+  }
+
   useEffect(() => {
     if (!open && (JSON.stringify(toUpdate) !== JSON.stringify(barrel))) {
-      // because it doesn't compare undefined properties, need to fix returned reset if returned is empty
-      imagesToDelete.current = imagesToDelete.current.filter((p_id) => {
-        let fromThisBarrel = false;
-        toUpdate.open?.damage_review?.images.forEach((img) => {
-          if (p_id === img.public_id) fromThisBarrel = true;
-        })
-        return fromThisBarrel;
-      })
+      imagesToDelete.current = [];
       setValidation(defaultValidation.current);
       setToUpdate({ ...barrel });
     }
+    setError("");
   }, [open])
 
   return (
@@ -200,10 +189,10 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
                   label="Returned:"
                   identifier={`returned_open${barrel._id}`}
                   type="date"
-                  value={toUpdate.open.returned?.split("T")[0] ?? ""}
+                  value={toUpdate.open.returned?.split("T")[0] || ""}
                   handleChange={handleChange}
                 />
-                { toUpdate.open.damage_review && <>
+                { (toUpdate.open.damage_review && toUpdate.open.returned) && <>
                   <h3>Damage Reported</h3>
                   <label
                     htmlFor={`comments_${barrel._id}`}
@@ -226,13 +215,15 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
                 </> }
               </fieldset>
             }
+          <p><small className='error'>{error}</small></p>
           <div className={barrelStyles.buttonsWrapper}>
             <Button 
-              styleOverride={{ height: "4rem" }}
+              styleOverride={{ height: "4rem", width: "12rem" }}
               title={"Save Changes"} 
+              loading={loading}
               handleClick={handleSubmit} 
             />
-            <CancelButton handleClick={() => setOpen(false)}/>
+            <CancelButton handleClick={() => setOpen(false)} styleOverride={ loading ? { visibility: "hidden" } : {} } />
           </div>
         </div>
       </Modal> 

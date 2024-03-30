@@ -9,7 +9,7 @@ type Props = {
   value: string
   checked?: boolean
   validation?: string
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>, open: boolean) => void
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>, open: boolean, damage_review?: boolean) => void
 }
 
 const EditBarrelInput = ({ label, type, identifier, value, checked, validation, handleChange }: Props) => {

@@ -35,4 +35,32 @@ const validateEditBarrel = (toUpdate: ToUpdateEditBarrel, barrelNumbers: number[
   return { validationFail, validationObject }
 }
 
-export { convertValueTypes, validateEditBarrel }
+const handleSetUpdate = (
+  prev: ToUpdateEditBarrel, 
+  name: string, 
+  value: string | number | boolean,
+  open: boolean,
+  damage_review?: boolean) => {
+  return open && prev.open ?
+    damage_review && prev.open.damage_review ? {
+      ...prev,
+      open: {
+        ...prev.open,
+        damage_review: {
+          ...prev.open.damage_review,
+          [name]: value
+        }
+      }
+    } : {
+      ...prev,
+      open: {
+        ...prev.open,
+        [name]: value
+      }
+    } : {
+      ...prev,
+      [name]: value
+    }
+}
+
+export { convertValueTypes, validateEditBarrel, handleSetUpdate }

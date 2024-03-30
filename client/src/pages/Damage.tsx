@@ -9,12 +9,12 @@ import authHeaders from "../utils/authHeaders";
 import { handleCatchError, handleNotOK } from "../utils/handleFetchFail";
 import { OK } from "../@types/auth";
 import { compressImage } from "../utils/images";
+import serverBaseURL from "../utils/baseURL";
 
 interface locationState {
   state: { barrel: Barrel } | null
 }
 function Damage() {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
   const { state } = useLocation() as locationState;
   const [loading, setLoading] = useState(false);

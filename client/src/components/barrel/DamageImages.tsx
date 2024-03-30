@@ -2,13 +2,10 @@ import { CSSProperties, useState } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
 import modalStyles from '../../styles/modal.module.css'
+import { ImgObject } from '../../@types/barrel'
 
 type Props = {
-  images: [{
-    public_id: string
-    url: string
-    _id: string
-  }]
+  images: ImgObject[]
 }
 
 const DamageImages = ({ images }: Props) => {

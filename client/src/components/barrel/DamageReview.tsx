@@ -10,6 +10,7 @@ import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import { OK } from '../../@types/auth'
 import CancelButton from './CancelButton'
 import DamageImages from './DamageImages'
+import serverBaseURL from '../../utils/baseURL'
 
 type Props = {
   barrel: Barrel
@@ -19,7 +20,6 @@ type Props = {
 }
 
 const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
   const reviewResponse = useRef("");
   const damage_review = barrel.open?.damage_review;

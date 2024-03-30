@@ -165,7 +165,13 @@ const getSingleID = async(req, res) => {
   }
 }
 
+const updateBarrel = async(req, res) => {
+  console.log(req.body);
+  res.status(200).json({ message: "testing" });
+}
+
 export { 
+  getBarrel,
   sendBarrel, 
   returnBarrel,
   reviewDamageRequest,
@@ -174,5 +180,5 @@ export {
   manageAll,
   getAllBarrelIDS, 
   getSingleID, 
-  getBarrel
+  updateBarrel
  }

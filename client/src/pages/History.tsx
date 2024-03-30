@@ -6,10 +6,10 @@ import useFetch from "../hooks/useFetch"
 import { useNavigate, useOutletContext } from "react-router-dom";
 import Button from '../components/Button';
 import ToTop from '../components/ToTop';
+import serverBaseURL from '../utils/baseURL';
 
 
 function History() {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const { params } = useOutletContext<SendParamsType>();
   const navigate = useNavigate();
 

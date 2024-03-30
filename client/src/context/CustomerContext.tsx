@@ -3,6 +3,7 @@ import { Customer } from "../@types/customer";
 import authHeaders from "../utils/authHeaders";
 import { NotOK } from "../@types/auth";
 import { AuthContext } from "./AuthContext";
+import serverBaseURL from "../utils/baseURL";
 
 interface CustomerContextType {
   customers: Customer[]
@@ -19,8 +20,6 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
 
   useEffect(() => {
-    const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-
     const getCustomers = async() => {
       const headers = authHeaders();
       if (!headers) return

@@ -7,10 +7,10 @@ import Button from "../components/Button";
 import Loading from "../components/Loading";
 import { Barrel } from "../@types/barrel";
 import historyStyles from "../styles/history.module.css"
+import serverBaseURL from "../utils/baseURL";
 
 
 const ManageBarrels = () => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const { data, loading, error, refetch } = useFetch<Barrel[]>(`${serverBaseURL}/api/barrel/manage-all`);
   const [openNew, setOpenNew] = useState(false);
   if (loading) return <Loading />

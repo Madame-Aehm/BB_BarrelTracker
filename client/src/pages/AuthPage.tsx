@@ -5,11 +5,10 @@ import { AuthOK, NotOK, PinError } from '../@types/auth';
 import AuthForm from '../components/auth/AuthForm';
 import { AuthContext } from '../context/AuthContext';
 import Loading from '../components/Loading';
+import serverBaseURL from '../utils/baseURL';
 
 const AuthPage = () => {
   const { setAuth, loading, setLoading } = useContext(AuthContext);
-
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const defaultError = { 1: false, 2: false, 3: false, 4: false, message: "" };
   const [error, setError] = useState<PinError>(defaultError);
 
