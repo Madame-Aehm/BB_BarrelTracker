@@ -7,6 +7,7 @@ import { convertValueTypes, handleSetUpdate, validateEditBarrel } from '../../ut
 import EditBarrelInput from './EditBarrelInput'
 import historyStyles from '../../styles/history.module.css'
 import barrelStyles from '../../styles/barrel.module.css'
+import authStyles from '../../styles/auth.module.css'
 import { CustomerContext } from '../../context/CustomerContext'
 import CancelButton from './CancelButton'
 import ImgThumbnail from '../history/ImgThumbnail'
@@ -16,6 +17,7 @@ import usePost from '../../hooks/usePost'
 type Props = {
   barrel: Barrel
   barrelNumbers: number[]
+  setBarrels: React.Dispatch<React.SetStateAction<Barrel[] | null>>
 }
 
 export type ToUpdateEditBarrel = {
@@ -37,24 +39,27 @@ type Open = null | {
   damage_review?: DamageReview
 }
 
-const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
+const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
   const [toUpdate, setToUpdate] = useState<ToUpdateEditBarrel>({ ...barrel });
-  const imagesToDelete = useRef<string[]>([]);
 
   const defaultValidation = useRef({
     number: "",
     invoice: "",
-    createdAt: ""
+    createdAt: "",
+    retired: "",
+    returned: ""
   })
   const [validation, setValidation] = useState(defaultValidation.current);
+  const [note, setNote] = useState("");
 
   const { loading, error, setError, makePostRequest } = usePost<any>({
     url: `${baseURL}/api/barrel/edit-barrel`, 
     body: JSON.stringify(toUpdate),
-    successCallback: (test) => {
-      console.log("callback", test);
+    successCallback: (result: Barrel) => {
+      console.log("edit result", result);
+      setBarrels(prev => prev ? prev.map((brl) => brl._id !== result._id ? brl : result) : null);
       setOpen(false);
     },
     delay: true
@@ -66,14 +71,20 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
     damage_review?: boolean) => {
     const name = e.target.type === "radio" ? e.target.name.split("_")[0] : e.target.name;
     const value = convertValueTypes(e.target.value, name);
-    if (name === "returned" && !value && barrel.open?.damage_review) {
-      imagesToDelete.current = barrel.open.damage_review.images.map((img) => img.public_id);
-    }
     setToUpdate((prev) => handleSetUpdate(prev, name, value, open, damage_review));
+
+    if (name === "returned") {
+      setNote(
+        !value && barrel.open?.damage_review ? "Deleting return date also deletes the damage report" 
+        : value && !barrel.open?.damage_review ? "Saving this change will close invoice" : ""
+      )
+    }
+    if (name === "damaged") {
+      setNote(value && toUpdate.open?.returned ? "Saving this change will close invoice" : "");
+    }
   }
 
   const handleImageRemove = (img: ImgObject) => {
-    imagesToDelete.current = [...imagesToDelete.current, img.public_id];
     setToUpdate(prev => {
       return prev.open?.damage_review ? {
         ...prev,
@@ -93,14 +104,13 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
     setError("");
     const validationCheck = validateEditBarrel(toUpdate, barrelNumbers, barrel.number);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    console.log("would now submit", toUpdate, "and also", imagesToDelete.current);
     await makePostRequest();
   }
 
   useEffect(() => {
     if (!open && (JSON.stringify(toUpdate) !== JSON.stringify(barrel))) {
-      imagesToDelete.current = [];
       setValidation(defaultValidation.current);
+      setNote("");
       setToUpdate({ ...barrel });
     }
     setError("");
@@ -120,6 +130,7 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
               type="radio"
               identifier={`damaged_true${barrel._id}`}
               value="true"
+              validation={validation.retired}
               checked={toUpdate.damaged}
               handleChange={handleChange}
             />
@@ -132,6 +143,7 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
               handleChange={handleChange}
             />
           </div>
+          <div><small className={authStyles.error} style={{textAlign: "right"}}>{ validation.retired }</small></div>
           <EditBarrelInput
             label="Number:"
             type="number"
@@ -140,9 +152,7 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
             validation={validation.number}
             handleChange={handleChange}
           />
-            { !toUpdate.open ?
-              <p>create invoice +</p>
-              :  
+            { toUpdate.open &&
               <fieldset className={historyStyles.activeInvoice}>
                 <legend><h2 className={historyStyles.legend}>Open Invoice:</h2></legend>
                 <span 
@@ -190,6 +200,7 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
                   identifier={`returned_open${barrel._id}`}
                   type="date"
                   value={toUpdate.open.returned?.split("T")[0] || ""}
+                  validation={validation.returned}
                   handleChange={handleChange}
                 />
                 { (toUpdate.open.damage_review && toUpdate.open.returned) && <>
@@ -213,6 +224,13 @@ const EditBarrel = ({ barrel, barrelNumbers }: Props) => {
                     </div> 
                   }
                 </> }
+                { note && 
+                  <div>
+                    <small style={{ textAlign: "right", color: "var(--bb-blue)" }}>
+                      <b>Note: </b>{ note }
+                    </small>
+                  </div> 
+                }
               </fieldset>
             }
           <p><small className='error'>{error}</small></p>

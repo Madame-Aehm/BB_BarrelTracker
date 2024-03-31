@@ -14,7 +14,9 @@ const validateEditBarrel = (toUpdate: ToUpdateEditBarrel, barrelNumbers: number[
   const validationObject = {
     number: "",
     invoice: "",
-    createdAt: ""
+    createdAt: "",
+    retired: "",
+    returned: ""
   }
   if (!toUpdate.number) {
     validationFail = true;
@@ -24,13 +26,23 @@ const validateEditBarrel = (toUpdate: ToUpdateEditBarrel, barrelNumbers: number[
     validationFail = true;
     validationObject.number = `There is already a barrel number ${toUpdate.number}`
   }
-  if (toUpdate.open && !toUpdate.open.invoice) {
-    validationFail = true;
-    validationObject.invoice = "Invoice is required"
-  }
-  if (toUpdate.open && !toUpdate.open.createdAt) {
-    validationFail = true;
-    validationObject.createdAt = "Need to specify date"
+  if (toUpdate.open) {
+    if (!toUpdate.open.invoice) {
+      validationFail = true;
+      validationObject.invoice = "Invoice is required"
+    }
+    if (!toUpdate.open.createdAt) {
+      validationFail = true;
+      validationObject.createdAt = "Need to specify date"
+    }
+    if (toUpdate.damaged && !toUpdate.open.returned) {
+      validationFail = true;
+      validationObject.retired = "Barrel can't be retired with an open invoice"
+    }
+    if (toUpdate.open.returned && (new Date(toUpdate.open.returned) < new Date(toUpdate.open.createdAt))) {
+      validationFail = true;
+      validationObject.returned = "Barrel can't be returned before it is sent out"
+    }
   }
   return { validationFail, validationObject }
 }

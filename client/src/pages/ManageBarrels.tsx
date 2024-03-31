@@ -11,7 +11,7 @@ import serverBaseURL from "../utils/baseURL";
 
 
 const ManageBarrels = () => {
-  const { data, loading, error, refetch } = useFetch<Barrel[]>(`${serverBaseURL}/api/barrel/manage-all`);
+  const { data, setData, loading, error, refetch } = useFetch<Barrel[]>(`${serverBaseURL}/api/barrel/manage-all`);
   const [openNew, setOpenNew] = useState(false);
   if (loading) return <Loading />
   return (
@@ -28,9 +28,8 @@ const ManageBarrels = () => {
       </Modal>
       <h2>Existing Barrels:</h2>
       { data && data.map((b) => {
-        return <BarrelListItem key={b._id} barrel={b} barrelNumbers={data.map((b) => b.number)} />
+        return <BarrelListItem key={b._id} barrel={b} barrelNumbers={data.map((b) => b.number)} setBarrels={setData} />
       }) } 
-       
     </div>
   )
 }

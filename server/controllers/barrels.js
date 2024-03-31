@@ -27,7 +27,6 @@ const sendBarrel = async(req, res) => {
   if (!id || !sendTo) return res.status(401).json({ error: "Missing fields" })
   try {
     const barrel = await Barrel.findByIdAndUpdate(id, {
-      home: false,
       open: sendTo
     }, { new: true, select: "_id" });
     if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
@@ -44,7 +43,6 @@ const returnBarrel = async(req, res) => {
   try {
     const barrel = await Barrel.findByIdAndUpdate(id, {
       $push: { history: { $each: [{ ...open, returned: localDate(new Date()) }], $position: 0 } },
-      home: true,
       open: null
     }, { new: true, select: "_id" });
     if (!barrel) return res.status(404).json({ error: `No barrel with ID: ${id}` });
@@ -119,7 +117,6 @@ const addBarrels = async(req, res) => {
     for (let i = offset; i < offset + number; i++) {
       barrelsToAdd.push(new Barrel({
         number: i,
-        home: true,
         damaged: false,
         open: null
       }).save())
@@ -166,8 +163,56 @@ const getSingleID = async(req, res) => {
 }
 
 const updateBarrel = async(req, res) => {
-  console.log(req.body);
-  res.status(200).json({ message: "testing" });
+  const edits = req.body;
+  try {
+    let control;
+    if (edits.open && edits.open.damage_review) {
+      control = await Barrel.findById(edits._id);
+    }
+
+    const barrel = await Barrel.findByIdAndUpdate(edits._id, { ...edits }, { new: true }).select("-history");
+    if (!barrel) return res.status(404).json({ error: "No barrel" });
+
+    if (barrel.open && barrel.open.damage_review && !barrel.open.returned) {
+      barrel.open.damage_review = undefined;
+      await barrel.save();
+    }
+
+    if (control) {
+      const editedImages = barrel.open?.damage_review?.images;
+      console.log("editedImages", editedImages);
+      const imagesToDelete = !editedImages ? control.open.damage_review.images 
+        : control.open.damage_review.images.filter((img) => {
+          let result = true;
+          for (let i = 0; i < editedImages.length; i++) {
+            if (editedImages[i].public_id === img.public_id) {
+              result = false;
+            }
+          }
+          return result
+        })
+      console.log("imagesToDelete", imagesToDelete);
+      imagesToDelete.forEach(async(img) => {
+        await cloudinary.uploader.destroy(img.public_id);
+        console.log("deleted image")
+      })
+    }
+
+    if (
+        (barrel.open && barrel.open.returned && !barrel.open.damage_review)
+        || (barrel.open && barrel.open.returned && barrel.damaged)
+      ) {
+      const closeInvoice = await Barrel.findByIdAndUpdate(barrel._id, {
+        $push: { history: { $each: [{ ...barrel.open }], $position: 0 } },
+        open: null
+      }, { new: true, select: "-history" });
+      if (closeInvoice) return res.status(200).json(closeInvoice);
+    }
+    res.status(200).json(barrel);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
 }
 
 export { 
