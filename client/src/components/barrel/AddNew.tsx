@@ -5,6 +5,7 @@ import { useRef, useState } from 'react'
 import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import authHeaders from '../../utils/authHeaders'
 import { OK } from '../../@types/auth'
+import serverBaseURL from '../../utils/baseURL'
 
 type Props = {
   refetch: () => Promise<void>
@@ -12,7 +13,6 @@ type Props = {
 }
 
 const AddNew = ({ setOpen, refetch }: Props) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const inputValue = useRef("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -58,7 +58,6 @@ const AddNew = ({ setOpen, refetch }: Props) => {
           <h2>{ success }</h2>
           <Button 
             title='OK'
-            loading={false}
             styleOverride={{ width: "6rem", height: "4rem" }}
             handleClick={() => setOpen(false)} />
         </div> : 

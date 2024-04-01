@@ -10,6 +10,7 @@ import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import { OK } from '../../@types/auth'
 import CancelButton from './CancelButton'
 import DamageImages from './DamageImages'
+import serverBaseURL from '../../utils/baseURL'
 
 type Props = {
   barrel: Barrel
@@ -19,7 +20,6 @@ type Props = {
 }
 
 const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
   const reviewResponse = useRef("");
   const damage_review = barrel.open?.damage_review;
@@ -60,7 +60,7 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
   if (damage_review) return (
     <>
       <div className={`${barrelStyles.atHome} ${barrelStyles.width80}`}>
-          <h2 className={barrelStyles.rbm}>Damage Review Request</h2>
+          <h2 className={barrelStyles.rbm}>Damage Review Requested</h2>
           <p className={barrelStyles.when}>on { formatDate(damage_review.createdAt) } </p>
           { damage_review.comments && 
             <div>

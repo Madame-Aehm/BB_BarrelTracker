@@ -9,6 +9,7 @@ import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { unfocusAll } from '../../utils/shiftFocus';
 import { CustomerContext } from '../../context/CustomerContext';
+import serverBaseURL from '../../utils/baseURL'
 
 type Props = {
   barrel: Barrel
@@ -18,8 +19,6 @@ type Props = {
 }
 
 const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-
   const { customers } = useContext(CustomerContext);
 
   const navigate = useNavigate();
@@ -80,13 +79,13 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
         <select 
           id='customer' 
           onChange={handleChange} 
-          className={`${barrelStyles.input} ${invalid.customer ? barrelStyles.invalid : ""}`}>
+          className={`${barrelStyles.input} ${invalid.customer ? "invalid" : ""}`}>
           <option value="">Choose Customer</option>
           { customers.map((c) => <option key={c._id} value={c.name}>{c.name}</option>) }
         </select>
         <input 
           id='invoice'
-          className={`${barrelStyles.input} ${invalid.invoice ? barrelStyles.invalid : ""}`} 
+          className={`${barrelStyles.input} ${invalid.invoice ? "invalid" : ""}`} 
           placeholder="Enter Invoice" 
           onChange={handleChange} />
         <div className={barrelStyles.centerButton}>

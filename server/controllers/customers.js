@@ -1,13 +1,15 @@
 import Customer from '../models/customers.js';
 import Barrel from '../models/barrels.js';
 import customerCache from '../config/cache.js';
+import customerAlphSort from '../utils/sortCustomers.js';
 
-const getCustomers = async(_, res) => {
+const getActiveCustomers = async(_, res) => {
   try {
-    const cachedCustomers = customerCache.get("customers");
+    const cachedCustomers = customerCache.get("activeCustomers");
     if (cachedCustomers === undefined) {
-      const customers = await Customer.find();
-      customerCache.set("customers", { customers });
+      const customers = await Customer.find({ active: true });
+      customerAlphSort(customers);
+      customerCache.set("activeCustomers", { customers });
       return res.status(200).json(customers);
     } 
     res.status(200).json(cachedCustomers.customers);
@@ -21,10 +23,12 @@ const addCustomer = async(req, res) => {
   const { name } = req.body;
   if (!name) return res.status(401).json({ error: "Who is it? Name names!" });
   try {
-    await Customer.create({ name: name.trim(), active: true });
-    const customers = await Customer.find();
-    customerCache.set("customers", { customers });
-    res.status(201).json({ message: "Customer created!" });
+    await Customer.create({ name: name.trim() });
+    const allCustomers = await Customer.find();
+    customerAlphSort(allCustomers);
+    const activeCustomers = allCustomers.filter((c) => c.active);
+    customerCache.set("activeCustomers", { activeCustomers });
+    res.status(201).json({ message: "Customer created!", allCustomers, activeCustomers });
   } catch (e) {
     console.log(e);
     if (e.code === 11000) return res.status(401).json({ error: "Name already in use" });
@@ -32,8 +36,24 @@ const addCustomer = async(req, res) => {
   }
 }
 
+const toggleActive = async(req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(401).json({ error: "Need customer name" });
+  try {
+    const customer = await Customer.findOne({ name });
+    if (!customer) return res.status(404).json({ error: "No customer with that name" });
+    customer.active = !customer.active;
+    await customer.save();
+    res.status(200).json(customer);
+  } catch (error) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
 const getCustomerHistory = async(req, res) => {
   const { name } = req.params;
+  console.log(name);
   if (!name) return res.status(401).json({ error: "Need customer name" });
   try {
     const barrels = await Barrel.find({
@@ -61,4 +81,4 @@ const getCustomerHistory = async(req, res) => {
   }
 }
 
-export { getCustomers, addCustomer, getCustomerHistory }
+export { getActiveCustomers, addCustomer, toggleActive, getCustomerHistory }

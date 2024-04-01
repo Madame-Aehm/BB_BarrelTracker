@@ -4,6 +4,7 @@ import labelStyles from '../../styles/labels.module.css'
 import { unfocusAll } from '../../utils/shiftFocus';
 import Button from '../Button';
 import BrlNumForm from '../BrlNumForm';
+import serverBaseURL from '../../utils/baseURL';
 
 type Props = {
   setUrl: Dispatch<React.SetStateAction<string>>
@@ -12,8 +13,6 @@ type Props = {
 }
 
 const LabelMenu = ({ loadingControl, setUrl, setError }: Props) => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-
   const barrel = useRef("");
   const [inputValid, setInputValid] = useState(true);
   const [loading, setLoading] = useState("");
@@ -43,7 +42,6 @@ const LabelMenu = ({ loadingControl, setUrl, setError }: Props) => {
   }
 
   useEffect(() => {
-    console.log(loadingControl)
     if (!loadingControl) {
       setLoading("");
     }

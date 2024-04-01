@@ -5,14 +5,14 @@ import SendOut from '../components/barrel/SendOut';
 import Loading from '../components/Loading';
 import Return from '../components/barrel/Return';
 import Button from '../components/Button';
+import serverBaseURL from '../utils/baseURL';
 
 const BarrelUpdate = () => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
 
   const { params } = useOutletContext<SendParamsType>();
 
-  const url = `${serverBaseURL}/api/barrel/get/${params}`;
+  const url = `${serverBaseURL}/api/barrel/get/?${params}`;
 
   const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
 
@@ -43,13 +43,12 @@ const BarrelUpdate = () => {
         <div>
           <h4 >Barrel is marked as <span className='error'>damaged</span>. Don't use!</h4>
           <Button 
-            loading={false}
             title='OK'
             styleOverride={{ width: "10rem", height: "4rem" }}
             handleClick={() => navigate("/") } />
         </div>
       )}
-      <p><Link to={`/barrel/history/${barrel.number}`}>see history</Link></p>
+      <p><Link to={`/barrel/history/${barrel.number}`}>See History →</Link></p>
     </>
   )
 }

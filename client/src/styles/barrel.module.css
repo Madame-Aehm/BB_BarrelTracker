@@ -62,8 +62,8 @@
   font-size: large;
 }
 
-.invalid {
-  border-color: tomato;
+input.input[type="radio"] {
+  display: none;
 }
 
 .textarea {
@@ -101,6 +101,14 @@
   flex-wrap: wrap;
   gap: 1rem;
   margin: 1rem 0;
+}
+
+.listItemText { 
+  display: flex;
+  gap: 0.5rem; 
+  align-items: center; 
+  text-align: left;
+  word-break: break-word; 
 }
 
 @media (max-width: 350px) {

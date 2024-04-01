@@ -21,7 +21,7 @@ const PinInput = ({ handleChange, id, invalid, pin, styleOverride }: Props) => {
 
   return (
     <input 
-      className={`${authStyles.pinInput} ${invalid ? authStyles.pinInvalid : ""}`} 
+      className={`${authStyles.pinInput} ${invalid ? "invalid" : ""}`} 
       style={styleOverride ? styleOverride : {}}
       id={id} 
       type="number" 

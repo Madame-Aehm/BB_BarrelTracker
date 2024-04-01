@@ -6,6 +6,7 @@ interface ReturnData<T> {
   loading: boolean
   setLoading: Dispatch<React.SetStateAction<boolean>>
   data: T | null
+  setData: Dispatch<React.SetStateAction<T | null>>
   error: string
   setError: Dispatch<React.SetStateAction<string>>
   refetch: () => Promise<void>
@@ -53,7 +54,7 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
     }
   }, [url])
 
-  return { data, loading, setLoading, error, setError, refetch: fetchData }
+  return { data, setData, loading, setLoading, error, setError, refetch: fetchData }
 }
 
 export default useFetch
