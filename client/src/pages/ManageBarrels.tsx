@@ -8,6 +8,7 @@ import Loading from "../components/Loading";
 import { Barrel } from "../@types/barrel";
 import historyStyles from "../styles/history.module.css"
 import serverBaseURL from "../utils/baseURL";
+import ToTop from "../components/ToTop";
 
 
 const ManageBarrels = () => {
@@ -15,22 +16,24 @@ const ManageBarrels = () => {
   const [openNew, setOpenNew] = useState(false);
   if (loading) return <Loading />
   return (
-    <div className={historyStyles.container}>
-      <h1>Manage Barrels</h1>
-      <p className="error">{ error }</p>
-      <h2>Still under construction... <span className={"material-symbols-outlined"}>handyman</span></h2>
-      <Button 
-        title={"Add Barrels"}
-        styleOverride={{ width: "12rem", height: "4rem" }}
-        handleClick={() => {console.log("log");setOpenNew(true)}} />
-      <Modal open={openNew} setOpen={setOpenNew} >
-        <AddNew refetch={refetch} setOpen={setOpenNew} />
-      </Modal>
-      <h2>Existing Barrels:</h2>
-      { data && data.map((b) => {
-        return <BarrelListItem key={b._id} barrel={b} barrelNumbers={data.map((b) => b.number)} setBarrels={setData} />
-      }) } 
-    </div>
+    <>
+      <div className={historyStyles.container}>
+        <h1>Manage Barrels</h1>
+        <p className="error">{ error }</p>
+        <Button 
+          title={"Add Barrels"}
+          styleOverride={{ width: "12rem", height: "4rem" }}
+          handleClick={() => {console.log("log");setOpenNew(true)}} />
+        <Modal open={openNew} setOpen={setOpenNew} >
+          <AddNew refetch={refetch} setOpen={setOpenNew} />
+        </Modal>
+        <h2>Existing Barrels:</h2>
+        { data && data.map((b) => {
+          return <BarrelListItem key={b._id} barrel={b} barrelNumbers={data.map((b) => b.number)} setBarrels={setData} />
+        }) } 
+      </div>
+      <ToTop />
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import barrelStyles from '../styles/barrel.module.css'
-import { Barrel } from "../@types/barrel";
+import { Barrel, ImgObject } from "../@types/barrel";
 import CancelButton from "../components/barrel/CancelButton";
 import { ChangeEvent, useRef, useState } from "react";
 import Loading from "../components/Loading";
@@ -10,10 +10,12 @@ import { handleCatchError, handleNotOK } from "../utils/handleFetchFail";
 import { OK } from "../@types/auth";
 import { compressImage } from "../utils/images";
 import serverBaseURL from "../utils/baseURL";
+import ImageController from "../components/barrel/ImageController";
 
 interface locationState {
   state: { barrel: Barrel } | null
 }
+
 function Damage() {
   const navigate = useNavigate();
   const { state } = useLocation() as locationState;
@@ -21,7 +23,9 @@ function Damage() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const comments = useRef("");
-  const files = useRef<FileList | null>(null);
+  const files = useRef<File[]>([]);
+
+  const [images, setImages] = useState<ImgObject[]>([])
 
   const submitRequest = async() => {
     if (!state) return
@@ -33,7 +37,7 @@ function Damage() {
     if (!headers) return
     try {
       if (files.current) {
-        const toCompress = Array.from(files.current).map((file) => compressImage(file));
+        const toCompress = files.current.map((file) => compressImage(file));
         (await Promise.all(toCompress)).forEach((file) => {
           body.append("images", file);
         })
@@ -55,9 +59,24 @@ function Damage() {
 
   const fileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      files.current = e.target.files;
+      files.current = [...e.target.files];
+      setImages(prev => {
+        const getUrls = [];
+        for (let i = 0; i < e.target.files!.length; i++) {
+          getUrls.push({ url: URL.createObjectURL(e.target.files![i])} );
+        }
+        return [...prev, ...getUrls ]
+      })
     }
   } 
+
+  const removeFile = (img: ImgObject) => {
+    const index = images.findIndex(e => e.url === img.url);
+    if (index >= 0) {
+      setImages(prev => prev.filter((_, i) => i !== index));
+      files.current = files.current && [...files.current].filter((_, i) => i !== index);
+    } 
+  }
 
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     comments.current = e.target.value;
@@ -87,12 +106,7 @@ function Damage() {
           onChange={handleTextChange}
           className={`${barrelStyles.input} ${barrelStyles.textarea}`}
           placeholder="If you have any notes to provide, please add them here (optional)"/>
-        <input 
-          type="file" 
-          accept="image/png, image/jpeg, image/jpg" 
-          onChange={fileChange}
-          multiple 
-          style={{ padding: "1rem" }} />
+        <ImageController imageArray={images} fileAdd={fileChange} id="imageUpload" imageRemove={removeFile} />
         <div className={barrelStyles.centerButton}>
           <CancelButton  />
           <Button

@@ -26,7 +26,6 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
   const inputValues = useRef({ invoice: "", customer: "" });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    console.log("event triggered");
     if (e.target.id === "invoice") inputValues.current.invoice = e.target.value;
     if (e.target.id === "customer") inputValues.current.customer = e.target.value;
     if (invalid.customer || invalid.invoice) {

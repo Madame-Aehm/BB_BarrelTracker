@@ -163,40 +163,40 @@ const getSingleID = async(req, res) => {
 }
 
 const updateBarrel = async(req, res) => {
-  const edits = req.body;
+  const edits = JSON.parse(req.body.edits);
+  const files = req.files;
   try {
-    let control;
     if (edits.open && edits.open.damage_review) {
-      control = await Barrel.findById(edits._id);
+      if (!edits.open.returned) edits.open.damage_review = undefined;
+      const control = await Barrel.findById(edits._id);
+      if (control) {
+        // remove missing images from Cloudinary
+        const editedImages = edits.open.damage_review?.images;
+        const imagesToDelete = !editedImages ? control.open.damage_review.images 
+          : control.open.damage_review.images.filter((img) => {
+            let result = true;
+            for (let i = 0; i < editedImages.length; i++) {
+              if (editedImages[i].public_id === img.public_id) {
+                result = false;
+              }
+            }
+            return result
+          })
+        imagesToDelete.forEach(async(img) => {
+          await cloudinary.uploader.destroy(img.public_id);
+          console.log("deleted image")
+        })
+      }
+      if (files) {
+        // add new files to Cloudinary and update edits object
+        const promises = files.map((file) => cloudinary.uploader.upload(file.path, { folder: "bb_tracker" }))
+        const images = await Promise.all(promises);
+        const relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }})
+        edits.open.damage_review.images = [...edits.open.damage_review.images, ...relevantFields];
+      }
     }
-
     const barrel = await Barrel.findByIdAndUpdate(edits._id, { ...edits }, { new: true }).select("-history");
     if (!barrel) return res.status(404).json({ error: "No barrel" });
-
-    if (barrel.open && barrel.open.damage_review && !barrel.open.returned) {
-      barrel.open.damage_review = undefined;
-      await barrel.save();
-    }
-
-    if (control) {
-      const editedImages = barrel.open?.damage_review?.images;
-      console.log("editedImages", editedImages);
-      const imagesToDelete = !editedImages ? control.open.damage_review.images 
-        : control.open.damage_review.images.filter((img) => {
-          let result = true;
-          for (let i = 0; i < editedImages.length; i++) {
-            if (editedImages[i].public_id === img.public_id) {
-              result = false;
-            }
-          }
-          return result
-        })
-      console.log("imagesToDelete", imagesToDelete);
-      imagesToDelete.forEach(async(img) => {
-        await cloudinary.uploader.destroy(img.public_id);
-        console.log("deleted image")
-      })
-    }
 
     if (
         (barrel.open && barrel.open.returned && !barrel.open.damage_review)

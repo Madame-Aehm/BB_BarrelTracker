@@ -13,7 +13,7 @@ interface ReturnData {
 
 interface Parameters<T> {
   url: string, 
-  body: string, 
+  body: string | FormData, 
   successCallback: (result: T) => void
   delay?: boolean
 }
@@ -30,7 +30,7 @@ const usePost = <T,> (params: Parameters<T>): ReturnData => {
     const headers = authHeaders();
     if (!headers) return setLoading(false);
     try {
-      headers.append("Content-Type", "application/json");
+      if (typeof body === "string") headers.append("Content-Type", "application/json");
       const response = await fetch(url, { headers, body, method: "POST" });
       if (response.ok) {
         const result = await response.json() as T;

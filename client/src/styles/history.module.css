@@ -1,3 +1,8 @@
+.header {
+  align-self: flex-start; 
+  margin-left: 10%;
+}
+
 .container {
   width: 100%;
   display: flex;
@@ -171,6 +176,16 @@
 .imgThumbnailWrap {
   display: flex;
   flex-wrap: wrap;
+}
+
+.addImage { 
+  height: 70px;
+  width: 50px; 
+  margin: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  cursor: pointer 
 }
 
 

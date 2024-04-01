@@ -24,9 +24,9 @@ export interface Damage_Review {
 }
 
 export interface ImgObject {
-  public_id: string
+  public_id?: string
   url: string
-  _id: string
+  _id?: string
 }
 
 export interface BrlHistory extends Open {

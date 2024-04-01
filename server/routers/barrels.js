@@ -19,6 +19,6 @@ router.get("/manage-all", manageAll);
 router.get("/label/all", getAllBarrelIDS);
 router.get("/label/number/:number", getSingleID);
 
-router.post("/edit-barrel", updateBarrel);
+router.post("/edit-barrel", upload.any('images'), updateBarrel);
 
 export default router

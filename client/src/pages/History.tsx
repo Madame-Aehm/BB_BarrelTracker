@@ -25,11 +25,17 @@ function History() {
         handleClick={() => navigate(-1)} />
       <h1>Barrel #{data.number}</h1>
       { (data.history && !data.history.length && !data.open) && <p>No history</p> }
-      { data.open && <HistoryCard key={data.open._id} history={data.open} brl={data.number} /> }
       <div className={historyStyles.container}>
-        { data.history && data.history.map((h) => {
-          return <HistoryCard key={h._id} history={h} brl={data.number} />
-        }) }
+        { data.open && <>
+          <h3 style={{ alignSelf: "flex-start", marginLeft: "10%" }}>Open:</h3>
+          <HistoryCard key={data.open._id} history={data.open} brl={data.number} />
+        </> }
+        { data.history && <>
+          { data.history.length > 0 && <h3 style={{ alignSelf: "flex-start", marginLeft: "10%" }}>Previous:</h3>}
+          { data.history.map((h) => {
+            return <HistoryCard key={h._id} history={h} brl={data.number} />
+          }) }
+        </> }
       </div>
       <ToTop />
     </>

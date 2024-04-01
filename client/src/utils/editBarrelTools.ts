@@ -39,7 +39,7 @@ const validateEditBarrel = (toUpdate: ToUpdateEditBarrel, barrelNumbers: number[
       validationFail = true;
       validationObject.retired = "Barrel can't be retired with an open invoice"
     }
-    if (toUpdate.open.returned && (new Date(toUpdate.open.returned) < new Date(toUpdate.open.createdAt))) {
+    if (toUpdate.open.returned && (new Date(toUpdate.open.returned).setHours(0,0,0,0) < new Date(toUpdate.open.createdAt).setHours(0,0,0,0))) {
       validationFail = true;
       validationObject.returned = "Barrel can't be returned before it is sent out"
     }

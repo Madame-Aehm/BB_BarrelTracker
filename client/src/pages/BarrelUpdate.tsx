@@ -12,7 +12,6 @@ const BarrelUpdate = () => {
 
   const { params } = useOutletContext<SendParamsType>();
 
-
   const url = `${serverBaseURL}/api/barrel/get/?${params}`;
 
   const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
@@ -49,7 +48,7 @@ const BarrelUpdate = () => {
             handleClick={() => navigate("/") } />
         </div>
       )}
-      <p><Link to={`/barrel/history/${barrel.number}`}>see history</Link></p>
+      <p><Link to={`/barrel/history/${barrel.number}`}>See History →</Link></p>
     </>
   )
 }
