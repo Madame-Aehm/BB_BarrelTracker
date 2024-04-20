@@ -1,4 +1,4 @@
-import { ToUpdateEditBarrel } from "../components/barrel/EditBarrel"
+import { BrlHistory, ToUpdateEditBarrel } from "../@types/barrel";
 
 const convertValueTypes = (value: string, name: string) => {
   console.log(typeof value);
@@ -75,4 +75,22 @@ const handleSetUpdate = (
     }
 }
 
-export { convertValueTypes, validateEditBarrel, handleSetUpdate }
+const handleHistoryUpdate = (
+  prev: BrlHistory, 
+  name: string, 
+  value: string | number | boolean,
+  damage_review?: boolean) => {
+  return damage_review && prev.damage_review ? {
+      ...prev,
+      damage_review: {
+        ...prev.damage_review,
+        [name]: value
+      }
+    } : {
+      ...prev,
+      [name]: value
+    }
+  
+}
+
+export { convertValueTypes, validateEditBarrel, handleSetUpdate, handleHistoryUpdate }

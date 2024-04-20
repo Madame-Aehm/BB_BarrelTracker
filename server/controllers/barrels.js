@@ -216,6 +216,11 @@ const updateBarrel = async(req, res) => {
   }
 }
 
+const updateHistory = async(req, res) => {
+  console.log(req.body);
+  res.send("test");
+}
+
 export { 
   getBarrel,
   sendBarrel, 
@@ -226,5 +231,6 @@ export {
   manageAll,
   getAllBarrelIDS, 
   getSingleID, 
-  updateBarrel
+  updateBarrel,
+  updateHistory
  }

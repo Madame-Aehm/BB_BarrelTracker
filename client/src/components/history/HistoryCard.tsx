@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import historyStyles from '../../styles/history.module.css'
+import barrelStyles from '../../styles/barrel.module.css'
 import { BrlHistory } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import DamageImages from '../barrel/DamageImages'
 import IconButton from '../IconButton'
 import { useNavigate } from 'react-router-dom'
+import EditHistory from './EditHistory'
 
 type Props = {
   history: BrlHistory
@@ -44,8 +46,6 @@ const HistoryCard = ({ history, brl }: Props) => {
                 <hr className={historyStyles.hr}></hr>
                 <b>Damage Report</b>
                 <div className={`${historyStyles.displayCurrent}`}>
-                  <b>Opened: </b>
-                  <p>{ formatDate(history.damage_review.createdAt) }</p>
                   { history.damage_review.closed && <>
                     <b>Resolved: </b>
                     <p>{ formatDate(history.damage_review.closed) }</p>
@@ -62,8 +62,11 @@ const HistoryCard = ({ history, brl }: Props) => {
                       <p className={historyStyles.pre}>{ history.damage_review.response }</p> 
                     </div>
                   </>}
-                  { history.damage_review.closed ? <p></p> : 
-                    <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${brl}`)} /> }
+                  <div className={barrelStyles.centerButton}>
+                    <EditHistory history={history} />
+                    { history.damage_review.closed ? <p></p> : 
+                      <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${brl}`)} /> }
+                  </div>
                   { history.damage_review.images.length > 0 ? 
                     <DamageImages images={history.damage_review.images} /> 
                   : null }

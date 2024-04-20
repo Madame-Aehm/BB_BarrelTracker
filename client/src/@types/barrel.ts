@@ -27,6 +27,7 @@ export interface Damage_Review {
   images: ImgObject[]
 }
 
+
 export interface ImgObject {
   public_id?: string
   url: string
