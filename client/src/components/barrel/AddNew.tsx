@@ -1,21 +1,19 @@
 import PinInput from '../auth/PinInput'
 import Button from '../Button'
 import flexStyles from '../../styles/flexbox.module.css'
-import { useRef, useState } from 'react'
-import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
-import authHeaders from '../../utils/authHeaders'
+import { useEffect, useRef, useState } from 'react'
 import { OK } from '../../@types/auth'
 import serverBaseURL from '../../utils/baseURL'
+import usePost from '../../hooks/usePost'
 
 type Props = {
   refetch: () => Promise<void>
+  open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AddNew = ({ setOpen, refetch }: Props) => {
+const AddNew = ({ refetch, open, setOpen }: Props) => {
   const inputValue = useRef("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [invalid, setInvalid] = useState(false);
   const [success, setSuccess] = useState("");
 
@@ -24,6 +22,14 @@ const AddNew = ({ setOpen, refetch }: Props) => {
     inputValue.current = e.target.value
   }
 
+  const { error, setError, loading, makePostRequest } = usePost<OK>({
+    url: `${serverBaseURL}/api/barrel/add`,
+    successCallback: async(result) => {
+      await refetch();
+      setSuccess(result.message);
+    }
+  })
+
   const handleClick = async() => {
     setError("");
     if (!inputValue.current) {
@@ -31,25 +37,21 @@ const AddNew = ({ setOpen, refetch }: Props) => {
       setError("You must include a value!");
       return
     }
-    setLoading(true);
-    try {
-      const headers = authHeaders();
-      if (!headers) return setError("Unauthorized");
-      const body = new URLSearchParams();
-      body.append("number", inputValue.current);
-      const response = await fetch(`${serverBaseURL}/api/barrel/add`, { headers, body, method: "POST" });
-      if (response.ok) {
-        const result = await response.json() as OK;
-        await refetch()
-        setSuccess(result.message);
-        setLoading(false);
-      } else {
-        await handleNotOK(response, setError, setLoading);
-      }
-    } catch (error) {
-      handleCatchError
-    }
+    const body = JSON.stringify({ number: inputValue.current });
+    makePostRequest(body);
   }
+
+  useEffect(() => {
+    if (!open) {
+      if (invalid) setInvalid(false);
+      if (success) setSuccess("");
+      if (inputValue.current) {
+        inputValue.current = "";
+        const input = document.querySelector("input");
+        if (input) input.value = "";
+      };
+    }
+  }, [open])
 
   return (
     <div className={flexStyles.vert}>

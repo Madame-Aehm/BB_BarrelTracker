@@ -1,58 +1,43 @@
-import { Dispatch } from 'react'
 import { Barrel, Open } from '../../@types/barrel'
 import barrelStyles from '../../styles/barrel.module.css'
 import Button from '../Button'
 import { useNavigate } from 'react-router-dom'
-import authHeaders from '../../utils/authHeaders'
-import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { OK } from '../../@types/auth'
 import DamageReview from './DamageReview'
 import formatDate from '../../utils/formatDate'
 import serverBaseURL from '../../utils/baseURL'
+import usePost from '../../hooks/usePost'
+import Loading from '../Loading'
 
 type Props = {
   open: Open
   barrel: Barrel
-  loading: boolean
-  setLoading: Dispatch<React.SetStateAction<boolean>>
-  setError: Dispatch<React.SetStateAction<string>>
 }
 
-function Return({ open, barrel, loading, setLoading, setError }: Props) {
+function Return({ open, barrel }: Props) {
   const navigate = useNavigate();
 
-  const handleReturn = async() => {
-    setError("");
-    setLoading(true);
+  const { loading, error, makePostRequest } = usePost<OK>({
+    url: `${serverBaseURL}/api/barrel/return`,
+    successCallback: () => {
+      navigate("/");
+    },
+    delay: true
+  })
+
+  const handleSubmit = () => {
     const body = JSON.stringify({
       id: barrel._id,
       open: open
     })
-    const headers = authHeaders();
-    if (!headers) return setError("Unauthorized");
-    headers.append("Content-Type", "application/json");
-    try {
-      const response = await fetch(`${serverBaseURL}/api/barrel/return`, { headers, body, method: "POST" });
-      if (response.ok) {
-        const result = await response.json() as OK;
-        console.log(result);
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/");
-        }, 1000);
-      } else {
-        await handleNotOK(response, setError, setLoading);
-      }
-    } catch (e) {
-      handleCatchError(e, setError, setLoading);
-    }
-  } 
+    makePostRequest(body);
+  }
 
   const handleDamageReviewRequest = () => {
     navigate("/report-damage", { state: { barrel } })
   }
-
+  if (loading) return <Loading />
   return (
     <>
       <div className={`${barrelStyles.displayCurrent} ${barrelStyles.width80}`}>
@@ -63,19 +48,13 @@ function Return({ open, barrel, loading, setLoading, setError }: Props) {
         <h3>Sent: </h3> 
         <p>{ formatDate(open.createdAt) }</p>
       </div>
-      { open.damage_review ? (
-        <DamageReview 
-          barrel={barrel} 
-          loading={loading}
-          setLoading={setLoading}
-          setError={setError} />
-      ) : (
+      { open.damage_review ? <DamageReview barrel={barrel} /> : (
         <div className={barrelStyles.buttonsWrapper}>
           <Button 
             loading={loading} 
             title='Mark as Returned'
             styleOverride={{ height: "5rem", width: "15rem" }}
-            handleClick={handleReturn} />
+            handleClick={handleSubmit} />
           <button 
             onClick={!loading ? handleDamageReviewRequest : undefined}
             className={`${barrelStyles.damageButton} ${loading ? barrelStyles.damageButtonLoading : ""}`}>
@@ -84,6 +63,7 @@ function Return({ open, barrel, loading, setLoading, setError }: Props) {
           <CancelButton />
         </div>
       ) }
+      { error && <p className='error'><small>{ error }</small></p> }
     </>
   )
 }

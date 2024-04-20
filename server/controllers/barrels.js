@@ -24,6 +24,7 @@ const getBarrel = async(req, res) => {
 
 const sendBarrel = async(req, res) => {
   const { id, sendTo } = req.body;
+  console.log(req.body);
   if (!id || !sendTo) return res.status(401).json({ error: "Missing fields" })
   try {
     const barrel = await Barrel.findByIdAndUpdate(id, {
@@ -77,6 +78,7 @@ const reviewDamageRequest = async(req, res) => {
 }
 
 const requestDamageReview = async(req, res) => {
+  console.log(req.body, req.files);
   const { id, comments } = req.body;
   if (!id) return res.status(401).json({ error: "Need ID" });
   const damage_review = {}
@@ -86,7 +88,6 @@ const requestDamageReview = async(req, res) => {
     if (req.files) {
       const promises = req.files.map((file) => cloudinary.uploader.upload(file.path, { folder: "bb_tracker" }))
       const images = await Promise.all(promises);
-      console.log("images", images);
       relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }})
       damage_review.images = relevantFields;
     }

@@ -23,9 +23,9 @@ const ManageBarrels = () => {
         <Button 
           title={"Add Barrels"}
           styleOverride={{ width: "12rem", height: "4rem" }}
-          handleClick={() => {console.log("log");setOpenNew(true)}} />
+          handleClick={() => setOpenNew(true)} />
         <Modal open={openNew} setOpen={setOpenNew} >
-          <AddNew refetch={refetch} setOpen={setOpenNew} />
+          <AddNew refetch={refetch} open={openNew} setOpen={setOpenNew} />
         </Modal>
         <h2>Existing Barrels:</h2>
         { data && data.map((b) => {

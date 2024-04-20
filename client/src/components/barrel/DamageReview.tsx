@@ -1,62 +1,49 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ChangeEvent, Dispatch, useRef } from 'react'
+import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Barrel } from '../../@types/barrel'
 import barrelStyles from '../../styles/barrel.module.css'
 import formatDate from '../../utils/formatDate'
 import Button from '../Button'
-import authHeaders from '../../utils/authHeaders'
-import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import { OK } from '../../@types/auth'
 import CancelButton from './CancelButton'
 import DamageImages from './DamageImages'
 import serverBaseURL from '../../utils/baseURL'
+import usePost from '../../hooks/usePost'
+import Loading from '../Loading'
 
 type Props = {
   barrel: Barrel
-  loading: boolean
-  setLoading: Dispatch<React.SetStateAction<boolean>>
-  setError: Dispatch<React.SetStateAction<string>>
 }
 
-const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
+const DamageReview = ({ barrel }: Props) => {
   const navigate = useNavigate();
   const reviewResponse = useRef("");
   const damage_review = barrel.open?.damage_review;
+  let damaged = false;
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    reviewResponse.current = e.target.value;
-  }
+  const { error, loading, makePostRequest } = usePost<OK>({
+    url: `${serverBaseURL}/api/barrel/review-damage`,
+    successCallback: (result) => {
+      console.log(result);
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    },
+    delay: true
+  })
 
-  const handleReview = async(damaged: boolean) => {
-    setError("");
-    setLoading(true);
+  const handleReview = async() => {
     const body = JSON.stringify({
       id: barrel._id,
       open: barrel.open,
       response: reviewResponse.current,
       damaged
     })
-    const headers = authHeaders();
-    if (!headers) return setError("Unauthorized");
-    headers.append("Content-Type", "application/json");
-    try {
-      const response = await fetch(`${serverBaseURL}/api/barrel/review-damage`, { headers, body, method: "POST" });
-      if (response.ok) {
-        const result = await response.json() as OK;
-        console.log(result);
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/");
-        }, 1000);
-      } else {
-        await handleNotOK(response, setError, setLoading);
-      }
-    } catch (e) {
-      handleCatchError(e, setError, setLoading);
-    }
+    await makePostRequest(body);
   }
   
+  if (loading) return <Loading />
   if (damage_review) return (
     <>
       <div className={`${barrelStyles.atHome} ${barrelStyles.width80}`}>
@@ -75,20 +62,27 @@ const DamageReview = ({ barrel, loading, setLoading, setError }: Props) => {
         <textarea 
           className={`${barrelStyles.input} ${barrelStyles.textarea}`}
           placeholder='Additional details'
-          onChange={handleChange} />
+          onChange={(e) => reviewResponse.current = e.target.value} />
       </div>
       <div className={barrelStyles.buttonsWrapper}>
         <Button 
           loading={loading}
           title='Mark as OK'
           styleOverride={{ height: "5rem", width: "15rem" }} 
-          handleClick={() => handleReview(false)}
+          handleClick={() => {
+            damaged = false;
+            handleReview();
+          }}
            />
-        <button className={barrelStyles.damageButton} style={{ height: "5rem", width: "15rem" }} onClick={() => handleReview(true)}>
+        <button className={barrelStyles.damageButton} style={{ height: "5rem", width: "15rem" }} onClick={() => {
+          damaged = true;
+          handleReview()
+          }}>
           Mark as Damaged*
         </button>
         <CancelButton />
       </div>
+      { error && <p className='error'><small>{ error }</small></p> }
       <p className={barrelStyles.sideMargins}>*This means the barrel is too damaged to continue using. It will be removed from rotation.</p>
     </>
   )

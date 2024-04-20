@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import IconButton from '../IconButton'
 import Modal from '../Modal'
-import { Barrel, ImgObject } from '../../@types/barrel'
+import { Barrel, ImgObject, ToUpdateEditBarrel } from '../../@types/barrel'
 import Button from '../Button'
 import { convertValueTypes, handleSetUpdate, validateEditBarrel } from '../../utils/editBarrelTools'
 import EditBarrelInput from './EditBarrelInput'
@@ -22,25 +22,6 @@ type Props = {
   setBarrels: React.Dispatch<React.SetStateAction<Barrel[] | null>>
 }
 
-export type ToUpdateEditBarrel = {
-  number: number | ""
-  damaged: boolean
-  open: Open
-}
-
-type DamageReview = {
-  comments?: string
-  images: ImgObject[]
-}
-
-type Open = null | {
-  createdAt: string
-  invoice: string
-  customer: string
-  returned?: string
-  damage_review?: DamageReview
-}
-
 const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
@@ -48,14 +29,14 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   const files = useRef<File[]>([]);
   const [previewImages, setPreviewImages] = useState<ImgObject[]>([])
 
-  const defaultValidation = useRef({
+  const defaultValidation = {
     number: "",
     invoice: "",
     createdAt: "",
     retired: "",
     returned: ""
-  })
-  const [validation, setValidation] = useState(defaultValidation.current);
+  }
+  const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
 
   const generateBody = (toUpdate: ToUpdateEditBarrel, files: File[]) => {
@@ -65,11 +46,9 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
     return body
   }
 
-  const { loading, error, setError, makePostRequest } = usePost<any>({
-    url: `${baseURL}/api/barrel/edit-barrel`, 
-    body: generateBody(toUpdate, files.current),
-    successCallback: (result: Barrel) => {
-      console.log("edit result", result);
+  const { loading, error, setError, makePostRequest } = usePost<Barrel>({
+    url: `${baseURL}/api/barrel/edit-barrel`,
+    successCallback: (result) => {
       setBarrels(prev => prev ? prev.map((brl) => brl._id !== result._id ? brl : result) : null);
       setOpen(false);
     },
@@ -136,16 +115,16 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   }
 
   const handleSubmit = async() => {
-    setValidation(defaultValidation.current);
+    setValidation(defaultValidation);
     setError("");
     const validationCheck = validateEditBarrel(toUpdate, barrelNumbers, barrel.number);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    await makePostRequest();
+    await makePostRequest(generateBody(toUpdate, files.current));
   }
 
   useEffect(() => {
     if (!open && (JSON.stringify(toUpdate) !== JSON.stringify(barrel))) {
-      setValidation(defaultValidation.current);
+      setValidation(defaultValidation);
       setNote("");
       setToUpdate({ ...barrel });
       setPreviewImages([]);

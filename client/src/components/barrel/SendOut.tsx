@@ -1,33 +1,28 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ChangeEvent, Dispatch, FormEvent, useContext, useRef, useState } from 'react'
+import { ChangeEvent, FormEvent, useContext, useRef, useState } from 'react'
 import Button from '../Button'
 import barrelStyles from '../../styles/barrel.module.css'
 import { Barrel } from '../../@types/barrel'
 import { useNavigate } from 'react-router-dom'
-import authHeaders from '../../utils/authHeaders'
-import { handleCatchError, handleNotOK } from '../../utils/handleFetchFail'
 import CancelButton from './CancelButton'
 import { unfocusAll } from '../../utils/shiftFocus';
 import { CustomerContext } from '../../context/CustomerContext';
 import serverBaseURL from '../../utils/baseURL'
+import usePost from '../../hooks/usePost'
+import Loading from '../Loading'
 
 type Props = {
   barrel: Barrel
-  loading: boolean
-  setLoading: Dispatch<React.SetStateAction<boolean>>
-  setError: Dispatch<React.SetStateAction<string>>
 }
 
-const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
+const SendOut = ({ barrel }: Props) => {
   const { customers } = useContext(CustomerContext);
-
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState({ invoice: false, customer: false });
   const inputValues = useRef({ invoice: "", customer: "" });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if (e.target.id === "invoice") inputValues.current.invoice = e.target.value;
-    if (e.target.id === "customer") inputValues.current.customer = e.target.value;
+    inputValues.current = { ...inputValues.current, [e.target.id]: e.target.value };
     if (invalid.customer || invalid.invoice) {
       setInvalid({ 
         invoice: e.target.id === "invoice" ? false : invalid.invoice, 
@@ -35,6 +30,17 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
       })
     }
   }
+
+  const { loading, error, setError, makePostRequest } = usePost({
+    url: `${serverBaseURL}/api/barrel/send`,
+    successCallback: (result) => {
+      console.log(result);
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    },
+    delay: true
+  })
 
   const handleConfirm = async(e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,31 +53,16 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
         customer: inputValues.current.customer ? false : true });
       return
     }
-    setLoading(true);
     const body = JSON.stringify({
       id: barrel._id,
       sendTo: inputValues.current
     })
-    const headers = authHeaders();
-    if (!headers) return setError("Unauthorized");
-    headers.append("Content-Type", "application/json");
-    try {
-      const response = await fetch(`${serverBaseURL}/api/barrel/send`, { headers, body, method: "POST" });
-      if (response.ok) {
-        const result = await response.json() as Barrel;
-        console.log(result);
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/");
-        }, 1000);
-      } else {
-        await handleNotOK(response, setError, setLoading);
-      }
-    } catch(e) {
-      handleCatchError(e, setError, setLoading);
-    }
+    makePostRequest(body);
   }
 
+  console.log(inputValues)
+
+  if (loading) return <Loading />
   return (
     <>
       <h2 className={barrelStyles.rbm}>Send to:</h2> 
@@ -96,6 +87,7 @@ const SendOut = ({ barrel, loading, setLoading, setError }: Props) => {
             />
           <CancelButton />
         </div>
+        { error && <p className='error'><small>{ error }testing testing</small></p> }
       </form>
     </>
   )

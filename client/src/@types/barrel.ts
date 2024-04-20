@@ -1,8 +1,12 @@
-export interface Barrel {
+export type ToUpdateEditBarrel = {
+  number: number | ""
+  damaged: boolean
+  open: Open | null
+}
+
+export interface Barrel extends ToUpdateEditBarrel {
   number: number
   _id: string
-  damaged: boolean
-  open: null | Open,
   history?: BrlHistory[]
 }
 
