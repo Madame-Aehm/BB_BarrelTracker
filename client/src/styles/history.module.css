@@ -125,6 +125,11 @@
   min-width: 0;
 }
 
+.editButtonPosition {
+  /* padding: 0.5rem;  */
+  align-self: flex-start;
+}
+
 .editBarrelInputLabel {
   font-size: large;
   font-weight: bold;
@@ -165,6 +170,12 @@
   align-self: flex-end;
   cursor: pointer;
   color: tomato;
+}
+
+.createDamageReport {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .imgThumbnailContainer {

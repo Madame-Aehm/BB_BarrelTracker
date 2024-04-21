@@ -11,9 +11,10 @@ import EditHistory from './EditHistory'
 type Props = {
   history: BrlHistory
   brl: number
+  brlHasOpen: boolean
 }
 
-const HistoryCard = ({ history, brl }: Props) => {
+const HistoryCard = ({ history, brl, brlHasOpen }: Props) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const HistoryCard = ({ history, brl }: Props) => {
             <b>Returned: </b>
             <p>{ history.returned ? formatDate(history.returned) : "-" }</p>
             </div>
-            { history.damage_review && 
+            { history.damage_review ? 
               <>
                 <hr className={historyStyles.hr}></hr>
                 <b>Damage Report</b>
@@ -63,7 +64,7 @@ const HistoryCard = ({ history, brl }: Props) => {
                     </div>
                   </>}
                   <div className={barrelStyles.centerButton}>
-                    <EditHistory history={history} />
+                    <EditHistory history={history} brlHasOpen={brlHasOpen} />
                     { history.damage_review.closed ? <p></p> : 
                       <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${brl}`)} /> }
                   </div>
@@ -71,7 +72,7 @@ const HistoryCard = ({ history, brl }: Props) => {
                     <DamageImages images={history.damage_review.images} /> 
                   : null }
                 </div> 
-              </>
+              </> : <div className={historyStyles.editButtonPosition}><EditHistory history={history} brlHasOpen={brlHasOpen} /></div>
             }
         </div>
       </div>

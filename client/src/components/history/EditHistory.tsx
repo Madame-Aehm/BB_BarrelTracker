@@ -1,44 +1,96 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import historyStyles from "../../styles/history.module.css"
 import barrelStyles from "../../styles/barrel.module.css"
+import authStyles from "../../styles/auth.module.css"
 import EditBarrelInput from '../barrel/EditBarrelInput'
-import { BrlHistory, Damage_Review, ImgObject, ToUpdateEditBarrel } from '../../@types/barrel'
-import { compressImage } from '../../utils/images'
-import ImageController from '../barrel/ImageController'
+import { BrlHistory, Damage_Review } from '../../@types/barrel'
 import { CustomerContext } from '../../context/CustomerContext'
-import { convertValueTypes, handleHistoryUpdate } from '../../utils/editBarrelTools'
+import { convertValueTypes, handleHistoryUpdate, validateEditHistory } from '../../utils/editBarrelTools'
 import Modal from '../Modal'
 import IconButton from '../IconButton'
+import Button from '../Button'
+import CancelButton from '../barrel/CancelButton'
 
 type Props = {
   history: BrlHistory
+  brlHasOpen: boolean
   // files: File[]
 }
 
-const EditHistory = ({ history }: Props) => {
+const EditHistory = ({ history, brlHasOpen }: Props) => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
-  const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
+  // const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
   const [historyUpdates, setHistoryUpdates] = useState({ ...history });
   const defaultValidation = {
     invoice: "",
     createdAt: "",
     returned: "",
-    damage_report: {
-      resolved: ""
-    }
+    closed: "",
+    response: ""
   }
   const [validation, setValidation] = useState(defaultValidation);
+  const [note, setNote] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, dr?: boolean) => {
-    const name = e.target.type === "radio" ? e.target.name.split("_")[0] : e.target.name;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, dr: boolean) => {
+    const name = e.target.name;
     const value = convertValueTypes(e.target.value, name);
+    console.log(name, value)
+    if ((name === "returned" || name === "resolved") && value === "") setNote("This change will reopen the invoice for the barrel.");
     setHistoryUpdates(prev => handleHistoryUpdate(prev, name, value, dr)); 
+    if (JSON.stringify(validation) !== JSON.stringify(defaultValidation)){
+      setValidation(prev => {
+        return {
+          ...prev,
+          [name]: ""
+        }
+      })
+    }
   }
+
+  const setEmptyDR = () => {
+    if (!historyUpdates.returned) {
+      return setValidation(prev => {
+        return {
+          ...prev,
+          returned: "Damage cannot be reported if barrel has not been returned"
+        }
+      })
+    }
+    setHistoryUpdates(prev => {
+      const newDR: Damage_Review = {
+        createdAt: Date(),
+        comments: "",
+        response: "",
+        images: []
+    }
+      return { 
+        ...prev, 
+        damage_review: newDR}
+    })
+  }
+
+  const handleSubmit = () => {
+    const validationCheck= validateEditHistory(historyUpdates, brlHasOpen);
+    console.log("validation", validationCheck);
+    if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
+    console.log("would submit this", historyUpdates)
+  }
+
+  useEffect(() => {
+    if (!open && (JSON.stringify(historyUpdates) !== JSON.stringify(history))) {
+      setValidation(defaultValidation);
+      setNote("");
+      setHistoryUpdates({ ...history });
+      // setPreviewImages([]);
+    }
+    // setError("");
+  }, [open])
 
   return (
     <>
       <IconButton 
+      styleOverride={{ margin: "0.5rem" }}
         icon='edit' 
         handleClick={() => setOpen(true)} />
       <Modal open={open} setOpen={setOpen}>
@@ -74,7 +126,7 @@ const EditHistory = ({ history }: Props) => {
               identifier={`invoice_open_${history._id}`}
               value={historyUpdates.invoice}
               validation={validation.invoice}
-              handleChange={handleChange}
+              handleChange={(e) => handleChange(e, false)}
             />
             <EditBarrelInput
               label="Since:"
@@ -82,7 +134,7 @@ const EditHistory = ({ history }: Props) => {
               type="date"
               value={historyUpdates.createdAt?.split("T")[0]}
               validation={validation.createdAt}
-              handleChange={handleChange}
+              handleChange={(e) => handleChange(e, false)}
             />
             <EditBarrelInput
               label="Returned:"
@@ -90,10 +142,27 @@ const EditHistory = ({ history }: Props) => {
               type="date"
               value={historyUpdates.returned?.split("T")[0] || ""}
               validation={validation.returned}
-              handleChange={handleChange}
+              handleChange={(e) => handleChange(e, false)}
             />
-            { (historyUpdates.damage_review) && <>
-              <h3>Damage Reported</h3>
+            { !historyUpdates.damage_review && 
+              <div className={historyStyles.createDamageReport}>
+                <h4>Add Damage Report</h4>
+                <IconButton
+                  icon='add'
+                  handleClick={setEmptyDR}
+                />
+              </div>
+              
+            }
+            { historyUpdates.damage_review && 
+            <fieldset className={historyStyles.activeInvoice}>
+              <legend><h2 className={historyStyles.legend}>Damage Report:</h2></legend>
+              <span 
+                  title='Delete open invoice'
+                  className={`material-symbols-outlined ${historyStyles.deleteOpen}`}
+                  onClick={() => setHistoryUpdates(prev => { return { ...prev, damage_review: undefined } })}>
+                    delete
+                </span>
               <label
                 htmlFor={`comments_${history._id}`}
                 className={`${historyStyles.editBarrelInputLabel}`}>Comments:</label>
@@ -112,9 +181,22 @@ const EditHistory = ({ history }: Props) => {
                 id={`response_${history._id}`}
                 value={historyUpdates.damage_review.response || ""} 
                 placeholder='Response can be added here' 
-                className={barrelStyles.input}
+                className={`${validation.response ? "invalid" : "valid"} ${barrelStyles.input}`}
                 name='response'
                 onChange={(e) => handleChange(e, true)}
+              />
+              { validation.response && 
+                <div>
+                  <small className={authStyles.error} style={{textAlign: "right"}}>{ validation.response }</small>
+                </div>
+              }
+              <EditBarrelInput
+                label="Resolved:"
+                identifier={`closed_open${history._id}`}
+                type="date"
+                value={historyUpdates.damage_review?.closed?.split("T")[0] || ""}
+                validation={validation.closed}
+                handleChange={(e) => handleChange(e, true)}
               />
               {/* <ImageController 
                 imageArray={[...historyUpdates.damage_review.images, ...previewImages]} 
@@ -122,7 +204,23 @@ const EditHistory = ({ history }: Props) => {
                 // fileAdd={handleAddImages}
                 // imageRemove={handleImageRemove}
                   /> */}
-            </> }
+            </fieldset> }
+          {/* <p className='error'>{"error"}</p> */}
+          { note && 
+            <div>
+              <small style={{ textAlign: "right", color: "var(--bb-blue)" }}>
+                <b>Note: </b>{ note }
+              </small>
+            </div> 
+          }
+          <div className={barrelStyles.buttonsWrapper}>
+            <Button 
+              styleOverride={{ height: "4rem", width: "12rem" }}
+              title={"Save Changes"} 
+              handleClick={handleSubmit} 
+            />
+            <CancelButton handleClick={() => setOpen(false)} />
+          </div>
         </div>
       </Modal> 
     </>

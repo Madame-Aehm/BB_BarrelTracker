@@ -15,7 +15,7 @@ const validateEditBarrel = (toUpdate: ToUpdateEditBarrel, barrelNumbers: number[
     number: "",
     invoice: "",
     createdAt: "",
-    retired: "",
+    damaged: "",
     returned: ""
   }
   if (!toUpdate.number) {
@@ -37,7 +37,7 @@ const validateEditBarrel = (toUpdate: ToUpdateEditBarrel, barrelNumbers: number[
     }
     if (toUpdate.damaged && !toUpdate.open.returned) {
       validationFail = true;
-      validationObject.retired = "Barrel can't be retired with an open invoice"
+      validationObject.damaged = "Barrel can't be retired with an open invoice"
     }
     if (toUpdate.open.returned && (new Date(toUpdate.open.returned).setHours(0,0,0,0) < new Date(toUpdate.open.createdAt).setHours(0,0,0,0))) {
       validationFail = true;
@@ -79,8 +79,8 @@ const handleHistoryUpdate = (
   prev: BrlHistory, 
   name: string, 
   value: string | number | boolean,
-  damage_review?: boolean) => {
-  return damage_review && prev.damage_review ? {
+  damage_review: boolean) => {
+  const newValue = (damage_review && prev.damage_review) ? {
       ...prev,
       damage_review: {
         ...prev.damage_review,
@@ -90,7 +90,49 @@ const handleHistoryUpdate = (
       ...prev,
       [name]: value
     }
-  
+  return newValue
 }
 
-export { convertValueTypes, validateEditBarrel, handleSetUpdate, handleHistoryUpdate }
+const validateEditHistory = (toUpdate: BrlHistory, brlHasOpen: boolean) => {
+  let validationFail = false;
+  const validationObject = {
+    invoice: "",
+    createdAt: "",
+    returned: "",
+    closed: "",
+    response: ""
+  }
+  if (!toUpdate.invoice) {
+    validationFail = true;
+    validationObject.invoice = "Invoice is required"
+  }
+  if (!toUpdate.createdAt) {
+    validationFail = true;
+    validationObject.createdAt = "Need to specify date"
+  }
+  if (toUpdate.returned && (new Date(toUpdate.returned).setHours(0,0,0,0) < new Date(toUpdate.createdAt).setHours(0,0,0,0))) {
+    validationFail = true;
+    validationObject.returned = "Barrel can't be returned before it is sent out"
+  }
+  if (!toUpdate.returned && brlHasOpen) {
+    validationFail = true;
+    validationObject.returned = "Removing return date reopens invoice, but this barrel already has an open invoice"
+  }
+  if (!toUpdate.returned && toUpdate.damage_review) {
+    validationFail = true;
+    validationObject.returned = "Damage report cannot exist on a barrel that hasn't been returned"
+  }
+  if (toUpdate.damage_review?.closed && toUpdate.returned) {
+    if ((new Date(toUpdate.damage_review.closed).setHours(0,0,0,0) < new Date(toUpdate.returned).setHours(0,0,0,0))) {
+      validationFail = true;
+      validationObject.closed = "Damage report can't be closed before barrel was returned"
+    }
+  }
+  if (!toUpdate.damage_review?.closed && toUpdate.damage_review?.response) {
+    validationFail = true;
+    validationObject.response = "Reopening invoice will delete this text"
+  }
+  return { validationFail, validationObject }
+}
+
+export { convertValueTypes, validateEditBarrel, handleSetUpdate, handleHistoryUpdate, validateEditHistory }

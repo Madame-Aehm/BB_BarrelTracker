@@ -33,7 +33,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
     number: "",
     invoice: "",
     createdAt: "",
-    retired: "",
+    damaged: "",
     returned: ""
   }
   const [validation, setValidation] = useState(defaultValidation);
@@ -70,6 +70,14 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
     }
     if (name === "damaged") {
       setNote(value && toUpdate.open?.returned ? "Saving this change will close invoice" : "");
+    }
+    if (JSON.stringify(validation) !== JSON.stringify(defaultValidation)){
+      setValidation(prev => {
+        return {
+          ...prev,
+          [name]: ""
+        }
+      })
     }
   }
 
@@ -146,7 +154,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
               type="radio"
               identifier={`damaged_true${barrel._id}`}
               value="true"
-              validation={validation.retired}
+              validation={validation.damaged}
               checked={toUpdate.damaged}
               handleChange={handleChange}
             />
@@ -159,7 +167,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
               handleChange={handleChange}
             />
           </div>
-          <div><small className={authStyles.error} style={{textAlign: "right"}}>{ validation.retired }</small></div>
+          <div><small className={authStyles.error} style={{textAlign: "right"}}>{ validation.damaged }</small></div>
           <EditBarrelInput
             label="Number:"
             type="number"
