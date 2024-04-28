@@ -217,13 +217,38 @@ const updateBarrel = async(req, res) => {
 }
 
 const updateHistory = async(req, res) => {
-  console.log(req.body);
   const edits = JSON.parse(req.body.edits);
+  const files = req.files;
   try {
     const barrel = await Barrel.findById(req.body.barrel_id);
     const reopenInvoice = !barrel.open && (!edits.returned || (edits.returned && edits.damage_review && !edits.damage_review.closed));
     if (!edits.damage_review) {
       edits.damage_review = undefined;
+    }
+    const historyIndex = barrel.history.map((his) => his._id.toString()).indexOf(edits._id);
+    const historyToUpdate = barrel.history[historyIndex];
+    if (historyToUpdate.damage_review) {
+      const editedImages = edits.damage_review?.images;
+      const imagesToDelete = !editedImages ? historyToUpdate.damage_review.images 
+        : historyToUpdate.damage_review.images.filter((img) => {
+          let result = true;
+          for (let i = 0; i < editedImages.length; i++) {
+            if (editedImages[i].public_id === img.public_id) {
+              result = false;
+            }
+          }
+          return result
+        })
+      imagesToDelete.forEach(async(img) => {
+        await cloudinary.uploader.destroy(img.public_id);
+        console.log("deleted image")
+      })
+    }
+    if (files.length) {
+      const promises = files.map((file) => cloudinary.uploader.upload(file.path, { folder: "bb_tracker" }))
+      const images = await Promise.all(promises);
+      const relevantFields = images.map((image) => { return { public_id: image.public_id, url: image.secure_url }});
+      edits.damage_review.images = [...edits.damage_review.images, ...relevantFields];
     }
     if (reopenInvoice) {
       barrel.open = { ...edits };
@@ -240,7 +265,7 @@ const updateHistory = async(req, res) => {
       })
     }
     await barrel.save();
-    res.status(200).json({ message: "history updated" });
+    res.status(200).json(barrel.history[historyIndex]);
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });

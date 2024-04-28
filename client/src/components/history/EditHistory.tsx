@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { authStyles, barrelStyles, historyStyles } from '../../styles/styles'
 import EditBarrelInput from '../barrel/EditBarrelInput'
-import { Barrel, BrlHistory, Damage_Review } from '../../@types/barrel'
+import { Barrel, BrlHistory, Damage_Review, ImgObject } from '../../@types/barrel'
 import { CustomerContext } from '../../context/CustomerContext'
 import { convertValueTypes, handleHistoryUpdate, validateEditHistory } from '../../utils/editBarrelTools'
 import Modal from '../Modal'
@@ -10,18 +10,21 @@ import Button from '../Button'
 import CancelButton from '../barrel/CancelButton'
 import usePost from '../../hooks/usePost'
 import baseURL from '../../utils/baseURL'
+import ImageController from '../barrel/ImageController'
+import { compressImage } from '../../utils/images'
 
 type Props = {
   history: BrlHistory
   barrel: Barrel
   setBarrel: React.Dispatch<React.SetStateAction<Barrel | null>>
-  // files: File[]
+  previewImages: ImgObject[]
+  setPreviewImages: React.Dispatch<React.SetStateAction<ImgObject[]>>
 }
 
-const EditHistory = ({ history, barrel, setBarrel }: Props) => {
+const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImages }: Props) => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
-  // const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
+  const files = useRef<File[]>([]);
   const [historyUpdates, setHistoryUpdates] = useState({ ...history });
   const defaultValidation = {
     invoice: "",
@@ -33,19 +36,20 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
   const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
 
-  const { loading, error, setError, makePostRequest } = usePost({
+  const { loading, error, makePostRequest } = usePost<BrlHistory>({
     url: `${baseURL}/api/barrel/edit-history`,
     successCallback: (result) => {
-      console.log("this is callback result", result);
+      setPreviewImages([]);
+      files.current = [];
       if (note) {
         setBarrel(prev => {
           if (!prev) return prev;
           return {
             ...prev,
             open: {
-              ...historyUpdates
+              ...result
             },
-            history: prev.history?.filter((his) => his._id === historyUpdates._id)
+            history: prev.history?.filter((his) => his._id === result._id)
           }
         })
         return setOpen(false);
@@ -56,21 +60,19 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
           ...prev,
           history: prev.history?.map(his => {
             if (his._id === history._id) {
-              return historyUpdates
+              return result
             }
             return his
           })
         }
       })
       setOpen(false);
-    },
-    delay: true
+    }
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, dr: boolean) => {
     const name = e.target.name;
     const value = convertValueTypes(e.target.value, name);
-    console.log(name, value)
     if ((name === "returned" || name === "closed") && value === "") setNote(`This change will reopen the invoice for barrel ${barrel.number}`);
     if ((name === "returned" || name === "closed") && value !== "") setNote("");
     setHistoryUpdates(prev => handleHistoryUpdate(prev, name, value, dr)); 
@@ -118,22 +120,60 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
       })
     }
     setHistoryUpdates(prev => { return { ...prev, damage_review: undefined } })
+    setPreviewImages([]);
+    files.current = [];
   }
 
-  const generateBody = (historyUpdates: BrlHistory, files?: File[]) => {
+  const handleAddImages = async(e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const toCompress = [...e.target.files].map((file) => compressImage(file));
+      const compressed: File[] = [];
+      (await Promise.all(toCompress)).forEach((file) => {
+        compressed.push(file);
+      })
+      files.current = [...files.current, ...compressed];
+      setPreviewImages(prev => {
+        const getUrls = [];
+        for (let i = 0; i < e.target.files!.length; i++) {
+          getUrls.push({ url: URL.createObjectURL(e.target.files![i])} );
+        }
+        return [...prev, ...getUrls ];
+      })
+    }
+  }
+
+  const handleImageRemove = (img: ImgObject) => {
+    if (!img.public_id) {
+      const index = previewImages.findIndex(e => e.url === img.url);
+      setPreviewImages(prev => {
+        return prev.filter((_, i) => i !== index);
+      })
+      files.current = files.current && [...files.current].filter((_, i) => i !== index);
+      return
+    }
+    setHistoryUpdates(prev => {
+      return prev.damage_review ? {
+        ...prev,
+        damage_review: {
+          ...prev.damage_review,
+          images: prev.damage_review.images.filter((image) => image.url !== img.url)
+        }
+      } : prev
+    })
+  }
+
+  const generateBody = (historyUpdates: BrlHistory, files: File[]) => {
     const body = new FormData();
     body.append("barrel_id", barrel._id);
     body.append("edits", JSON.stringify(historyUpdates));
-    // files.forEach((file) => body.append("images", file));
+    files.forEach((file) => body.append("images", file));
     return body
   }
 
   const handleSubmit = async() => {
     const validationCheck= validateEditHistory(historyUpdates, barrel.open ? true : false);
-    console.log("validation", validationCheck);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    console.log("would submit this", historyUpdates)
-    await makePostRequest(generateBody(historyUpdates));
+    await makePostRequest(generateBody(historyUpdates, files.current));
   }
 
   useEffect(() => {
@@ -141,7 +181,8 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
       setValidation(defaultValidation);
       setNote("");
       setHistoryUpdates({ ...history });
-      // setPreviewImages([]);
+      setPreviewImages([]);
+      files.current = [];
     }
     // setError("");
   }, [open])
@@ -155,15 +196,6 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
       <Modal open={open} setOpen={setOpen}>
         <div className={historyStyles.editHistoryFormContainer}>
           <h1>Edit History</h1>
-            {/* <span 
-              title='Delete open invoice'
-              className={`material-symbols-outlined ${historyStyles.deleteOpen}`}
-              onClick={() => setToUpdate(prev => {
-                return { ...prev, open: null }
-              })}>
-                delete
-            </span> */}
-            
             <label className={historyStyles.editBarrelInputLabel}>Customer: </label>
             <select 
               className={barrelStyles.input}
@@ -217,7 +249,7 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
             <fieldset className={historyStyles.activeInvoice}>
               <legend><h2 className={historyStyles.legend}>Damage Report:</h2></legend>
               <span 
-                  title='Delete open invoice'
+                  title='Delete Damage Report'
                   className={`material-symbols-outlined ${historyStyles.deleteOpen}`}
                   onClick={handleRemoveDR}>
                     delete
@@ -232,6 +264,12 @@ const EditHistory = ({ history, barrel, setBarrel }: Props) => {
                 className={barrelStyles.input}
                 name='comments'
                 onChange={(e) => handleChange(e, true)}
+              />
+              <ImageController 
+                imageArray={[...historyUpdates.damage_review.images, ...previewImages]} 
+                id={`${history._id}_imgController`}
+                fileAdd={handleAddImages}
+                imageRemove={handleImageRemove}
               />
               <label
                 htmlFor={`response_${history._id}`}

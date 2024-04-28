@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { barrelStyles, historyStyles } from '../../styles/styles'
-import { Barrel, BrlHistory } from '../../@types/barrel'
+import { Barrel, BrlHistory, ImgObject } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import DamageImages from '../barrel/DamageImages'
 import IconButton from '../IconButton'
@@ -14,8 +14,9 @@ type Props = {
 }
 
 const HistoryCard = ({ history, barrel, setBarrel }: Props) => {
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
 
   return (
     <div className={`${historyStyles.card}`}>
@@ -63,17 +64,27 @@ const HistoryCard = ({ history, barrel, setBarrel }: Props) => {
                     </div>
                   </>}
                   <div className={barrelStyles.centerButton}>
-                    <EditHistory history={history} barrel={barrel} setBarrel={setBarrel} />
+                    <EditHistory 
+                      history={history} 
+                      barrel={barrel} 
+                      setBarrel={setBarrel} 
+                      previewImages={previewImages} 
+                      setPreviewImages={setPreviewImages} />
                     { history.damage_review.closed ? <p></p> : 
                       <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${barrel.number}`)} /> }
                   </div>
-                  { history.damage_review.images.length > 0 ? 
-                    <DamageImages images={history.damage_review.images} /> 
-                  : null }
+                  { history.damage_review.images.length > 0 && 
+                    <DamageImages images={[ ...history.damage_review.images, ...previewImages ]} /> 
+                  }
                 </div> 
               </> : 
               <div className={historyStyles.editButtonPosition}>
-                <EditHistory history={history} barrel={barrel} setBarrel={setBarrel} />
+                <EditHistory 
+                  history={history} 
+                  barrel={barrel} 
+                  setBarrel={setBarrel}
+                  previewImages={previewImages} 
+                  setPreviewImages={setPreviewImages} />
               </div>
             }
         </div>

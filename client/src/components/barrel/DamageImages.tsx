@@ -24,7 +24,7 @@ const DamageImages = ({ images }: Props) => {
               if (img._id !== arr[arr.length - 1]._id) style.marginRight = "1rem";
               return (
                 <img 
-                  key={img._id} 
+                  key={img._id || img.url} 
                   src={img.url} 
                   alt={`Image ${i+1} of ${arr.length}`} 
                   style={style}

@@ -14,7 +14,6 @@ function History() {
   const navigate = useNavigate();
 
   const { data, setData, error, loading } = useFetch<Barrel>(`${serverBaseURL}/api/barrel/get/?${params}&history=true`);
-  console.log("barrel as data", data)
 
   if (error) return <div>Something went wrong....</div>
   if (loading) return <Loading />

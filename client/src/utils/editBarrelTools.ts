@@ -1,7 +1,6 @@
 import { BrlHistory, ToUpdateEditBarrel } from "../@types/barrel";
 
 const convertValueTypes = (value: string, name: string) => {
-  console.log(typeof value);
   let result: string | number | boolean = value;
   if (name === "number" && value) result = Number(value);
   if (name === "damaged") result = value === "true";

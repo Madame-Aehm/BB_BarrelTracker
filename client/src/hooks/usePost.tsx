@@ -25,7 +25,6 @@ const usePost = <T,> (params: Parameters<T>): ReturnData => {
   const [error, setError] = useState("");
 
   const makePostRequest = async(body: string | FormData,) => {
-    console.log("sending this body", body);
     setLoading(true);
     setError("");
     const headers = authHeaders();

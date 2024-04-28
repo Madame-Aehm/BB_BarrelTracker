@@ -244,13 +244,6 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
                     fileAdd={handleAddImages}
                     imageRemove={handleImageRemove}
                      />
-                  {/* { toUpdate.open.damage_review.images.length > 0 && 
-                    <div className={historyStyles.imgThumbnailWrap}>
-                      { toUpdate.open.damage_review.images.map((img, i) => {
-                        return <ImgThumbnail key={`${barrel._id}img${i}`} img={img} handleChange={handleImageRemove} />
-                      }) }
-                    </div> 
-                  } */}
                 </> }
                 { note && 
                   <div>
