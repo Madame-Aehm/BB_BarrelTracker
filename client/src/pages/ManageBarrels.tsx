@@ -6,7 +6,7 @@ import AddNew from "../components/barrel/AddNew";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import { Barrel } from "../@types/barrel";
-import historyStyles from "../styles/history.module.css"
+import { historyStyles } from "../styles/styles";
 import serverBaseURL from "../utils/baseURL";
 import ToTop from "../components/ToTop";
 

@@ -1,5 +1,5 @@
 import { ImgObject } from "../../@types/barrel"
-import historyStyles from "../../styles/history.module.css"
+import { historyStyles } from "../../styles/styles"
 import ImgThumbnail from "../history/ImgThumbnail"
 
 

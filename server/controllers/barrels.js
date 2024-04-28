@@ -218,6 +218,7 @@ const updateBarrel = async(req, res) => {
 
 const updateHistory = async(req, res) => {
   console.log(req.body);
+  // const barrel = await Barrel.findByIdAndUpdate(edits._id, { ...edits }, { new: true }).select("-history");
   res.send("test");
 }
 

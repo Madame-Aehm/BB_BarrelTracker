@@ -2,7 +2,7 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Barrel } from '../../@types/barrel'
-import barrelStyles from '../../styles/barrel.module.css'
+import { barrelStyles } from '../../styles/styles'
 import formatDate from '../../utils/formatDate'
 import Button from '../Button'
 import { OK } from '../../@types/auth'

@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
-import modalStyles from '../styles/modal.module.css'
+import { modalStyles } from '../styles/styles';
 
 interface Props extends PropsWithChildren {
   open: boolean

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom"
-import barrelStyles from '../styles/barrel.module.css'
+import { barrelStyles } from "../styles/styles";
 import { Barrel, ImgObject } from "../@types/barrel";
 import CancelButton from "../components/barrel/CancelButton";
 import { ChangeEvent, useRef, useState } from "react";

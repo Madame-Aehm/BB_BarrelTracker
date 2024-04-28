@@ -1,23 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react'
-import historyStyles from "../../styles/history.module.css"
-import barrelStyles from "../../styles/barrel.module.css"
-import authStyles from "../../styles/auth.module.css"
+import { authStyles, barrelStyles, historyStyles } from '../../styles/styles'
 import EditBarrelInput from '../barrel/EditBarrelInput'
-import { BrlHistory, Damage_Review } from '../../@types/barrel'
+import { Barrel, BrlHistory, Damage_Review } from '../../@types/barrel'
 import { CustomerContext } from '../../context/CustomerContext'
 import { convertValueTypes, handleHistoryUpdate, validateEditHistory } from '../../utils/editBarrelTools'
 import Modal from '../Modal'
 import IconButton from '../IconButton'
 import Button from '../Button'
 import CancelButton from '../barrel/CancelButton'
+import usePost from '../../hooks/usePost'
+import baseURL from '../../utils/baseURL'
 
 type Props = {
   history: BrlHistory
+  setBrl: React.Dispatch<React.SetStateAction<Barrel | null>>
   brlHasOpen: boolean
   // files: File[]
 }
 
-const EditHistory = ({ history, brlHasOpen }: Props) => {
+const EditHistory = ({ history, setBrl, brlHasOpen }: Props) => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
   // const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
@@ -31,6 +32,16 @@ const EditHistory = ({ history, brlHasOpen }: Props) => {
   }
   const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
+
+  const { loading, error, setError, makePostRequest } = usePost<BrlHistory>({
+    url: `${baseURL}/api/barrel/edit-barrel`,
+    successCallback: (result) => {
+      console.log("this is callback result", result);
+      // setBarrels(prev => prev ? prev.map((brl) => brl._id !== result._id ? brl : result) : null);
+      setOpen(false);
+    },
+    delay: true
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, dr: boolean) => {
     const name = e.target.name;
@@ -213,10 +224,12 @@ const EditHistory = ({ history, brlHasOpen }: Props) => {
               </small>
             </div> 
           }
+          { error && <p className='error'>{ error }</p> }
           <div className={barrelStyles.buttonsWrapper}>
             <Button 
               styleOverride={{ height: "4rem", width: "12rem" }}
               title={"Save Changes"} 
+              loading={loading}
               handleClick={handleSubmit} 
             />
             <CancelButton handleClick={() => setOpen(false)} />

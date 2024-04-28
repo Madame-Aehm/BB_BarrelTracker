@@ -1,5 +1,4 @@
-// import layoutStyles from '../styles/layout.module.css'
-import loaderStyles from '../styles/loader.module.css'
+import { loaderStyles } from '../styles/styles'
 
 
 

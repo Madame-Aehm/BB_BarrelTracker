@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { ChangeEvent, FormEvent, useContext, useRef, useState } from 'react'
 import Button from '../Button'
-import barrelStyles from '../../styles/barrel.module.css'
+import { barrelStyles } from '../../styles/styles'
 import { Barrel } from '../../@types/barrel'
 import { useNavigate } from 'react-router-dom'
 import CancelButton from './CancelButton'

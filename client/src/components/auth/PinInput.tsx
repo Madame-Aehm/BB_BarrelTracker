@@ -1,5 +1,5 @@
 import { CSSProperties, ChangeEvent, KeyboardEvent, MutableRefObject } from 'react'
-import authStyles from '../../styles/auth.module.css'
+import { authStyles } from '../../styles/styles'
 import { Pin, PinInputType } from '../../@types/auth'
 import { shiftFocus } from '../../utils/shiftFocus'
 

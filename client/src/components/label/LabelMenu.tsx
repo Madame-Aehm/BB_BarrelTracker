@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { ChangeEvent, Dispatch, FormEvent, useEffect, useRef, useState } from 'react'
-import labelStyles from '../../styles/labels.module.css'
+import { labelStyles } from '../../styles/styles';
 import { unfocusAll } from '../../utils/shiftFocus';
 import Button from '../Button';
 import BrlNumForm from '../BrlNumForm';

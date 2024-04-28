@@ -1,7 +1,7 @@
 import { CSSProperties, useState } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
-import modalStyles from '../../styles/modal.module.css'
+import { modalStyles } from '../../styles/styles'
 import { ImgObject } from '../../@types/barrel'
 
 type Props = {

@@ -1,5 +1,5 @@
 import { Barrel, Open } from '../../@types/barrel'
-import barrelStyles from '../../styles/barrel.module.css'
+import { barrelStyles } from '../../styles/styles'
 import Button from '../Button'
 import { useNavigate } from 'react-router-dom'
 import CancelButton from './CancelButton'

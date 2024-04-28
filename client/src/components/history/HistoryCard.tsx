@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import historyStyles from '../../styles/history.module.css'
-import barrelStyles from '../../styles/barrel.module.css'
-import { BrlHistory } from '../../@types/barrel'
+import { barrelStyles, historyStyles } from '../../styles/styles'
+import { Barrel, BrlHistory } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import DamageImages from '../barrel/DamageImages'
 import IconButton from '../IconButton'
@@ -11,10 +10,11 @@ import EditHistory from './EditHistory'
 type Props = {
   history: BrlHistory
   brl: number
+  setBrl: React.Dispatch<React.SetStateAction<Barrel | null>>
   brlHasOpen: boolean
 }
 
-const HistoryCard = ({ history, brl, brlHasOpen }: Props) => {
+const HistoryCard = ({ history, brl, setBrl, brlHasOpen }: Props) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -64,7 +64,7 @@ const HistoryCard = ({ history, brl, brlHasOpen }: Props) => {
                     </div>
                   </>}
                   <div className={barrelStyles.centerButton}>
-                    <EditHistory history={history} brlHasOpen={brlHasOpen} />
+                    <EditHistory history={history} setBrl={setBrl} brlHasOpen={brlHasOpen} />
                     { history.damage_review.closed ? <p></p> : 
                       <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${brl}`)} /> }
                   </div>
@@ -72,7 +72,10 @@ const HistoryCard = ({ history, brl, brlHasOpen }: Props) => {
                     <DamageImages images={history.damage_review.images} /> 
                   : null }
                 </div> 
-              </> : <div className={historyStyles.editButtonPosition}><EditHistory history={history} brlHasOpen={brlHasOpen} /></div>
+              </> : 
+              <div className={historyStyles.editButtonPosition}>
+                <EditHistory history={history} setBrl={setBrl} brlHasOpen={brlHasOpen} />
+              </div>
             }
         </div>
       </div>

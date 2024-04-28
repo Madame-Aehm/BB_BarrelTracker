@@ -1,5 +1,4 @@
-import authStyles from '../styles/auth.module.css'
-import layoutStyles from '../styles/layout.module.css'
+import { authStyles, layoutStyles } from '../styles/styles';
 import { useContext, useState } from 'react';
 import { AuthOK, NotOK, PinError } from '../@types/auth';
 import AuthForm from '../components/auth/AuthForm';

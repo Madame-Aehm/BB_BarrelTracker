@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect } from 'react'
 import * as qr from "@bitjson/qr-code";
-import labelStyles from '../../styles/labels.module.css'
+import { labelStyles } from '../../styles/styles';
 
 type Props = {
   contents: string
