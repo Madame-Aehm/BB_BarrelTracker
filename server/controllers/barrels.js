@@ -134,7 +134,7 @@ const manageAll = async(_, res) => {
   try {
     const barrels = await Barrel.find({}, "-history").sort({ number: "desc" });
     res.status(200).json(barrels);
-  } catch (error) {
+  } catch (e) {
     console.log(e);
     res.status(500).json({ error: "Server Error" });
   }
@@ -218,8 +218,33 @@ const updateBarrel = async(req, res) => {
 
 const updateHistory = async(req, res) => {
   console.log(req.body);
-  // const barrel = await Barrel.findByIdAndUpdate(edits._id, { ...edits }, { new: true }).select("-history");
-  res.send("test");
+  const edits = JSON.parse(req.body.edits);
+  try {
+    const barrel = await Barrel.findById(req.body.barrel_id);
+    const reopenInvoice = !barrel.open && (!edits.returned || (edits.returned && edits.damage_review && !edits.damage_review.closed));
+    if (!edits.damage_review) {
+      edits.damage_review = undefined;
+    }
+    if (reopenInvoice) {
+      barrel.open = { ...edits };
+      barrel.history = barrel.history.filter((history) => history._id.toString() !== edits._id);
+    } else {
+      barrel.history = barrel.history.map((history) => {
+        if (history._id.toString() === edits._id) {
+          return {
+            ...history,
+            ...edits
+          }
+        }
+        return history
+      })
+    }
+    await barrel.save();
+    res.status(200).json({ message: "history updated" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Server Error" });
+  }
 }
 
 export { 

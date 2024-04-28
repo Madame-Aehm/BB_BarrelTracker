@@ -14,6 +14,7 @@ function History() {
   const navigate = useNavigate();
 
   const { data, setData, error, loading } = useFetch<Barrel>(`${serverBaseURL}/api/barrel/get/?${params}&history=true`);
+  console.log("barrel as data", data)
 
   if (error) return <div>Something went wrong....</div>
   if (loading) return <Loading />
@@ -33,7 +34,7 @@ function History() {
         { data.history && <>
           { data.history.length > 0 && <h3 style={{ alignSelf: "flex-start", marginLeft: "10%" }}>Previous:</h3>}
           { data.history.map((h) => {
-            return <HistoryCard key={h._id} history={h} brl={data.number} setBrl={setData} brlHasOpen={data.open ? true : false} />
+            return <HistoryCard key={h._id} history={h} barrel={data} setBarrel={setData} />
           }) }
         </> }
       </div>

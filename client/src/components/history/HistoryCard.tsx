@@ -9,12 +9,11 @@ import EditHistory from './EditHistory'
 
 type Props = {
   history: BrlHistory
-  brl: number
-  setBrl: React.Dispatch<React.SetStateAction<Barrel | null>>
-  brlHasOpen: boolean
+  barrel: Barrel
+  setBarrel: React.Dispatch<React.SetStateAction<Barrel | null>>
 }
 
-const HistoryCard = ({ history, brl, setBrl, brlHasOpen }: Props) => {
+const HistoryCard = ({ history, barrel, setBarrel }: Props) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -64,9 +63,9 @@ const HistoryCard = ({ history, brl, setBrl, brlHasOpen }: Props) => {
                     </div>
                   </>}
                   <div className={barrelStyles.centerButton}>
-                    <EditHistory history={history} setBrl={setBrl} brlHasOpen={brlHasOpen} />
+                    <EditHistory history={history} barrel={barrel} setBarrel={setBarrel} />
                     { history.damage_review.closed ? <p></p> : 
-                      <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${brl}`)} /> }
+                      <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${barrel.number}`)} /> }
                   </div>
                   { history.damage_review.images.length > 0 ? 
                     <DamageImages images={history.damage_review.images} /> 
@@ -74,7 +73,7 @@ const HistoryCard = ({ history, brl, setBrl, brlHasOpen }: Props) => {
                 </div> 
               </> : 
               <div className={historyStyles.editButtonPosition}>
-                <EditHistory history={history} setBrl={setBrl} brlHasOpen={brlHasOpen} />
+                <EditHistory history={history} barrel={barrel} setBarrel={setBarrel} />
               </div>
             }
         </div>

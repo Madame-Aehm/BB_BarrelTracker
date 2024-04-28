@@ -13,12 +13,12 @@ import baseURL from '../../utils/baseURL'
 
 type Props = {
   history: BrlHistory
-  setBrl: React.Dispatch<React.SetStateAction<Barrel | null>>
-  brlHasOpen: boolean
+  barrel: Barrel
+  setBarrel: React.Dispatch<React.SetStateAction<Barrel | null>>
   // files: File[]
 }
 
-const EditHistory = ({ history, setBrl, brlHasOpen }: Props) => {
+const EditHistory = ({ history, barrel, setBarrel }: Props) => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
   // const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
@@ -33,11 +33,35 @@ const EditHistory = ({ history, setBrl, brlHasOpen }: Props) => {
   const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
 
-  const { loading, error, setError, makePostRequest } = usePost<BrlHistory>({
-    url: `${baseURL}/api/barrel/edit-barrel`,
+  const { loading, error, setError, makePostRequest } = usePost({
+    url: `${baseURL}/api/barrel/edit-history`,
     successCallback: (result) => {
       console.log("this is callback result", result);
-      // setBarrels(prev => prev ? prev.map((brl) => brl._id !== result._id ? brl : result) : null);
+      if (note) {
+        setBarrel(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            open: {
+              ...historyUpdates
+            },
+            history: prev.history?.filter((his) => his._id === historyUpdates._id)
+          }
+        })
+        return setOpen(false);
+      }
+      setBarrel(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          history: prev.history?.map(his => {
+            if (his._id === history._id) {
+              return historyUpdates
+            }
+            return his
+          })
+        }
+      })
       setOpen(false);
     },
     delay: true
@@ -47,7 +71,8 @@ const EditHistory = ({ history, setBrl, brlHasOpen }: Props) => {
     const name = e.target.name;
     const value = convertValueTypes(e.target.value, name);
     console.log(name, value)
-    if ((name === "returned" || name === "resolved") && value === "") setNote("This change will reopen the invoice for the barrel.");
+    if ((name === "returned" || name === "closed") && value === "") setNote(`This change will reopen the invoice for barrel ${barrel.number}`);
+    if ((name === "returned" || name === "closed") && value !== "") setNote("");
     setHistoryUpdates(prev => handleHistoryUpdate(prev, name, value, dr)); 
     if (JSON.stringify(validation) !== JSON.stringify(defaultValidation)){
       setValidation(prev => {
@@ -77,15 +102,38 @@ const EditHistory = ({ history, setBrl, brlHasOpen }: Props) => {
     }
       return { 
         ...prev, 
-        damage_review: newDR}
+        damage_review: newDR
+      }
     })
+    setNote(`Unless you specify a resolved date, this change will reopen the invoice for barrel ${barrel.number}`);
   }
 
-  const handleSubmit = () => {
-    const validationCheck= validateEditHistory(historyUpdates, brlHasOpen);
+  const handleRemoveDR = () => {
+    if (validation.returned) {
+      setValidation(prev => {
+        return {
+          ...prev,
+          returned: ""
+        }
+      })
+    }
+    setHistoryUpdates(prev => { return { ...prev, damage_review: undefined } })
+  }
+
+  const generateBody = (historyUpdates: BrlHistory, files?: File[]) => {
+    const body = new FormData();
+    body.append("barrel_id", barrel._id);
+    body.append("edits", JSON.stringify(historyUpdates));
+    // files.forEach((file) => body.append("images", file));
+    return body
+  }
+
+  const handleSubmit = async() => {
+    const validationCheck= validateEditHistory(historyUpdates, barrel.open ? true : false);
     console.log("validation", validationCheck);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
     console.log("would submit this", historyUpdates)
+    await makePostRequest(generateBody(historyUpdates));
   }
 
   useEffect(() => {
@@ -171,7 +219,7 @@ const EditHistory = ({ history, setBrl, brlHasOpen }: Props) => {
               <span 
                   title='Delete open invoice'
                   className={`material-symbols-outlined ${historyStyles.deleteOpen}`}
-                  onClick={() => setHistoryUpdates(prev => { return { ...prev, damage_review: undefined } })}>
+                  onClick={handleRemoveDR}>
                     delete
                 </span>
               <label

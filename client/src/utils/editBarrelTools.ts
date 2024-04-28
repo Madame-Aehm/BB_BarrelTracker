@@ -132,6 +132,10 @@ const validateEditHistory = (toUpdate: BrlHistory, brlHasOpen: boolean) => {
     validationFail = true;
     validationObject.response = "Reopening invoice will delete this text"
   }
+  if (toUpdate.damage_review && !toUpdate.damage_review.closed && brlHasOpen) {
+    validationFail = true;
+    validationObject.closed = "Empty damage resolution date reopens invoice, but this barrel already has an open invoice"
+  }
   return { validationFail, validationObject }
 }
 
