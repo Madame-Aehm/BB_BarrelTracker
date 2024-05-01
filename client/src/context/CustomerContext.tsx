@@ -3,6 +3,7 @@ import { Customer } from "../@types/customer";
 import authHeaders from "../utils/authHeaders";
 import { NotOK } from "../@types/auth";
 import { AuthContext } from "./AuthContext";
+import serverBaseURL from "../utils/baseURL";
 
 interface CustomerContextType {
   customers: Customer[]
@@ -19,13 +20,11 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
 
   useEffect(() => {
-    const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
-
     const getCustomers = async() => {
       const headers = authHeaders();
       if (!headers) return
       try {
-        const response = await fetch(`${serverBaseURL}/api/customer/all`, { headers });
+        const response = await fetch(`${serverBaseURL}/api/customer/active`, { headers });
         if (response.ok) {
           const result = await response.json() as Customer[];
           setCustomers(result);
@@ -37,8 +36,9 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
         console.log(e);
       }
     } 
-
-    getCustomers().catch((e) => console.log(e))
+    if (auth) {
+      getCustomers().catch((e) => console.log(e))
+    }
   }, [auth])
 
   return <CustomerContext.Provider value={{ customers }}>{ children }</CustomerContext.Provider>

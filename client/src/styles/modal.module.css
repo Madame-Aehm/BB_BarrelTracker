@@ -18,14 +18,25 @@
   align-items: center;
   position: absolute;
   width: 400px;
-  max-width: 85%;
+  max-width: 85vw;
   left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  top: 10%
+  top: 10%;
+  max-height: 75vh;
+  overflow-y: auto;
 }
 
+.modal::-webkit-scrollbar {
+  display: none;
+}
+
+.imagesScroller {
+  width: 90%; 
+  overflow: auto;
+  display: flex;
+}
 
 @keyframes enter {
   from { 
@@ -104,5 +115,11 @@
   .modal {
     border-color: var(--font-light);
     background-color: var(--font-dark);
+  }
+}
+
+@media not (any-hover: hover) {
+  .imagesScroller::-webkit-scrollbar {
+    display: none;
   }
 }

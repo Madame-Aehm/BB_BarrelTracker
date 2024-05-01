@@ -9,6 +9,7 @@ const handleCatchError = (
     const { message } = e as Error;
     setError(message);
     if (setLoading) setLoading(false);
+    return message
 }
 
 const handleNotOK = async(
@@ -19,6 +20,7 @@ const handleNotOK = async(
   console.log(result);
   setError(result.error);
   if (setLoading) setLoading(false);
+  return result.error
 }
 
 export { handleCatchError, handleNotOK }

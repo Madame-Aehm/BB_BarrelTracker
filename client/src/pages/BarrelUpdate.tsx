@@ -5,16 +5,16 @@ import SendOut from '../components/barrel/SendOut';
 import Loading from '../components/Loading';
 import Return from '../components/barrel/Return';
 import Button from '../components/Button';
+import serverBaseURL from '../utils/baseURL';
 
 const BarrelUpdate = () => {
-  const serverBaseURL = import.meta.env.VITE_SERVER_BASEURL as string;
   const navigate = useNavigate();
 
   const { params } = useOutletContext<SendParamsType>();
 
-  const url = `${serverBaseURL}/api/barrel/get/${params}`;
+  const url = `${serverBaseURL}/api/barrel/get/?${params}`;
 
-  const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
+  const { data: barrel, loading, error } = useFetch<Barrel>(url, true);
 
   if (loading) return <Loading />
   if (!barrel && error) return <p>{error}</p>
@@ -23,33 +23,22 @@ const BarrelUpdate = () => {
       <h1>Barrel #{ barrel.number }</h1>
       {!barrel.damaged ? (
         <>
-          { barrel.open ? (
-            <Return 
-              barrel={barrel}
-              open={barrel.open}
-              loading={loading}
-              setLoading={setLoading}
-              setError={setError} />
-          ) : ( 
-            <SendOut 
-              barrel={barrel}
-              loading={loading} 
-              setLoading={setLoading}
-              setError={setError} />
-          )}
+          { barrel.open ? 
+            <Return barrel={barrel} open={barrel.open} /> 
+          : <SendOut barrel={barrel} /> 
+          }
           <p className="error">{ error }</p>
         </>
       ) : (
         <div>
           <h4 >Barrel is marked as <span className='error'>damaged</span>. Don't use!</h4>
           <Button 
-            loading={false}
             title='OK'
             styleOverride={{ width: "10rem", height: "4rem" }}
             handleClick={() => navigate("/") } />
         </div>
       )}
-      <p><Link to={`/barrel/history/${barrel.number}`}>see history</Link></p>
+      <p><Link to={`/barrel/history/${barrel.number}`}>See History →</Link></p>
     </>
   )
 }

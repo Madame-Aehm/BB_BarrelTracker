@@ -1,57 +1,58 @@
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useState } from 'react'
 import authHeaders from '../utils/authHeaders';
 import { handleCatchError, handleNotOK } from '../utils/handleFetchFail';
 
-interface ReturnData<T> {
+interface ReturnData {
   loading: boolean
   setLoading: Dispatch<React.SetStateAction<boolean>>
-  data: T | null
+  // data: T | null
   error: string
   setError: Dispatch<React.SetStateAction<string>>
+  makePostRequest: (body: string | FormData,) => Promise<void>
 }
 
-interface Parameters {
+interface Parameters<T> {
   url: string, 
-  body: string, 
+  successCallback: (result: T) => void
+  failCallback?: (error: string) => void
   delay?: boolean
 }
 
-const usePost = <T,> (params: Parameters): ReturnData<T> => {
-  const { url, body, delay } = params;
+const usePost = <T,> (params: Parameters<T>): ReturnData => {
+  const { url, successCallback, failCallback, delay } = params;
 
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchData = async() => {
-      setLoading(true);
-      setData(null);
-      setError("");
-      const headers = authHeaders();
-      if (!headers) return setLoading(false);
-      try {
-        const response = await fetch(url, { headers, body, method: "POST" });
-        if (response.ok) {
-          const result = await response.json() as T;
-          console.log(result);
-          setData(result);
-          if (delay === true) {
-            setTimeout(() => {
-              setLoading(false)
-            }, 1000);
-          } else setLoading(false)
-        } else {
-          await handleNotOK(response, setError, setLoading);
-        }
-      } catch (e) {
-        handleCatchError(e, setError, setLoading);
+  const makePostRequest = async(body: string | FormData,) => {
+    setLoading(true);
+    setError("");
+    const headers = authHeaders();
+    if (!headers) return setLoading(false);
+    try {
+      if (typeof body === "string") headers.append("Content-Type", "application/json");
+      const response = await fetch(url, { headers, body, method: "POST" });
+      if (response.ok) {
+        const result = await response.json() as T;
+        console.log(result);
+        successCallback(result);
+        if (delay === true) {
+          setTimeout(() => {
+            setLoading(false)
+          }, 1000);
+        } else setLoading(false)
+      } else {
+        const error = await handleNotOK(response, setError, setLoading);
+        if (failCallback) failCallback(error);
       }
+    } catch (e) {
+      const error = handleCatchError(e, setError, setLoading);
+      if (failCallback) failCallback(error);
     }
-    if (url && body) fetchData().catch(e => {console.log(e); setLoading(false)});
-  }, [url, delay, body])
+  }
 
-  return { data, loading, setLoading, error, setError }
+
+  return { loading, setLoading, error, setError, makePostRequest }
 }
 
 export default usePost

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 // import Label from '../components/label/Label'
 import LabelMenu from '../components/label/LabelMenu'
-import labelStyles from '../styles/labels.module.css'
+import { labelStyles } from '../styles/styles'
 import { LabelType } from '../@types/labels'
 import LabelPlain from '../components/label/LabelPlain'
 import Button from '../components/Button'

@@ -1,5 +1,5 @@
 import { CSSProperties, ChangeEvent, KeyboardEvent, MutableRefObject } from 'react'
-import authStyles from '../../styles/auth.module.css'
+import { authStyles } from '../../styles/styles'
 import { Pin, PinInputType } from '../../@types/auth'
 import { shiftFocus } from '../../utils/shiftFocus'
 
@@ -21,7 +21,7 @@ const PinInput = ({ handleChange, id, invalid, pin, styleOverride }: Props) => {
 
   return (
     <input 
-      className={`${authStyles.pinInput} ${invalid ? authStyles.pinInvalid : ""}`} 
+      className={`${authStyles.pinInput} ${invalid ? "invalid" : ""}`} 
       style={styleOverride ? styleOverride : {}}
       id={id} 
       type="number" 

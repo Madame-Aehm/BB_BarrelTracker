@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { ChangeEvent, FormEvent } from 'react'
-import labelStyles from '../styles/labels.module.css'
+import { labelStyles } from '../styles/styles'
 import PinInput from './auth/PinInput'
 import Button from './Button'
 
