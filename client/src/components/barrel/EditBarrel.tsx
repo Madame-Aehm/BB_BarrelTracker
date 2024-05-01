@@ -3,7 +3,7 @@ import IconButton from '../IconButton'
 import Modal from '../Modal'
 import { Barrel, ImgObject, ToUpdateEditBarrel } from '../../@types/barrel'
 import Button from '../Button'
-import { convertValueTypes, handleSetUpdate, validateEditBarrel } from '../../utils/editBarrelTools'
+import { addImages, convertValueTypes, generateEditsBody, handleSetUpdate, validateEditBarrel } from '../../utils/editBarrelTools'
 import EditBarrelInput from './EditBarrelInput'
 import { authStyles, barrelStyles, historyStyles } from '../../styles/styles'
 import { CustomerContext } from '../../context/CustomerContext'
@@ -12,7 +12,6 @@ import baseURL from '../../utils/baseURL'
 import usePost from '../../hooks/usePost'
 import { Link } from 'react-router-dom'
 import ImageController from './ImageController'
-import { compressImage } from '../../utils/images'
 
 type Props = {
   barrel: Barrel
@@ -36,13 +35,6 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   }
   const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
-
-  const generateBody = (toUpdate: ToUpdateEditBarrel, files: File[]) => {
-    const body = new FormData();
-    body.append("edits", JSON.stringify(toUpdate));
-    files.forEach((file) => body.append("images", file));
-    return body
-  }
 
   const { loading, error, setError, makePostRequest } = usePost<Barrel>({
     url: `${baseURL}/api/barrel/edit-barrel`,
@@ -81,19 +73,8 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
 
   const handleAddImages = async(e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const toCompress = [...e.target.files].map((file) => compressImage(file));
-      const compressed: File[] = [];
-      (await Promise.all(toCompress)).forEach((file) => {
-        compressed.push(file);
-      })
-      files.current = [...files.current, ...compressed];
-      setPreviewImages(prev => {
-        const getUrls = [];
-        for (let i = 0; i < e.target.files!.length; i++) {
-          getUrls.push({ url: URL.createObjectURL(e.target.files![i])} );
-        }
-        return [...prev, ...getUrls ];
-      })
+      const addedFiles = await addImages(e.target.files, setPreviewImages);
+      files.current = [...files.current, ...addedFiles];
     }
   }
 
@@ -125,7 +106,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
     setError("");
     const validationCheck = validateEditBarrel(toUpdate, barrelNumbers, barrel.number);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    await makePostRequest(generateBody(toUpdate, files.current));
+    await makePostRequest(generateEditsBody(toUpdate, files.current));
   }
 
   useEffect(() => {

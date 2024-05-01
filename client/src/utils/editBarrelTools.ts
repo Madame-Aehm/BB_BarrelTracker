@@ -1,4 +1,5 @@
-import { Open, ToUpdateEditBarrel } from "../@types/barrel";
+import { ImgObject, Open, ToUpdateEditBarrel } from "../@types/barrel";
+import { compressImage } from "./images";
 
 const convertValueTypes = (value: string, name: string) => {
   let result: string | number | boolean = value;
@@ -138,4 +139,36 @@ const validateEditHistory = (toUpdate: Open, brlHasOpen: boolean) => {
   return { validationFail, validationObject }
 }
 
-export { convertValueTypes, validateEditBarrel, handleSetUpdate, handleHistoryUpdate, validateEditHistory }
+const addImages = async(files: FileList, setPreviewImages: (value: React.SetStateAction<ImgObject[]>) => void) => {
+  const toCompress = [...files].map((file) => compressImage(file));
+  const compressed: File[] = [];
+  (await Promise.all(toCompress)).forEach((file) => {
+    compressed.push(file);
+  })
+  setPreviewImages(prev => {
+    const getUrls = [];
+    for (let i = 0; i < files!.length; i++) {
+      getUrls.push({ url: URL.createObjectURL(files![i])} );
+    }
+    return [...prev, ...getUrls ];
+  })
+  return compressed
+}
+
+const generateEditsBody = (updates: any, files: File[], barrelId?: string) => {
+  const body = new FormData();
+  if (barrelId) body.append("barrel_id", barrelId);
+  body.append("edits", JSON.stringify(updates));
+  files.forEach((file) => body.append("images", file));
+  return body
+}
+
+export { 
+  convertValueTypes, 
+  validateEditBarrel, 
+  handleSetUpdate, 
+  handleHistoryUpdate, 
+  validateEditHistory, 
+  generateEditsBody,
+  addImages 
+}

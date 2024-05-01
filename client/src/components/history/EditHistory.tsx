@@ -3,7 +3,7 @@ import { authStyles, barrelStyles, historyStyles } from '../../styles/styles'
 import EditBarrelInput from '../barrel/EditBarrelInput'
 import { Barrel, Damage_Review, ImgObject, Open } from '../../@types/barrel'
 import { CustomerContext } from '../../context/CustomerContext'
-import { convertValueTypes, handleHistoryUpdate, validateEditHistory } from '../../utils/editBarrelTools'
+import { addImages, convertValueTypes, generateEditsBody, handleHistoryUpdate, validateEditHistory } from '../../utils/editBarrelTools'
 import Modal from '../Modal'
 import IconButton from '../IconButton'
 import Button from '../Button'
@@ -11,7 +11,6 @@ import CancelButton from '../barrel/CancelButton'
 import usePost from '../../hooks/usePost'
 import baseURL from '../../utils/baseURL'
 import ImageController from '../barrel/ImageController'
-import { compressImage } from '../../utils/images'
 
 type Props = {
   history: Open
@@ -126,19 +125,8 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
 
   const handleAddImages = async(e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const toCompress = [...e.target.files].map((file) => compressImage(file));
-      const compressed: File[] = [];
-      (await Promise.all(toCompress)).forEach((file) => {
-        compressed.push(file);
-      })
-      files.current = [...files.current, ...compressed];
-      setPreviewImages(prev => {
-        const getUrls = [];
-        for (let i = 0; i < e.target.files!.length; i++) {
-          getUrls.push({ url: URL.createObjectURL(e.target.files![i])} );
-        }
-        return [...prev, ...getUrls ];
-      })
+      const addedFiles = await addImages(e.target.files, setPreviewImages);
+      files.current = [...files.current, ...addedFiles];
     }
   }
 
@@ -162,18 +150,10 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
     })
   }
 
-  const generateBody = (historyUpdates: Open, files: File[]) => {
-    const body = new FormData();
-    body.append("barrel_id", barrel._id);
-    body.append("edits", JSON.stringify(historyUpdates));
-    files.forEach((file) => body.append("images", file));
-    return body
-  }
-
   const handleSubmit = async() => {
     const validationCheck= validateEditHistory(historyUpdates, barrel.open ? true : false);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    await makePostRequest(generateBody(historyUpdates, files.current));
+    await makePostRequest(generateEditsBody(historyUpdates, files.current, barrel._id));
   }
 
   useEffect(() => {
