@@ -6,7 +6,7 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
   registerType: "autoUpdate",
   manifest:{
     name:"Blaue Bohne Barrel Tracker",
-    short_name:"BB BT",
+    short_name:process.env.VITE_NAME,
     description:"App to keep track of the Pfand barrels distributed by Blaue Bohne Kaffee Rösterei.",
     icons:[
     {
