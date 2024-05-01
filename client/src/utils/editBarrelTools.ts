@@ -1,4 +1,4 @@
-import { BrlHistory, ToUpdateEditBarrel } from "../@types/barrel";
+import { Open, ToUpdateEditBarrel } from "../@types/barrel";
 
 const convertValueTypes = (value: string, name: string) => {
   let result: string | number | boolean = value;
@@ -75,7 +75,7 @@ const handleSetUpdate = (
 }
 
 const handleHistoryUpdate = (
-  prev: BrlHistory, 
+  prev: Open, 
   name: string, 
   value: string | number | boolean,
   damage_review: boolean) => {
@@ -92,7 +92,7 @@ const handleHistoryUpdate = (
   return newValue
 }
 
-const validateEditHistory = (toUpdate: BrlHistory, brlHasOpen: boolean) => {
+const validateEditHistory = (toUpdate: Open, brlHasOpen: boolean) => {
   let validationFail = false;
   const validationObject = {
     invoice: "",

@@ -7,7 +7,7 @@ export type ToUpdateEditBarrel = {
 export interface Barrel extends ToUpdateEditBarrel {
   number: number
   _id: string
-  history?: BrlHistory[]
+  history?: Open[]
 }
 
 export interface Open {
@@ -32,10 +32,6 @@ export interface ImgObject {
   public_id?: string
   url: string
   _id?: string
-}
-
-export interface BrlHistory extends Open {
-  barrel?: number
 }
 
 export type SendParamsType = {

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { authStyles, barrelStyles, historyStyles } from '../../styles/styles'
 import EditBarrelInput from '../barrel/EditBarrelInput'
-import { Barrel, BrlHistory, Damage_Review, ImgObject } from '../../@types/barrel'
+import { Barrel, Damage_Review, ImgObject, Open } from '../../@types/barrel'
 import { CustomerContext } from '../../context/CustomerContext'
 import { convertValueTypes, handleHistoryUpdate, validateEditHistory } from '../../utils/editBarrelTools'
 import Modal from '../Modal'
@@ -14,7 +14,7 @@ import ImageController from '../barrel/ImageController'
 import { compressImage } from '../../utils/images'
 
 type Props = {
-  history: BrlHistory
+  history: Open
   barrel: Barrel
   setBarrel: React.Dispatch<React.SetStateAction<Barrel | null>>
   previewImages: ImgObject[]
@@ -36,7 +36,7 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
   const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
 
-  const { loading, error, makePostRequest } = usePost<BrlHistory>({
+  const { loading, error, makePostRequest } = usePost<Open>({
     url: `${baseURL}/api/barrel/edit-history`,
     successCallback: (result) => {
       setPreviewImages([]);
@@ -86,7 +86,7 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
     }
   }
 
-  const setEmptyDR = () => {
+  const setEmptyDamageReport = () => {
     if (!historyUpdates.returned) {
       return setValidation(prev => {
         return {
@@ -110,7 +110,7 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
     setNote(`Unless you specify a resolved date, this change will reopen the invoice for barrel ${barrel.number}`);
   }
 
-  const handleRemoveDR = () => {
+  const handleRemoveDamageReport = () => {
     if (validation.returned) {
       setValidation(prev => {
         return {
@@ -162,7 +162,7 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
     })
   }
 
-  const generateBody = (historyUpdates: BrlHistory, files: File[]) => {
+  const generateBody = (historyUpdates: Open, files: File[]) => {
     const body = new FormData();
     body.append("barrel_id", barrel._id);
     body.append("edits", JSON.stringify(historyUpdates));
@@ -240,7 +240,7 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
                 <h4>Add Damage Report</h4>
                 <IconButton
                   icon='add'
-                  handleClick={setEmptyDR}
+                  handleClick={setEmptyDamageReport}
                 />
               </div>
               
@@ -251,7 +251,7 @@ const EditHistory = ({ history, barrel, setBarrel, previewImages, setPreviewImag
               <span 
                   title='Delete Damage Report'
                   className={`material-symbols-outlined ${historyStyles.deleteOpen}`}
-                  onClick={handleRemoveDR}>
+                  onClick={handleRemoveDamageReport}>
                     delete
                 </span>
               <label

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { barrelStyles, historyStyles } from '../../styles/styles'
-import { Barrel, BrlHistory, ImgObject } from '../../@types/barrel'
+import { Barrel, ImgObject, Open } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import DamageImages from '../barrel/DamageImages'
 import IconButton from '../IconButton'
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import EditHistory from './EditHistory'
 
 type Props = {
-  history: BrlHistory
+  history: Open
   barrel: Barrel
   setBarrel: React.Dispatch<React.SetStateAction<Barrel | null>>
 }
