@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import layoutStyles from '../styles/layout.module.css'
+import { layoutStyles } from '../styles/styles';
 
 
 

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import layoutStyles from '../../../styles/layout.module.css'
+import { layoutStyles } from '../../../styles/styles'
 import NavIcon from './NavIcon'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../../context/AuthContext'

@@ -8,23 +8,23 @@ interface ReturnData {
   // data: T | null
   error: string
   setError: Dispatch<React.SetStateAction<string>>
-  makePostRequest: () => Promise<void>
+  makePostRequest: (body: string | FormData,) => Promise<void>
 }
 
 interface Parameters<T> {
   url: string, 
-  body: string | FormData, 
   successCallback: (result: T) => void
+  failCallback?: (error: string) => void
   delay?: boolean
 }
 
 const usePost = <T,> (params: Parameters<T>): ReturnData => {
-  const { url, body, successCallback, delay } = params;
+  const { url, successCallback, failCallback, delay } = params;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const makePostRequest = async() => {
+  const makePostRequest = async(body: string | FormData,) => {
     setLoading(true);
     setError("");
     const headers = authHeaders();
@@ -42,10 +42,12 @@ const usePost = <T,> (params: Parameters<T>): ReturnData => {
           }, 1000);
         } else setLoading(false)
       } else {
-        await handleNotOK(response, setError, setLoading);
+        const error = await handleNotOK(response, setError, setLoading);
+        if (failCallback) failCallback(error);
       }
     } catch (e) {
-      handleCatchError(e, setError, setLoading);
+      const error = handleCatchError(e, setError, setLoading);
+      if (failCallback) failCallback(error);
     }
   }
 

@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, FormEvent, useRef } from 'react'
-import authStyles from '../../styles/auth.module.css'
+import { authStyles } from '../../styles/styles';
 import PinInput from './PinInput';
 import { Pin, PinError, PinInputType } from '../../@types/auth';
 import { shiftFocus, unfocusAll } from '../../utils/shiftFocus';

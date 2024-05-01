@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useRef, useState } from 'react'
-import barrelStyles from '../../styles/barrel.module.css'
+import { barrelStyles } from '../../styles/styles';
 import BrlNumForm from '../BrlNumForm';
 import { unfocusAll } from '../../utils/shiftFocus';
 import { useNavigate } from 'react-router-dom';

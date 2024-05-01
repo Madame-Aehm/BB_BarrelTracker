@@ -1,7 +1,7 @@
 import { CSSProperties, useState } from 'react'
 import Button from '../Button'
 import Modal from '../Modal'
-import modalStyles from '../../styles/modal.module.css'
+import { modalStyles } from '../../styles/styles'
 import { ImgObject } from '../../@types/barrel'
 
 type Props = {
@@ -24,7 +24,7 @@ const DamageImages = ({ images }: Props) => {
               if (img._id !== arr[arr.length - 1]._id) style.marginRight = "1rem";
               return (
                 <img 
-                  key={img._id} 
+                  key={img._id || img.url} 
                   src={img.url} 
                   alt={`Image ${i+1} of ${arr.length}`} 
                   style={style}

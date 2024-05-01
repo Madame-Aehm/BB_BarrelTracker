@@ -127,7 +127,4 @@
   .singleWrapper {
     border-color: var(--font-light);
   }
-  .loaderMain {
-    background-color: var(--font-dark);
-  }
 }

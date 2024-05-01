@@ -6,7 +6,7 @@ import AddNew from "../components/barrel/AddNew";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import { Barrel } from "../@types/barrel";
-import historyStyles from "../styles/history.module.css"
+import { historyStyles } from "../styles/styles";
 import serverBaseURL from "../utils/baseURL";
 import ToTop from "../components/ToTop";
 
@@ -23,9 +23,9 @@ const ManageBarrels = () => {
         <Button 
           title={"Add Barrels"}
           styleOverride={{ width: "12rem", height: "4rem" }}
-          handleClick={() => {console.log("log");setOpenNew(true)}} />
+          handleClick={() => setOpenNew(true)} />
         <Modal open={openNew} setOpen={setOpenNew} >
-          <AddNew refetch={refetch} setOpen={setOpenNew} />
+          <AddNew refetch={refetch} open={openNew} setOpen={setOpenNew} />
         </Modal>
         <h2>Existing Barrels:</h2>
         { data && data.map((b) => {

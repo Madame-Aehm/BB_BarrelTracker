@@ -1,5 +1,5 @@
 import QRCode from 'react-qr-code'
-import labelStyles from '../../styles/labels.module.css'
+import { labelStyles } from '../../styles/styles'
 
 type Props = {
   id: string

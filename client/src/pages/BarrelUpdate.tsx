@@ -14,7 +14,7 @@ const BarrelUpdate = () => {
 
   const url = `${serverBaseURL}/api/barrel/get/?${params}`;
 
-  const { data: barrel, loading, setLoading, error, setError } = useFetch<Barrel>(url, true);
+  const { data: barrel, loading, error } = useFetch<Barrel>(url, true);
 
   if (loading) return <Loading />
   if (!barrel && error) return <p>{error}</p>
@@ -23,20 +23,10 @@ const BarrelUpdate = () => {
       <h1>Barrel #{ barrel.number }</h1>
       {!barrel.damaged ? (
         <>
-          { barrel.open ? (
-            <Return 
-              barrel={barrel}
-              open={barrel.open}
-              loading={loading}
-              setLoading={setLoading}
-              setError={setError} />
-          ) : ( 
-            <SendOut 
-              barrel={barrel}
-              loading={loading} 
-              setLoading={setLoading}
-              setError={setError} />
-          )}
+          { barrel.open ? 
+            <Return barrel={barrel} open={barrel.open} /> 
+          : <SendOut barrel={barrel} /> 
+          }
           <p className="error">{ error }</p>
         </>
       ) : (

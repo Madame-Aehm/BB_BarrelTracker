@@ -1,19 +1,22 @@
 import { useState } from 'react'
-import historyStyles from '../../styles/history.module.css'
-import { BrlHistory } from '../../@types/barrel'
+import { barrelStyles, historyStyles } from '../../styles/styles'
+import { Barrel, ImgObject, Open } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import DamageImages from '../barrel/DamageImages'
 import IconButton from '../IconButton'
 import { useNavigate } from 'react-router-dom'
+import EditHistory from './EditHistory'
 
 type Props = {
-  history: BrlHistory
-  brl: number
+  history: Open
+  barrel: Barrel
+  setBarrel: React.Dispatch<React.SetStateAction<Barrel | null>>
 }
 
-const HistoryCard = ({ history, brl }: Props) => {
-  const [open, setOpen] = useState(false);
+const HistoryCard = ({ history, barrel, setBarrel }: Props) => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [previewImages, setPreviewImages] = useState<ImgObject[]>([]);
 
   return (
     <div className={`${historyStyles.card}`}>
@@ -39,13 +42,11 @@ const HistoryCard = ({ history, brl }: Props) => {
             <b>Returned: </b>
             <p>{ history.returned ? formatDate(history.returned) : "-" }</p>
             </div>
-            { history.damage_review && 
+            { history.damage_review ? 
               <>
                 <hr className={historyStyles.hr}></hr>
                 <b>Damage Report</b>
                 <div className={`${historyStyles.displayCurrent}`}>
-                  <b>Opened: </b>
-                  <p>{ formatDate(history.damage_review.createdAt) }</p>
                   { history.damage_review.closed && <>
                     <b>Resolved: </b>
                     <p>{ formatDate(history.damage_review.closed) }</p>
@@ -62,13 +63,29 @@ const HistoryCard = ({ history, brl }: Props) => {
                       <p className={historyStyles.pre}>{ history.damage_review.response }</p> 
                     </div>
                   </>}
-                  { history.damage_review.closed ? <p></p> : 
-                    <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${brl}`)} /> }
-                  { history.damage_review.images.length > 0 ? 
-                    <DamageImages images={history.damage_review.images} /> 
-                  : null }
+                  <div className={barrelStyles.centerButton}>
+                    <EditHistory 
+                      history={history} 
+                      barrel={barrel} 
+                      setBarrel={setBarrel} 
+                      previewImages={previewImages} 
+                      setPreviewImages={setPreviewImages} />
+                    { history.damage_review.closed ? <p></p> : 
+                      <IconButton icon='arrow_forward' handleClick={() => navigate(`/barrel/update/${barrel.number}`)} /> }
+                  </div>
+                  { history.damage_review.images.length > 0 && 
+                    <DamageImages images={[ ...history.damage_review.images, ...previewImages ]} /> 
+                  }
                 </div> 
-              </>
+              </> : 
+              <div className={historyStyles.editButtonPosition}>
+                <EditHistory 
+                  history={history} 
+                  barrel={barrel} 
+                  setBarrel={setBarrel}
+                  previewImages={previewImages} 
+                  setPreviewImages={setPreviewImages} />
+              </div>
             }
         </div>
       </div>

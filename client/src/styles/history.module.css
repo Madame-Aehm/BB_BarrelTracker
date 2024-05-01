@@ -110,11 +110,24 @@
   width: 100%;
 }
 
+.editHistoryFormContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 380px;
+  max-width: 100%;
+}
+
 .activeInvoice {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   min-width: 0;
+}
+
+.editButtonPosition {
+  /* padding: 0.5rem;  */
+  align-self: flex-start;
 }
 
 .editBarrelInputLabel {
@@ -157,6 +170,12 @@
   align-self: flex-end;
   cursor: pointer;
   color: tomato;
+}
+
+.createDamageReport {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .imgThumbnailContainer {

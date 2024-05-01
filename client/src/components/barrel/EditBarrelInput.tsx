@@ -1,6 +1,4 @@
-import authStyles from '../../styles/auth.module.css'
-import historyStyles from '../../styles/history.module.css'
-import barrelStyles from '../../styles/barrel.module.css'
+import { authStyles, historyStyles, barrelStyles } from '../../styles/styles'
 
 type Props = {
   label: string

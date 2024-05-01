@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import historyStyles from '../../styles/history.module.css'
-import barrelStyles from '../../styles/barrel.module.css'
+import { barrelStyles, historyStyles } from '../../styles/styles'
 import { Barrel } from '../../@types/barrel'
 import formatDate from '../../utils/formatDate'
 import Button from '../Button'

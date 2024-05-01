@@ -1,44 +1,22 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import IconButton from '../IconButton'
 import Modal from '../Modal'
-import { Barrel, ImgObject } from '../../@types/barrel'
+import { Barrel, ImgObject, ToUpdateEditBarrel } from '../../@types/barrel'
 import Button from '../Button'
-import { convertValueTypes, handleSetUpdate, validateEditBarrel } from '../../utils/editBarrelTools'
+import { addImages, convertValueTypes, generateEditsBody, handleSetUpdate, validateEditBarrel } from '../../utils/editBarrelTools'
 import EditBarrelInput from './EditBarrelInput'
-import historyStyles from '../../styles/history.module.css'
-import barrelStyles from '../../styles/barrel.module.css'
-import authStyles from '../../styles/auth.module.css'
+import { authStyles, barrelStyles, historyStyles } from '../../styles/styles'
 import { CustomerContext } from '../../context/CustomerContext'
 import CancelButton from './CancelButton'
 import baseURL from '../../utils/baseURL'
 import usePost from '../../hooks/usePost'
 import { Link } from 'react-router-dom'
 import ImageController from './ImageController'
-import { compressImage } from '../../utils/images'
 
 type Props = {
   barrel: Barrel
   barrelNumbers: number[]
   setBarrels: React.Dispatch<React.SetStateAction<Barrel[] | null>>
-}
-
-export type ToUpdateEditBarrel = {
-  number: number | ""
-  damaged: boolean
-  open: Open
-}
-
-type DamageReview = {
-  comments?: string
-  images: ImgObject[]
-}
-
-type Open = null | {
-  createdAt: string
-  invoice: string
-  customer: string
-  returned?: string
-  damage_review?: DamageReview
 }
 
 const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
@@ -48,28 +26,19 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   const files = useRef<File[]>([]);
   const [previewImages, setPreviewImages] = useState<ImgObject[]>([])
 
-  const defaultValidation = useRef({
+  const defaultValidation = {
     number: "",
     invoice: "",
     createdAt: "",
-    retired: "",
+    damaged: "",
     returned: ""
-  })
-  const [validation, setValidation] = useState(defaultValidation.current);
+  }
+  const [validation, setValidation] = useState(defaultValidation);
   const [note, setNote] = useState("");
 
-  const generateBody = (toUpdate: ToUpdateEditBarrel, files: File[]) => {
-    const body = new FormData();
-    body.append("edits", JSON.stringify(toUpdate));
-    files.forEach((file) => body.append("images", file));
-    return body
-  }
-
-  const { loading, error, setError, makePostRequest } = usePost<any>({
-    url: `${baseURL}/api/barrel/edit-barrel`, 
-    body: generateBody(toUpdate, files.current),
-    successCallback: (result: Barrel) => {
-      console.log("edit result", result);
+  const { loading, error, setError, makePostRequest } = usePost<Barrel>({
+    url: `${baseURL}/api/barrel/edit-barrel`,
+    successCallback: (result) => {
       setBarrels(prev => prev ? prev.map((brl) => brl._id !== result._id ? brl : result) : null);
       setOpen(false);
     },
@@ -92,23 +61,20 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
     if (name === "damaged") {
       setNote(value && toUpdate.open?.returned ? "Saving this change will close invoice" : "");
     }
+    if (JSON.stringify(validation) !== JSON.stringify(defaultValidation)){
+      setValidation(prev => {
+        return {
+          ...prev,
+          [name]: ""
+        }
+      })
+    }
   }
 
   const handleAddImages = async(e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const toCompress = [...e.target.files].map((file) => compressImage(file));
-      const compressed: File[] = [];
-      (await Promise.all(toCompress)).forEach((file) => {
-        compressed.push(file);
-      })
-      files.current = [...files.current, ...compressed];
-      setPreviewImages(prev => {
-        const getUrls = [];
-        for (let i = 0; i < e.target.files!.length; i++) {
-          getUrls.push({ url: URL.createObjectURL(e.target.files![i])} );
-        }
-        return [...prev, ...getUrls ];
-      })
+      const addedFiles = await addImages(e.target.files, setPreviewImages);
+      files.current = [...files.current, ...addedFiles];
     }
   }
 
@@ -136,16 +102,16 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
   }
 
   const handleSubmit = async() => {
-    setValidation(defaultValidation.current);
+    setValidation(defaultValidation);
     setError("");
     const validationCheck = validateEditBarrel(toUpdate, barrelNumbers, barrel.number);
     if (validationCheck.validationFail) return setValidation(validationCheck.validationObject);
-    await makePostRequest();
+    await makePostRequest(generateEditsBody(toUpdate, files.current));
   }
 
   useEffect(() => {
     if (!open && (JSON.stringify(toUpdate) !== JSON.stringify(barrel))) {
-      setValidation(defaultValidation.current);
+      setValidation(defaultValidation);
       setNote("");
       setToUpdate({ ...barrel });
       setPreviewImages([]);
@@ -167,7 +133,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
               type="radio"
               identifier={`damaged_true${barrel._id}`}
               value="true"
-              validation={validation.retired}
+              validation={validation.damaged}
               checked={toUpdate.damaged}
               handleChange={handleChange}
             />
@@ -180,7 +146,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
               handleChange={handleChange}
             />
           </div>
-          <div><small className={authStyles.error} style={{textAlign: "right"}}>{ validation.retired }</small></div>
+          <div><small className={authStyles.error} style={{textAlign: "right"}}>{ validation.damaged }</small></div>
           <EditBarrelInput
             label="Number:"
             type="number"
@@ -259,13 +225,6 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
                     fileAdd={handleAddImages}
                     imageRemove={handleImageRemove}
                      />
-                  {/* { toUpdate.open.damage_review.images.length > 0 && 
-                    <div className={historyStyles.imgThumbnailWrap}>
-                      { toUpdate.open.damage_review.images.map((img, i) => {
-                        return <ImgThumbnail key={`${barrel._id}img${i}`} img={img} handleChange={handleImageRemove} />
-                      }) }
-                    </div> 
-                  } */}
                 </> }
                 { note && 
                   <div>

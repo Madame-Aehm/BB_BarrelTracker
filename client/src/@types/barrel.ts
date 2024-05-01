@@ -1,9 +1,13 @@
-export interface Barrel {
+export type ToUpdateEditBarrel = {
+  number: number | ""
+  damaged: boolean
+  open: Open | null
+}
+
+export interface Barrel extends ToUpdateEditBarrel {
   number: number
   _id: string
-  damaged: boolean
-  open: null | Open,
-  history?: BrlHistory[]
+  history?: Open[]
 }
 
 export interface Open {
@@ -23,14 +27,11 @@ export interface Damage_Review {
   images: ImgObject[]
 }
 
+
 export interface ImgObject {
   public_id?: string
   url: string
   _id?: string
-}
-
-export interface BrlHistory extends Open {
-  barrel?: number
 }
 
 export type SendParamsType = {
