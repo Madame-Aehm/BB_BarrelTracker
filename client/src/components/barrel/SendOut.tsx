@@ -18,14 +18,14 @@ type Props = {
 const SendOut = ({ barrel }: Props) => {
   const { customers } = useContext(CustomerContext);
   const navigate = useNavigate();
-  const [invalid, setInvalid] = useState({ invoice: false, customer: false });
-  const inputValues = useRef({ invoice: "", customer: "" });
+  const [invalid, setInvalid] = useState({ suffix: false, customer: false });
+  const inputValues = useRef({ prefix: "LI", suffix: "", customer: "" });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     inputValues.current = { ...inputValues.current, [e.target.id]: e.target.value };
-    if (invalid.customer || invalid.invoice) {
+    if (invalid.customer || invalid.suffix) {
       setInvalid({ 
-        invoice: e.target.id === "invoice" ? false : invalid.invoice, 
+        suffix: e.target.id === "suffix" ? false : invalid.suffix, 
         customer: e.target.id === "customer" ? false : invalid.customer 
       })
     }
@@ -46,16 +46,19 @@ const SendOut = ({ barrel }: Props) => {
     e.preventDefault();
     unfocusAll();
     setError("");
-    if (!inputValues.current.customer || !inputValues.current.invoice) {
+    if (!inputValues.current.customer || !inputValues.current.suffix) {
       setError("You need to enter a customer and invoice!");
       setInvalid({ 
-        invoice: inputValues.current.invoice ? false : true, 
+        suffix: inputValues.current.suffix ? false : true, 
         customer: inputValues.current.customer ? false : true });
       return
     }
     const body = JSON.stringify({
       id: barrel._id,
-      sendTo: inputValues.current
+      sendTo: {
+        invoice: `${inputValues.current.prefix}${inputValues.current.suffix}`,
+        customer: inputValues.current.customer
+      }
     })
     makePostRequest(body);
   }
@@ -74,11 +77,21 @@ const SendOut = ({ barrel }: Props) => {
           <option value="">Choose Customer</option>
           { customers.map((c) => <option key={c._id} value={c.name}>{c.name}</option>) }
         </select>
-        <input 
-          id='invoice'
-          className={`${barrelStyles.input} ${invalid.invoice ? "invalid" : ""}`} 
-          placeholder="Enter Invoice" 
-          onChange={handleChange} />
+        <div>
+          <select
+            id='prefix'
+            className={`${barrelStyles.input}`}
+            onChange={handleChange}>
+            <option value="LI">LI</option>
+            <option value="RE">RE</option>
+          </select>
+          <input 
+            type='number'
+            id='suffix'
+            className={`${barrelStyles.input} ${invalid.suffix ? "invalid" : ""}`} 
+            placeholder="Enter Invoice" 
+            onChange={handleChange} />
+        </div>
         <div className={barrelStyles.centerButton}>
           <Button 
             title='Confirm'
