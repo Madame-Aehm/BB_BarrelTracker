@@ -16,7 +16,7 @@ import BarrelPage from './pages/Barrel.tsx'
 import ManageBarrels from './pages/ManageBarrels.tsx'
 import Error404 from './pages/Error404.tsx'
 import ManageCustomers from './pages/ManageCustomers.tsx'
-import VersionControl from './versionControl.tsx'
+import VersionControl from './VersionControl.tsx'
 
 const router = createBrowserRouter([{
   element: (
