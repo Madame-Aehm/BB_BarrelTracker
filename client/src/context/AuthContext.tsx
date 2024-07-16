@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dispatch, PropsWithChildren, createContext, useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
-import getVersion from "../versionControl";
 import serverBaseURL from "../utils/baseURL";
 
 interface AuthContextType {
@@ -34,10 +33,6 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     }
     if (data === true) setAuth(data);
   }, [data, error])
-
-  useEffect(() => {
-    getVersion().catch(e => console.log(e));
-  }, [])
 
   return <AuthContext.Provider value={{ auth, setAuth, loading, setLoading, error }}>
     { children }
