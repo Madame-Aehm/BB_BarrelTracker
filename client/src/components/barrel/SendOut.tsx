@@ -77,7 +77,7 @@ const SendOut = ({ barrel }: Props) => {
           <option value="">Choose Customer</option>
           { customers.map((c) => <option key={c._id} value={c.name}>{c.name}</option>) }
         </select>
-        <div>
+        <div style={{ display: "flex" }}>
           <select
             id='prefix'
             className={`${barrelStyles.input}`}
