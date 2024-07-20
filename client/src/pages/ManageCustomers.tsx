@@ -10,7 +10,6 @@ const ManageCustomers = () => {
   const { customers } = useContext(CustomerContext);
   const [open, setOpen] = useState(false);
   // const [editCustomer, setEditCustomer] = useState<null | Customer>(null);
-  console.log(customers)
   return (
     <>
       <h1>Manage Customers</h1>

@@ -12,7 +12,7 @@ type Props = {
 }
 
 
-const AddNew = ({ setOpen }: Props) => {
+const AddNew = ({ open, setOpen }: Props) => {
   const { setCustomers } = useContext(CustomerContext);
   const inputValue = useRef("");
   const [invalid, setInvalid] = useState("");
@@ -23,7 +23,7 @@ const AddNew = ({ setOpen }: Props) => {
     inputValue.current = e.target.value
   }
 
-  const { error, loading, makePostRequest } = usePost<Customer[]>({
+  const { error, setError, loading, makePostRequest } = usePost<Customer[]>({
     url: `${serverBaseURL}/api/customer/new`,
     successCallback: async(result) => {
       setSuccess("Customer added");
@@ -34,7 +34,7 @@ const AddNew = ({ setOpen }: Props) => {
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputValue.current.trim()) {
-      setInvalid("Customer needs a name")
+      return setInvalid("Customer needs a name")
     }
     await makePostRequest(JSON.stringify({ name: inputValue.current }));
   }
@@ -43,6 +43,7 @@ const AddNew = ({ setOpen }: Props) => {
     if (!open) {
       if (invalid) setInvalid("");
       if (success) setSuccess("");
+      if (error) setError("");
       if (inputValue.current) {
         inputValue.current = "";
         const input = document.querySelector("input");
@@ -72,7 +73,7 @@ const AddNew = ({ setOpen }: Props) => {
           <Button 
             loading={loading} 
             title="Add"
-            styleOverride={{ height: "3.5rem", width: "5.5rem" }} />
+            styleOverride={{ height: "4rem", width: "8rem" }} />
         { error && <p className="error">{ error }</p> }
         </form>
       }
