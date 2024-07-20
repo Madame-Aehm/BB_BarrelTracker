@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, useRef, useState } from 'react'
-import { barrelStyles } from '../../styles/styles';
 import BrlNumForm from '../BrlNumForm';
 import { unfocusAll } from '../../utils/shiftFocus';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +28,7 @@ const Manual = () => {
 
   return (
     <div>
-      <p className={barrelStyles.error}>{ error }</p>
+      <p className="error">{ error }</p>
       <BrlNumForm invalid={invalid} handleChange={handleChange} handleSubmit={handleSubmit} />
     </div>
   )

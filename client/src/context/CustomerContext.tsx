@@ -7,10 +7,12 @@ import serverBaseURL from "../utils/baseURL";
 
 interface CustomerContextType {
   customers: Customer[]
+  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>
 }
 
 const defaultValue: CustomerContextType = {
-  customers: []
+  customers: [],
+  setCustomers: () => { throw new Error("No Provider") }
 }
 
 export const CustomerContext = createContext(defaultValue);
@@ -41,5 +43,5 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
     }
   }, [auth])
 
-  return <CustomerContext.Provider value={{ customers }}>{ children }</CustomerContext.Provider>
+  return <CustomerContext.Provider value={{ customers, setCustomers }}>{ children }</CustomerContext.Provider>
 }
