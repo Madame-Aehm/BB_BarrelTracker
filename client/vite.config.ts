@@ -27,7 +27,7 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
   display:"standalone",
   scope:'/',
   start_url:"/",
-  orientation:'portrait'
+  // orientation:'portrait'
   }
 }
 

@@ -24,11 +24,10 @@ const addCustomer = async(req, res) => {
   if (!name) return res.status(401).json({ error: "Who is it? Name names!" });
   try {
     await Customer.create({ name: name.trim() });
-    const allCustomers = await Customer.find();
-    customerAlphSort(allCustomers);
-    const activeCustomers = allCustomers.filter((c) => c.active);
-    customerCache.set("activeCustomers", { activeCustomers });
-    res.status(201).json({ message: "Customer created!", allCustomers, activeCustomers });
+    const customers = await Customer.find({ active: true });
+    customerAlphSort(customers);
+    customerCache.set("activeCustomers", { customers });
+    res.status(201).json(customers);
   } catch (e) {
     console.log(e);
     if (e.code === 11000) return res.status(401).json({ error: "Name already in use" });

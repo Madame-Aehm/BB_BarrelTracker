@@ -13,7 +13,7 @@ import ToTop from "../components/ToTop";
 
 const ManageBarrels = () => {
   const { data, setData, loading, error, refetch } = useFetch<Barrel[]>(`${serverBaseURL}/api/barrel/manage-all`);
-  const [openNew, setOpenNew] = useState(false);
+  const [open, setOpen] = useState(false);
   if (loading) return <Loading />
   return (
     <>
@@ -21,11 +21,11 @@ const ManageBarrels = () => {
         <h1>Manage Barrels</h1>
         <p className="error">{ error }</p>
         <Button 
-          title={"Add Barrels"}
+          title="Add Barrels"
           styleOverride={{ width: "12rem", height: "4rem" }}
-          handleClick={() => setOpenNew(true)} />
-        <Modal open={openNew} setOpen={setOpenNew} >
-          <AddNew refetch={refetch} open={openNew} setOpen={setOpenNew} />
+          handleClick={() => setOpen(true)} />
+        <Modal open={open} setOpen={setOpen} >
+          <AddNew refetch={refetch} open={open} setOpen={setOpen} />
         </Modal>
         <h2>Existing Barrels:</h2>
         { data && data.map((b) => {

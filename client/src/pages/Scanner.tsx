@@ -26,7 +26,7 @@ function Scanner() {
               }
             }}
             scanDelay={1000}
-            containerStyle={{ width: "80%", minWidth: "300px", height: "auto" }}
+            containerStyle={{ width: "98%", minWidth: "300px", height: "auto", maxHeight: "100vh" }}
           /> 
         : <Manual />
       }

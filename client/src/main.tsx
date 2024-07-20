@@ -16,16 +16,19 @@ import BarrelPage from './pages/Barrel.tsx'
 import ManageBarrels from './pages/ManageBarrels.tsx'
 import Error404 from './pages/Error404.tsx'
 import ManageCustomers from './pages/ManageCustomers.tsx'
+import VersionControl from './VersionControl.tsx'
 
 const router = createBrowserRouter([{
   element: (
-    <AuthContextProvider>
-      <CustomerContextProvider>
-        <AuthWrapper>
-          <Outlet />
-        </AuthWrapper>
-      </CustomerContextProvider>
-    </AuthContextProvider>
+    <VersionControl>
+      <AuthContextProvider>
+        <CustomerContextProvider>
+          <AuthWrapper>
+            <Outlet />
+          </AuthWrapper>
+        </CustomerContextProvider>
+      </AuthContextProvider>
+    </VersionControl>
   ),
   children: [
     {

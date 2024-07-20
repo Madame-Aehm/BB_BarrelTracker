@@ -71,13 +71,6 @@ input.input[type="radio"] {
   min-height: 150px;
 }
 
-.error {
-  color: tomato;
-  font-weight: bold;
-  height: 1rem;
-  margin-top: 0;
-}
-
 .damageButton {
   background-color: gold;
   color: var(--font-dark);
