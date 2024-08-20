@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import localDate from '../utils/localDate.js';
 
 const damageReviewSchema = new mongoose.Schema({
   comments: { type: String },
@@ -14,8 +15,9 @@ const historySchema = new mongoose.Schema({
   customer: { type: String, required: true },
   invoice: { type: String, required: true },
   returned: { type: Date },
-  damage_review: damageReviewSchema
-}, { timestamps: true });
+  damage_review: damageReviewSchema,
+  createdAt: { type: Date, default: localDate(new Date()) }
+});
 
 const barrelSchema = new mongoose.Schema({
   number: { type: Number, required: true, unique: true}, 
