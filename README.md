@@ -9,6 +9,8 @@ I used MERN stack technologies to create a Progressive Web App with a QR scanner
 Each barrel is scanned before being sent out and the invoice and customer information are stored. Barrels are scanned again when they are returned. There is also an option to input the barrel number manually.
 
 ![Screenshot of camera scanner](./readme_assets/BB_screenshot_scanner.png)
+![Screenshot of manual entry](./readme_assets/BB_screenshot_manual.png)
+![Screenshot of send form](./readme_assets/BB_screenshot_send.png)
 
 If there is any damage to the barrel, the employee can submit a "report". They can make notes and take pictures, and the report will be emailed to the business owner. If a barrel is deemed too damaged to stay in rotation, it can be marked as "damaged", and the client will be charged. If the damage is superficial, it can be marked as ok to continue using, but the history of the damage is stored for future reference. 
 
