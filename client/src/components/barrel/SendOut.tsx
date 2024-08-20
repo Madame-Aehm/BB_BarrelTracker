@@ -60,16 +60,14 @@ const SendOut = ({ barrel }: Props) => {
         customer: inputValues.current.customer
       }
     })
-    makePostRequest(body);
+    await makePostRequest(body);
   }
-
-  console.log(inputValues)
 
   if (loading) return <Loading />
   return (
     <>
       <h2 className={barrelStyles.rbm}>Send to:</h2> 
-      <form onSubmit={handleConfirm} className={`${barrelStyles.atHome} ${barrelStyles.gap1}`}>
+      <form onSubmit={handleConfirm} className={`${barrelStyles.atHome} ${barrelStyles.gap1}`} style={{ maxWidth: "95%"}}>
         <select 
           id='customer' 
           onChange={handleChange} 
@@ -86,6 +84,7 @@ const SendOut = ({ barrel }: Props) => {
             <option value="RE">RE</option>
           </select>
           <input 
+            style={{ minWidth: "0"}}
             type='number'
             id='suffix'
             className={`${barrelStyles.input} ${invalid.suffix ? "invalid" : ""}`} 
