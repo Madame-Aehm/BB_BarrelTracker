@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
     type: Object,
     code: { type: String, required: () => this.expires !== null },
     expires: { type: Date, required: () => this.code !== null }
-   },
+  },
   failedAttempts: {
     count: { type: Number, default: 0 },
     lastAttempt: { type: Date, default: null },
