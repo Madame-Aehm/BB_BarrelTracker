@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import 'dotenv/config'
 import mongoose from "mongoose";
+import mongoSanitize from "express-mongo-sanitize";
 import authenticate from "./middleware/auth.js";
 import authRouter from "./routers/auth.js";
 import barrelRouter from "./routers/barrels.js";
@@ -12,7 +13,7 @@ import cloudinaryConfig from "./config/cloudinary.js";
   const app = express();
   const port = process.env.PORT || 5000;
 
-  const middlares = () => {
+  const middlewares = () => {
     app.use(express.json());
     app.use(
       express.urlencoded({
@@ -20,6 +21,7 @@ import cloudinaryConfig from "./config/cloudinary.js";
       })
     );
     app.use(cors());
+    app.use(mongoSanitize()); // Prevent NoSQL injection attacks
     cloudinaryConfig();
   }
 
@@ -46,7 +48,7 @@ import cloudinaryConfig from "./config/cloudinary.js";
     .catch((err) => console.log(err));
   }
 
-  middlares();
+  middlewares();
   routes();
   connectMongoose();
 })();
