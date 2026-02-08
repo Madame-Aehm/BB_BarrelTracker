@@ -66,7 +66,7 @@ const AuthForm = ({ submit, error, loading }: Props) => {
           <PinInput handleChange={handleChange} id={PinInputType.Three} invalid={error.error[3]} pin={pin} />
           <PinInput handleChange={handleChange} id={PinInputType.Four} invalid={error.error[4]} pin={pin} />
         </div>
-        <small className={authStyles.error}>{ error.error.message && error.error.message }</small>
+        <p className={authStyles.error}>{ error.error.message && error.error.message }</p>
         <Button 
           loading={loading} 
           title={"OK"}

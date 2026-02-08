@@ -8,7 +8,7 @@ import serverBaseURL from '../utils/baseURL';
 const AuthPage = () => {
   const { setAuth, loading, setLoading } = useContext(AuthContext);
   const defaultError = { 1: false, 2: false, 3: false, 4: false, message: "" };
-  const [error, setError] = useState<PinError>({ 1: false, 2: false, 3: false, 4: false, message: "initial value" });
+  const [error, setError] = useState<PinError>(defaultError);
 
   const submit = async(pin: string) => {
     setLoading(true);
