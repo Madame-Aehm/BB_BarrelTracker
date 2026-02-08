@@ -33,7 +33,6 @@ const authenticateDevice = async(req, res) => {
 
     // Increment failed attempts
     const { shouldLock, attemptsRemaining, lockedUntil } = await incrementFailedAttempts(auth);
-    
     if (shouldLock) {
       const lockMinutes = Math.ceil((lockedUntil - new Date()) / 1000 / 60);
       return res.status(423).json({ 

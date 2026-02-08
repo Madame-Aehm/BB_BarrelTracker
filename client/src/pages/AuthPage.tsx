@@ -3,15 +3,12 @@ import { useContext, useState } from 'react';
 import { AuthOK, NotOK, PinError } from '../@types/auth';
 import AuthForm from '../components/auth/AuthForm';
 import { AuthContext } from '../context/AuthContext';
-import Loading from '../components/Loading';
 import serverBaseURL from '../utils/baseURL';
 
 const AuthPage = () => {
   const { setAuth, loading, setLoading } = useContext(AuthContext);
   const defaultError = { 1: false, 2: false, 3: false, 4: false, message: "" };
-  const [error, setError] = useState<PinError>(defaultError);
-
-
+  const [error, setError] = useState<PinError>({ 1: false, 2: false, 3: false, 4: false, message: "initial value" });
 
   const submit = async(pin: string) => {
     setLoading(true);
@@ -38,14 +35,12 @@ const AuthPage = () => {
     }
   }
 
-  if (loading) return <Loading />
-
   return (
-    <main className={`${layoutStyles.main} ${layoutStyles.trueCenter}`}>
-      <img src='/bb_bean.png' alt='Blaue Bohne' className={authStyles.bbImg} />
-      <h1 className={authStyles.h1}>- BARREL TRACKER -</h1>
-      <AuthForm submit={submit} loading={loading} error={{ error, setError, defaultError }} />
-    </main>
+      <main className={`${layoutStyles.main} ${layoutStyles.trueCenter}`}>
+        <img src='/bb_bean.png' alt='Blaue Bohne' className={authStyles.bbImg} />
+        <h1 className={authStyles.h1}>- BARREL TRACKER -</h1>
+        <AuthForm submit={submit} loading={loading} error={{ error, setError, defaultError }} />
+      </main>
   )
 }
 

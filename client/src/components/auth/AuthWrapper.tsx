@@ -5,8 +5,13 @@ import Loading from '../Loading';
 
 const AuthWrapper = ({ children }: PropsWithChildren) => {
   const { auth, loading } = useContext(AuthContext);
-  if (loading) return <Loading />
-  return auth ? children : <AuthPage />;
+  // if (loading) return <Loading />
+  return (
+    <>
+      { loading && <Loading /> }
+      { auth ? children : <AuthPage /> }
+    </>
+  )
 }
 
 export default AuthWrapper
