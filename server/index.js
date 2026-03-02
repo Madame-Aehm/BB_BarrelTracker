@@ -3,6 +3,7 @@ import cors from "cors";
 import 'dotenv/config'
 import mongoose from "mongoose";
 import mongoSanitize from "express-mongo-sanitize";
+import helmetConfig from "./config/helmet.js";
 import authenticate from "./middleware/auth.js";
 import authRouter from "./routers/auth.js";
 import barrelRouter from "./routers/barrels.js";
@@ -14,14 +15,37 @@ import cloudinaryConfig from "./config/cloudinary.js";
   const port = process.env.PORT || 5000;
 
   const middlewares = () => {
-    app.use(express.json());
+    app.use(helmetConfig());
+    app.use(express.json({ limit: '10mb' }));
     app.use(
       express.urlencoded({
         extended: true,
+        limit: '10mb'
       })
     );
-    app.use(cors());
-    app.use(mongoSanitize()); // Prevent NoSQL injection attacks
+    
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : ['http://localhost:3000', 'http://localhost:5173']; // Default for development
+    
+    app.use(cors({
+      origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, Postman, etc.)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          console.warn(`CORS blocked request from origin: ${origin}`);
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true, // Allow cookies/auth headers
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      maxAge: 86400 // Cache preflight requests for 24 hours
+    }));
+    app.use(mongoSanitize());
     cloudinaryConfig();
   }
 
