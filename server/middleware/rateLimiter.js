@@ -44,4 +44,18 @@ const changePinLimiter = rateLimit({
   }
 });
 
-export { authRateLimiter, recoverPinLimiter, changePinLimiter };
+const uploadRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 upload requests per 15 minutes
+  message: { error: "Too many file uploads from this IP, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false,
+  handler: (req, res) => {
+    res.status(429).json({ 
+      error: "Too many file uploads from this IP, please try again after 15 minutes" 
+    });
+  }
+});
+
+export { authRateLimiter, recoverPinLimiter, changePinLimiter, uploadRateLimiter };

@@ -26,11 +26,10 @@ import cloudinaryConfig from "./config/cloudinary.js";
     
     const allowedOrigins = process.env.ALLOWED_ORIGINS 
       ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:3000', 'http://localhost:5173']; // Default for development
+      : ['http://localhost:3000', 'http://localhost:5173'];
     
     app.use(cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, Postman, etc.)
         if (!origin) return callback(null, true);
         
         if (allowedOrigins.indexOf(origin) !== -1) {
@@ -40,11 +39,12 @@ import cloudinaryConfig from "./config/cloudinary.js";
           callback(new Error('Not allowed by CORS'));
         }
       },
-      credentials: true, // Allow cookies/auth headers
+      credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
-      maxAge: 86400 // Cache preflight requests for 24 hours
+      maxAge: 86400
     }));
+    
     app.use(mongoSanitize());
     cloudinaryConfig();
   }

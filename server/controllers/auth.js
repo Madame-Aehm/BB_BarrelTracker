@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { encrypt, verify } from '../utils/bcrypt.js';
 import Auth from '../models/auth.js';
 import { generateToken } from '../utils/jwt.js';
@@ -55,10 +56,7 @@ const currentlyAuthorized = (_, res) => {
 }
 
 const recoverPin = async(_, res) => {
-  let code = "";
-  for (let i = 0; i < 7; i++) {
-    code = code + Math.floor(Math.random() * 9);
-  }
+  const code = crypto.randomInt(1000000, 9999999).toString();
   const expires = localDate(new Date(new Date().getTime() + 30 * 60 * 1000));
   try {
     const auth = (await Auth.find())[0];
@@ -68,7 +66,7 @@ const recoverPin = async(_, res) => {
     recoverPinEmail(code);
     res.send({ message: "Email sent for recovery", expires });
   } catch (error) {
-    console.log(e);
+    console.log(error);
     res.status(500).json({ error: "Server Error" });
   }
 }
