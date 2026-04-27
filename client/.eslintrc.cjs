@@ -23,5 +23,19 @@ module.exports = {
       { allowConstantExport: true },
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
+    "@typescript-eslint/no-misused-promises": [2, {
+      "checksVoidReturn": {
+        "attributes": false
+      }
+    }]
   },
+  overrides: [
+    {
+      files: ['.eslintrc.cjs'],
+      parser: 'espree', // Use default JS parser for this file
+      parserOptions: {
+        project: false, // Disable TS project mode
+      },
+    },
+  ],
 }

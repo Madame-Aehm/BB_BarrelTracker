@@ -11,6 +11,7 @@ const CancelButton = ({ handleClick, styleOverride }: Props) => {
   return (
     <button 
       className='cancelButton'
+      type="button"
       onClick={handleClick ? handleClick : () => navigate(-1)}
       style={styleOverride}>
         Cancel

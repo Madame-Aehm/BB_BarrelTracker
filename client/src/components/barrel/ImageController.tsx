@@ -5,7 +5,7 @@ import ImgThumbnail from "../history/ImgThumbnail"
 
 type Props = {
   imageArray: ImgObject[]
-  fileAdd: (e: React.ChangeEvent<HTMLInputElement>) => void
+  fileAdd: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>
   imageRemove: (img: ImgObject) => void
   id: string
 }

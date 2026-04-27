@@ -25,7 +25,7 @@ const AddNew = ({ open, setOpen }: Props) => {
 
   const { error, setError, loading, makePostRequest } = usePost<Customer[]>({
     url: `${serverBaseURL}/api/customer/new`,
-    successCallback: async(result) => {
+    successCallback: (result) => {
       setSuccess("Customer added");
       setCustomers(result);
     }
@@ -48,8 +48,9 @@ const AddNew = ({ open, setOpen }: Props) => {
         inputValue.current = "";
         const input = document.querySelector("input");
         if (input) input.value = "";
-      };
+      }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   return (

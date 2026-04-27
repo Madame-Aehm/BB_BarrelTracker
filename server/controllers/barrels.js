@@ -284,4 +284,4 @@ export {
   getSingleID, 
   updateBarrel,
   updateHistory
- }
+}

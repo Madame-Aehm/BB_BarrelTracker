@@ -117,6 +117,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
       setPreviewImages([]);
     }
     setError("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   return (
@@ -224,7 +225,7 @@ const EditBarrel = ({ barrel, barrelNumbers, setBarrels }: Props) => {
                     id={`${barrel._id}_imgController`}
                     fileAdd={handleAddImages}
                     imageRemove={handleImageRemove}
-                     />
+                  />
                 </> }
                 { note && 
                   <div>

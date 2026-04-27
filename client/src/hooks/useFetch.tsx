@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useCallback, useEffect, useState } from 'react'
 import authHeaders from '../utils/authHeaders';
 import { handleCatchError, handleNotOK } from '../utils/handleFetchFail';
 
@@ -18,7 +18,7 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchData = async() => {
+  const fetchData = useCallback(async() => {
     setData(null);
     setError("");
     const headers = authHeaders();
@@ -40,7 +40,7 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
     } catch (e) {
       handleCatchError(e, setError, setLoading);
     }
-  }
+  }, [url, delay])
 
   useEffect(() => {
     if (url){ 
@@ -52,7 +52,7 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
     else {
       setLoading(false);
     }
-  }, [url])
+  }, [url, fetchData])
 
   return { data, setData, loading, setLoading, error, setError, refetch: fetchData }
 }

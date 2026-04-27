@@ -14,12 +14,12 @@ const EditBarrelInput = ({ label, type, identifier, value, checked, validation, 
   return (
     <>
         <label 
-          htmlFor={identifier} 
+          htmlFor={identifier}
           className={`
             ${historyStyles.editBarrelInputLabel}
-            ${checked && historyStyles.checked} 
-            ${(checked && validation) && historyStyles.invalidRadio}
-            ${checked === false && historyStyles.unChecked} 
+            ${checked ? historyStyles.checked : ""} 
+            ${(checked && validation) ? historyStyles.invalidRadio : ""}
+            ${checked === false ? historyStyles.unChecked : ""} 
           `}>
             { label }
           </label>
@@ -32,8 +32,13 @@ const EditBarrelInput = ({ label, type, identifier, value, checked, validation, 
           checked={checked}
           onChange={(e) => handleChange(e, identifier.includes("open") ? true : false)}
         />
-        { (checked === undefined && validation) && <div><small className={authStyles.error} style={{textAlign: "right"}}>{ validation }</small></div> }
-      
+        { (checked === undefined && validation) && 
+          <div>
+            <small className={authStyles.error} style={{textAlign: "right"}}>
+              { validation }
+            </small>
+          </div> 
+        }
     </>
   )
 }

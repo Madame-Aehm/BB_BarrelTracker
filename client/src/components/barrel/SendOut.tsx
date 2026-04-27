@@ -99,7 +99,7 @@ const SendOut = ({ barrel }: Props) => {
             />
           <CancelButton />
         </div>
-        { error && <p className='error'><small>{ error }testing testing</small></p> }
+        { error && <p className='error'><small>{ error }</small></p> }
       </form>
     </>
   )

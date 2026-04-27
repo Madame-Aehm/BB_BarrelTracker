@@ -69,14 +69,15 @@ const DamageReview = ({ barrel }: Props) => {
           loading={loading}
           title='Mark as OK'
           styleOverride={{ height: "5rem", width: "15rem" }} 
-          handleClick={() => {
+          handleClick={async () => {
             damaged = false;
-            handleReview();
+            await handleReview();
           }}
-           />
-        <button className={barrelStyles.damageButton} style={{ height: "5rem", width: "15rem" }} onClick={() => {
-          damaged = true;
-          handleReview()
+        />
+        <button className={barrelStyles.damageButton} style={{ height: "5rem", width: "15rem" }} 
+          onClick={async () => {
+            damaged = true;
+            await handleReview()
           }}>
           Mark as Damaged*
         </button>
