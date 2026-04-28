@@ -165,13 +165,24 @@ const getSingleID = async(req, res) => {
 
 const updateBarrel = async(req, res) => {
   const edits = JSON.parse(req.body.edits);
+  console.log("EDITS", edits);
   const files = req.files;
   try {
     if (edits.open && edits.open.damage_review) {
-      if (!edits.open.returned) edits.open.damage_review = undefined;
       const control = await Barrel.findById(edits._id);
+      console.log("CONTROL", control);
+      console.log("CONDITION", !edits.damaged && control.damaged);
+      if ((edits.damaged && !control.damaged)) {
+        console.log("damage status changed from - to +");
+        // if damaged status manually updated, close any open damage report
+        edits.open.damage_review.closed = localDate(new Date());
+      }
+      if (!edits.open.returned) {
+        // if open returned status revoked, remove damage report
+        edits.open.damage_review = undefined;
+      } 
       if (control) {
-        // remove missing images from Cloudinary
+        // remove deleted images from Cloudinary
         const editedImages = edits.open.damage_review?.images;
         const imagesToDelete = !editedImages ? control.open.damage_review.images 
           : control.open.damage_review.images.filter((img) => {
@@ -185,7 +196,6 @@ const updateBarrel = async(req, res) => {
           })
         imagesToDelete.forEach(async(img) => {
           await cloudinary.uploader.destroy(img.public_id);
-          console.log("deleted image")
         })
       }
       if (files) {
