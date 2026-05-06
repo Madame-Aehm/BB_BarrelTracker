@@ -1,11 +1,18 @@
 import crypto from 'crypto';
 import { encrypt, verify } from '../utils/bcrypt.js';
 import Auth from '../models/auth.js';
-import { generateToken } from '../utils/jwt.js';
+import Session from "../models/session.js";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import localDate from "../utils/localDate.js";
 import validatePin from '../utils/validatePin.js';
 import { recoverPinEmail } from '../utils/sendEmail.js';
 import { checkAccountLockout, incrementFailedAttempts, clearFailedAttempts } from '../utils/accountLockout.js';
+
+const generateSessionId = () => {
+  // crypto.randomUUID exists on modern Node; fall back for older runtimes.
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  return crypto.randomBytes(16).toString("hex");
+};
 
 const authenticateDevice = async(req, res) => {
   const { pin } = req.body;
@@ -28,8 +35,18 @@ const authenticateDevice = async(req, res) => {
     if (verified) {
       // Clear failed attempts on successful authentication
       await clearFailedAttempts(auth);
-      const token = generateToken(auth);
-      return res.status(200).json({ token });
+      const sessionId = generateSessionId();
+      const refreshToken = generateRefreshToken({ userId: auth._id, sessionId });
+      const refreshTokenHash = await encrypt(refreshToken);
+
+      await Session.create({
+        userId: auth._id,
+        sessionId,
+        refreshToken: refreshTokenHash,
+      });
+
+      const accessToken = generateAccessToken({ userId: auth._id, sessionId });
+      return res.status(200).json({ accessToken, refreshToken, sessionId });
     }
 
     // Increment failed attempts
@@ -54,6 +71,62 @@ const authenticateDevice = async(req, res) => {
 const currentlyAuthorized = (_, res) => {
   res.status(200).json(true);
 }
+
+const refreshAuth = async (req, res) => {
+  const { refreshToken, sessionId } = req.body ?? {};
+  if (!refreshToken || !sessionId) {
+    return res.status(400).json({ error: "refreshToken and sessionId required" });
+  }
+
+  const verification = verifyRefreshToken(refreshToken);
+  if (!verification.ok) {
+    return res.status(401).json({ error: "Unauthorized - refresh token invalid" });
+  }
+
+  const decoded = verification.decoded;
+  if (decoded?.typ !== "refresh" || decoded?.sid !== sessionId) {
+    return res.status(401).json({ error: "Unauthorized - refresh token invalid" });
+  }
+
+  try {
+    const session = await Session.findOne({ sessionId });
+    if (!session) return res.status(403).json({ error: "Forbidden" });
+
+    // If the JWT is for a different user than the session, treat as forbidden.
+    if (String(session.userId) !== String(decoded.sub)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const matches = await verify(refreshToken, session.refreshToken);
+    if (!matches) {
+      // Reuse/breach detection: valid refresh JWT for this sessionId but does not match stored hash.
+      await Session.deleteOne({ sessionId });
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const newRefreshToken = generateRefreshToken({ userId: session.userId, sessionId });
+    const newRefreshHash = await encrypt(newRefreshToken);
+    await Session.updateOne({ sessionId }, { $set: { refreshToken: newRefreshHash } });
+
+    const accessToken = generateAccessToken({ userId: session.userId, sessionId });
+    return res.status(200).json({ accessToken, refreshToken: newRefreshToken, sessionId });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ error: "Server Error" });
+  }
+};
+
+const logout = async (req, res) => {
+  const { sessionId } = req.body ?? {};
+  if (!sessionId) return res.status(400).json({ error: "sessionId required" });
+  try {
+    await Session.deleteOne({ sessionId });
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ error: "Server Error" });
+  }
+};
 
 const recoverPin = async(_, res) => {
   const code = crypto.randomInt(1000000, 9999999).toString();
@@ -91,4 +164,4 @@ const changePin = async(req, res) => {
   }
 }
 
-export { authenticateDevice, currentlyAuthorized, recoverPin, changePin }
+export { authenticateDevice, currentlyAuthorized, refreshAuth, logout, recoverPin, changePin }
