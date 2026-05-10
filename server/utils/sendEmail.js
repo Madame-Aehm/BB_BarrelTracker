@@ -1,10 +1,10 @@
 import nodemailer from 'nodemailer';
-import 'dotenv/config'
+import env from "../config/env.js";
 
 const barrelDamagedEmail = async(barrel, comments, images) => {
   const mailOptions = {
     from: '"bbbt.damagereview"',
-    to: process.env.POC_EMAIL,
+    to: env.email.pocEmail,
     subject: 'Damage Review Requested',
     html: `
       <p><b>Barrel #${barrel.number}</b></p>
@@ -20,7 +20,7 @@ const barrelDamagedEmail = async(barrel, comments, images) => {
 const recoverPinEmail = async(code) => {
   const mailOptions = {
     from: '"Pin Recovery"',
-    to: process.env.POC_EMAIL,
+    to: env.email.pocEmail,
     subject: "BB BT Pin Recovery",
     html: `
       <p><b>Code: </b> ${code}</p>
@@ -33,8 +33,8 @@ const sendEmail = async(mailOptions) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.USER,
-      pass: process.env.PASS
+      user: env.email.user,
+      pass: env.email.pass
     }
   });
   try {

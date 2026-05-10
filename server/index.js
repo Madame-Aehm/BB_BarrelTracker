@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import 'dotenv/config'
 import mongoose from "mongoose";
 import mongoSanitize from "express-mongo-sanitize";
 import helmetConfig from "./config/helmet.js";
@@ -9,10 +8,11 @@ import authRouter from "./routers/auth.js";
 import barrelRouter from "./routers/barrels.js";
 import customerRouter from "./routers/customers.js";
 import cloudinaryConfig from "./config/cloudinary.js";
+import env from "./config/env.js";
 
 (function () {
   const app = express();
-  const port = process.env.PORT || 5000;
+  const port = env.port;
 
   const middlewares = () => {
     app.use(helmetConfig());
@@ -24,9 +24,7 @@ import cloudinaryConfig from "./config/cloudinary.js";
       })
     );
     
-    const allowedOrigins = process.env.ALLOWED_ORIGINS 
-      ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:3000', 'http://localhost:5173'];
+    const allowedOrigins = env.allowedOrigins;
     
     app.use(cors({
       origin: (origin, callback) => {
@@ -63,7 +61,7 @@ import cloudinaryConfig from "./config/cloudinary.js";
 
   const connectMongoose = () => {
     mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(env.mongoUri)
     .then(() => {
       app.listen(port, () => {
         console.log("Connection to MongoDB established, and server is running on port " + port);
