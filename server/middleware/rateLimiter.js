@@ -16,6 +16,35 @@ const authRateLimiter = rateLimit({
   }
 });
 
+// Refresh can be called periodically by legitimate clients; keep this lenient.
+// Still useful to protect bcrypt/DB work from abuse.
+const refreshRateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 60, // 60 requests per window per IP
+  message: { error: "Too many refresh attempts from this IP, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many refresh attempts from this IP, please try again later",
+    });
+  },
+});
+
+// Logout is cheap but can be spammed to generate DB writes.
+const logoutRateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 30,
+  message: { error: "Too many logout requests from this IP, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many logout requests from this IP, please try again later",
+    });
+  },
+});
+
 // 10 requests per hour for PIN recovery
 const recoverPinLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -58,4 +87,11 @@ const uploadRateLimiter = rateLimit({
   }
 });
 
-export { authRateLimiter, recoverPinLimiter, changePinLimiter, uploadRateLimiter };
+export {
+  authRateLimiter,
+  refreshRateLimiter,
+  logoutRateLimiter,
+  recoverPinLimiter,
+  changePinLimiter,
+  uploadRateLimiter,
+};

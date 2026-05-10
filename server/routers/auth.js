@@ -1,15 +1,21 @@
 import express from 'express'
 import authenticate from '../middleware/auth.js';
 import { authenticateDevice, changePin, currentlyAuthorized, logout, recoverPin, refreshAuth } from '../controllers/auth.js';
-import { authRateLimiter, recoverPinLimiter, changePinLimiter } from '../middleware/rateLimiter.js';
+import {
+  authRateLimiter,
+  refreshRateLimiter,
+  logoutRateLimiter,
+  recoverPinLimiter,
+  changePinLimiter,
+} from '../middleware/rateLimiter.js';
 
 const router = express.Router();
 
 router.post("/authenticate", authRateLimiter, authenticateDevice);
 
-router.post("/refresh", refreshAuth);
+router.post("/refresh", refreshRateLimiter, refreshAuth);
 
-router.post("/logout", logout);
+router.post("/logout", authenticate, logoutRateLimiter, logout);
 
 router.get("/authorized", authenticate, currentlyAuthorized);
 
