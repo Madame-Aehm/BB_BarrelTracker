@@ -39,7 +39,9 @@ export const CustomerContextProvider = ({ children }: PropsWithChildren) => {
       }
     } 
     if (auth) {
-      getCustomers().catch((e) => console.log(e))
+      getCustomers().catch((e) => console.log(e));
+    } else {
+      setCustomers([]);
     }
   }, [auth])
 

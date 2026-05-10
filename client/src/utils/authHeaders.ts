@@ -1,5 +1,7 @@
+import { getAccessToken } from "./accessTokenMemory";
+
 const authHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = getAccessToken();
   if (!token) return null;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${token}`);

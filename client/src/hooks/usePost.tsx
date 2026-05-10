@@ -1,5 +1,6 @@
 import { Dispatch, useState } from 'react'
 import authHeaders from '../utils/authHeaders';
+import { authenticatedFetch } from '../utils/authenticatedFetch';
 import { handleCatchError, handleNotOK } from '../utils/handleFetchFail';
 
 interface ReturnData {
@@ -31,7 +32,7 @@ const usePost = <T,> (params: Parameters<T>): ReturnData => {
     if (!headers) return setLoading(false);
     try {
       if (typeof body === "string") headers.append("Content-Type", "application/json");
-      const response = await fetch(url, { headers, body, method: "POST" });
+      const response = await authenticatedFetch(url, { headers, body, method: "POST" });
       if (response.ok) {
         const result = await response.json() as T;
         console.log(result);

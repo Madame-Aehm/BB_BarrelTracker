@@ -8,7 +8,7 @@ import NavMenuItem from './NavMenuItem'
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAuth } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   window.onclick = () => setOpen(false);
 
@@ -16,10 +16,7 @@ const NavBar = () => {
     setOpen(false);
   }, [location.pathname])
 
-  const close = () => {
-    localStorage.removeItem("token");
-    setAuth(false);
-  }
+  const close = () => logout();
   const handleClick = (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e) e.stopPropagation();
     setOpen(true)

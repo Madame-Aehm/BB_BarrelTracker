@@ -1,5 +1,6 @@
 import { Dispatch, useCallback, useEffect, useState } from 'react'
 import authHeaders from '../utils/authHeaders';
+import { authenticatedFetch } from '../utils/authenticatedFetch';
 import { handleCatchError, handleNotOK } from '../utils/handleFetchFail';
 
 interface ReturnData<T> {
@@ -24,7 +25,7 @@ const useFetch = <T,> (url: string, delay?: boolean): ReturnData<T> => {
     const headers = authHeaders();
     if (!headers) return setLoading(false);
     try {
-      const response = await fetch(url, { headers });
+      const response = await authenticatedFetch(url, { headers });
       if (response.ok) {
         const result = await response.json() as T;
         console.log(result);

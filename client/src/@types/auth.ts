@@ -1,5 +1,7 @@
 export type AuthOK = {
-  token: string
+  accessToken: string
+  refreshToken: string
+  sessionId: string
 }
 
 export type CurrentAuth = {
