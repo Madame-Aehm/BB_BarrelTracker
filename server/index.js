@@ -9,6 +9,7 @@ import barrelRouter from "./routers/barrels.js";
 import customerRouter from "./routers/customers.js";
 import cloudinaryConfig from "./config/cloudinary.js";
 import env from "./config/env.js";
+import { errorHandler } from "./errors/errorHandler.js";
 
 (function () {
   const app = express();
@@ -56,7 +57,7 @@ import env from "./config/env.js";
     app.use("/api/barrel", authenticate, barrelRouter);
     app.use("/api/customer", authenticate, customerRouter);
     app.get("/api/version", (_, res) => res.send({ version: "1.3" })); // change this on on redeploy to trigger hard refresh and clear browser cache
-    app.use('*', (_, res) => res.status(404).json({ error: "Endpoint not found." }));
+    app.use(errorHandler);
   }
 
   const connectMongoose = () => {
@@ -67,8 +68,16 @@ import env from "./config/env.js";
         console.log("Connection to MongoDB established, and server is running on port " + port);
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.error("MongoDB connection failed:", err);
+      process.exit(1);
+    });
   }
+
+  process.on("unhandledRejection", (reason) => {
+    console.error("Unhandled rejection:", reason);
+    if (env.nodeEnv === "production") process.exit(1);
+  });
 
   middlewares();
   routes();

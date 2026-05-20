@@ -1,7 +1,7 @@
 import multer from "multer";
 import path from "path";
 import crypto from "crypto";
-
+import { AppError, badRequest, payloadTooLarge } from "../errors/AppError.js";
 
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -14,18 +14,14 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
 const MAX_FILES = 10; // Maximum number of files per request
 
 const sanitizeFilename = (filename) => {
-  // Remove path components
   const basename = path.basename(filename);
   
-  // Remove or replace dangerous characters
-  // Keep only alphanumeric, dots, dashes, and underscores
   const sanitized = basename
     .replace(/[^a-zA-Z0-9._-]/g, '_')
-    .replace(/\.+/g, '.') // Replace multiple dots with single dot
-    .replace(/^\.+/, '') // Remove leading dots
-    .substring(0, 255); // Limit length
+    .replace(/\.+/g, '.')
+    .replace(/^\.+/, '')
+    .substring(0, 255);
   
-  // Generate unique prefix to avoid collisions
   const uniquePrefix = crypto.randomBytes(8).toString('hex');
   const ext = path.extname(sanitized);
   const nameWithoutExt = path.basename(sanitized, ext);
@@ -85,48 +81,43 @@ const upload = multer({
   limits: {
     fileSize: MAX_FILE_SIZE,
     files: MAX_FILES,
-    fields: 20, // Max number of non-file fields
-    fieldSize: 1024 * 1024, // 1MB max field size
-    fieldNameSize: 100, // Max field name size
-    headerPairs: 2000 // Max header pairs
+    fields: 20,
+    fieldSize: 1024 * 1024,
+    fieldNameSize: 100,
+    headerPairs: 2000
   }
 });
 
-const handleMulterError = (err, req, res, next) => {
+const multerToAppError = (err) => {
   if (err instanceof multer.MulterError) {
-    // Multer-specific errors
     switch (err.code) {
       case 'LIMIT_FILE_SIZE':
-        return res.status(413).json({ 
-          error: `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB per file` 
-        });
+        return payloadTooLarge(
+          `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB per file`
+        );
       case 'LIMIT_FILE_COUNT':
-        return res.status(413).json({ 
-          error: `Too many files. Maximum is ${MAX_FILES} files per request` 
-        });
+        return payloadTooLarge(
+          `Too many files. Maximum is ${MAX_FILES} files per request`
+        );
       case 'LIMIT_UNEXPECTED_FILE':
-        return res.status(400).json({ 
-          error: 'Unexpected file field in upload' 
-        });
+        return badRequest('Unexpected file field in upload');
       case 'LIMIT_FIELD_COUNT':
-        return res.status(400).json({ 
-          error: 'Too many fields in request' 
-        });
+        return badRequest('Too many fields in request');
       case 'LIMIT_FIELD_SIZE':
-        return res.status(413).json({ 
-          error: 'Field value too large' 
-        });
+        return payloadTooLarge('Field value too large');
       default:
-        return res.status(400).json({ 
-          error: 'File upload error. Please try again' 
-        });
+        return badRequest('File upload error. Please try again');
     }
-  } else if (err) {
-    return res.status(400).json({ 
-      error: err.message || 'Invalid file upload' 
-    });
   }
-  
+  if (err) {
+    return badRequest(err.message || 'Invalid file upload');
+  }
+  return null;
+};
+
+const handleMulterError = (err, req, res, next) => {
+  const appErr = multerToAppError(err);
+  if (appErr instanceof AppError) return next(appErr);
   next();
 };
 

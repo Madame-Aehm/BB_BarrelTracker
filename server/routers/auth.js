@@ -1,6 +1,7 @@
 import express from 'express'
 import authenticate from '../middleware/auth.js';
 import { authenticateDevice, changePin, currentlyAuthorized, logout, recoverPin, refreshAuth } from '../controllers/auth.js';
+import { asyncHandler } from '../errors/asyncHandler.js';
 import {
   authRateLimiter,
   refreshRateLimiter,
@@ -11,16 +12,16 @@ import {
 
 const router = express.Router();
 
-router.post("/authenticate", authRateLimiter, authenticateDevice);
+router.post("/authenticate", authRateLimiter, asyncHandler(authenticateDevice));
 
-router.post("/refresh", refreshRateLimiter, refreshAuth);
+router.post("/refresh", refreshRateLimiter, asyncHandler(refreshAuth));
 
-router.post("/logout", authenticate, logoutRateLimiter, logout);
+router.post("/logout", authenticate, logoutRateLimiter, asyncHandler(logout));
 
 router.get("/authorized", authenticate, currentlyAuthorized);
 
-router.get("/recover-pin", recoverPinLimiter, recoverPin);
+router.get("/recover-pin", recoverPinLimiter, asyncHandler(recoverPin));
 
-router.post("/change-pin", changePinLimiter, changePin);
+router.post("/change-pin", changePinLimiter, asyncHandler(changePin));
 
 export default router
