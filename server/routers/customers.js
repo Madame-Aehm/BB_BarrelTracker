@@ -1,14 +1,13 @@
-import express from 'express'
-import { addCustomer, getActiveCustomers, getCustomerHistory, toggleActive } from '../controllers/customers.js';
-import { asyncHandler } from '../errors/asyncHandler.js';
+import express from "express";
+import { asyncHandler } from "../errors/asyncHandler.js";
 
-const router = express.Router();
+export function createCustomerRouter(controllers) {
+  const router = express.Router();
 
-router.get("/active", asyncHandler(getActiveCustomers));
+  router.get("/active", asyncHandler(controllers.getActiveCustomers));
+  router.post("/new", asyncHandler(controllers.addCustomer));
+  router.post("/toggle-active", asyncHandler(controllers.toggleActive));
+  router.get("/history/:name", asyncHandler(controllers.getCustomerHistory));
 
-router.post("/new", asyncHandler(addCustomer));
-router.post("/toggle-active", asyncHandler(toggleActive));
-
-router.get("/history/:name", asyncHandler(getCustomerHistory));
-
-export default router
+  return router;
+}
