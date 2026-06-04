@@ -19,6 +19,8 @@ import { createCustomerRouter } from "./routers/customers.js";
   const app = express();
   const port = env.port;
 
+  app.set('trust proxy', 1);
+
   cloudinaryConfig();
 
   const container = createContainer();
