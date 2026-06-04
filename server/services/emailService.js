@@ -4,11 +4,14 @@ import env from "../config/env.js";
 export default class EmailService {
   constructor(emailConfig = env.email) {
     this.transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: emailConfig.user,
         pass: emailConfig.pass,
       },
+      connectionTimeout: 10000,
     });
     this.pocEmail = emailConfig.pocEmail;
   }
