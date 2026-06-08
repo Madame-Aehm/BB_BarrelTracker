@@ -99,4 +99,5 @@ import { createCustomerRouter } from "./routers/customers.js";
   middlewares();
   routes();
   connectMongoose();
+  //testing vercel preview redeploy
 })();
